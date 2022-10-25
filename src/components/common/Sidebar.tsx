@@ -1,86 +1,64 @@
 import {
-    AccountBox,
-    ChevronLeft,
-    Inbox,
-    Inventory,
-    LocalGroceryStore,
-    Mail,
-    People,
-    Receipt
-} from '@mui/icons-material';
+  DesktopOutlined,
+  FileTextOutlined,
+  LineChartOutlined,
+  ShopOutlined,
+  TeamOutlined,
+  ToolOutlined
+} from '@ant-design/icons';
+import { Layout, Menu, MenuProps } from 'antd';
+import { Link } from 'react-router-dom';
 import {
-    Divider,
-    Drawer,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Toolbar,
-    Typography
-} from '@mui/material';
-import React from 'react';
+  COMPANY_URL,
+  DASHBOARD_URL,
+  PEOPLE_URL,
+  POLICIES_URL,
+  PROCESSES_URL,
+  REPORTS_URL
+} from '../routes/routes';
+import '../../styles/common/app.scss';
 
-type SidebarProps = {
-    open: boolean;
-    toggleOpen: (open: boolean) => void;
-};
+const { Sider } = Layout;
 
-const Sidebar = ({ open, toggleOpen }: SidebarProps) => {
-    return (
-        <Drawer variant='persistent' anchor='left' open={open}>
-            <Toolbar>
-                <Typography variant='h6'>Admin Portal</Typography>
-                <IconButton onClick={() => toggleOpen(false)}>
-                    <ChevronLeft />
-                </IconButton>
-            </Toolbar>
-            <Divider />
-            <List>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Inventory />
-                        </ListItemIcon>
-                        <ListItemText primary='Inventory' />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <LocalGroceryStore />
-                        </ListItemIcon>
-                        <ListItemText primary='Sales' />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <Receipt />
-                        </ListItemIcon>
-                        <ListItemText primary='Orders' />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <People />
-                        </ListItemIcon>
-                        <ListItemText primary='Customers' />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <AccountBox />
-                        </ListItemIcon>
-                        <ListItemText primary='HR' />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-        </Drawer>
-    );
+const menuItems: MenuProps['items'] = [
+  {
+    label: <Link to={DASHBOARD_URL}>Dashboard</Link>,
+    key: DASHBOARD_URL,
+    icon: <DesktopOutlined />
+  },
+  {
+    label: <Link to={COMPANY_URL}>Company</Link>,
+    key: COMPANY_URL,
+    icon: <ShopOutlined />
+  },
+  {
+    label: <Link to={PEOPLE_URL}>People</Link>,
+    key: PEOPLE_URL,
+    icon: <TeamOutlined />
+  },
+  {
+    label: <Link to={POLICIES_URL}>Policies</Link>,
+    key: POLICIES_URL,
+    icon: <FileTextOutlined />
+  },
+  {
+    label: <Link to={PROCESSES_URL}>Processes</Link>,
+    key: PROCESSES_URL,
+    icon: <ToolOutlined />
+  },
+  {
+    label: <Link to={REPORTS_URL}>Reports</Link>,
+    key: REPORTS_URL,
+    icon: <LineChartOutlined />
+  }
+];
+
+const Sidebar = () => {
+  return (
+    <Sider width='15vw' className='app-sidebar'>
+      <Menu mode='inline' style={{ height: '100%' }} items={menuItems} />
+    </Sider>
+  );
 };
 
 export default Sidebar;

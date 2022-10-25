@@ -1,22 +1,5 @@
 import React from 'react';
-import {
-  Alert,
-  Backdrop,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField
-} from '@mui/material';
 import '../styles/pages/login.scss';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AuthContext from 'src/context/auth/authContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -64,15 +47,8 @@ const Login = () => {
 
   return (
     <div className='login'>
-      <Backdrop
-        sx={{
-          color: '#fff',
-          zIndex: (theme) => theme.zIndex.drawer + 1
-        }}
-        open={loading}
-      >
-        <CircularProgress color='inherit' />
-      </Backdrop>
+      hey
+      {/*       
       <Box className='logo-box'>
         <h1>The Kettle Gourmet</h1>
         <p>Human Resource Planning System</p>
@@ -117,7 +93,6 @@ const Login = () => {
                 {`Error: ${error}`}
               </Alert>
             )}
-            {/* the checkbox does nothing; i just followed the wireframe first lols */}
             <FormControlLabel
               control={<Checkbox defaultChecked />}
               label='Stay signed in'
@@ -134,7 +109,7 @@ const Login = () => {
             </div>
           </FormGroup>
         </form>
-      </Box>
+      </Box> */}
     </div>
   );
 };
