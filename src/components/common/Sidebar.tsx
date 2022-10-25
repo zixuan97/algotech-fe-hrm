@@ -8,7 +8,7 @@ import {
   ToolOutlined
 } from '@ant-design/icons';
 import { Grid, Layout, Menu, MenuProps } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   COMPANY_URL,
   DASHBOARD_URL,
@@ -56,8 +56,8 @@ const menuItems: MenuProps['items'] = [
 ];
 
 const Sidebar = () => {
+  const location = useLocation();
   const screens = useBreakpoint();
-  console.log(screens);
   const [collapsed, setCollapsed] = React.useState<boolean>(!screens.xxl);
 
   React.useEffect(() => {
@@ -72,7 +72,12 @@ const Sidebar = () => {
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
     >
-      <Menu mode='inline' style={{ height: '100%' }} items={menuItems} />
+      <Menu
+        mode='inline'
+        style={{ height: '100%' }}
+        selectedKeys={[location.pathname]}
+        items={menuItems}
+      />
     </Sider>
   );
 };

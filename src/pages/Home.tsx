@@ -48,7 +48,7 @@ const Home = ({ children }: HomeProps) => {
     <Layout>
       <Sidebar />
       <Layout>
-        <Content style={{ padding: '10px 60px' }}>
+        <Content style={{ padding: '10px 40px' }}>
           <Breadcrumb style={{ margin: '24px 0' }}>
             {getBreadcrumbItems(location, isAuthenticated)}
           </Breadcrumb>
