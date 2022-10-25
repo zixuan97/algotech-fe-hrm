@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   DesktopOutlined,
   FileTextOutlined,
@@ -6,7 +7,7 @@ import {
   TeamOutlined,
   ToolOutlined
 } from '@ant-design/icons';
-import { Layout, Menu, MenuProps } from 'antd';
+import { Grid, Layout, Menu, MenuProps } from 'antd';
 import { Link } from 'react-router-dom';
 import {
   COMPANY_URL,
@@ -19,6 +20,7 @@ import {
 import '../../styles/common/app.scss';
 
 const { Sider } = Layout;
+const { useBreakpoint } = Grid;
 
 const menuItems: MenuProps['items'] = [
   {
@@ -54,8 +56,22 @@ const menuItems: MenuProps['items'] = [
 ];
 
 const Sidebar = () => {
+  const screens = useBreakpoint();
+  console.log(screens);
+  const [collapsed, setCollapsed] = React.useState<boolean>(!screens.xxl);
+
+  React.useEffect(() => {
+    setCollapsed(!screens.xxl);
+  }, [screens.xxl]);
+
   return (
-    <Sider width='15vw' className='app-sidebar'>
+    <Sider
+      width={screens.xxl ? '10vw' : screens.xl ? '12vw' : '14vw'}
+      className='app-sidebar'
+      collapsible={!screens.xxl}
+      collapsed={collapsed}
+      onCollapse={(value) => setCollapsed(value)}
+    >
       <Menu mode='inline' style={{ height: '100%' }} items={menuItems} />
     </Sider>
   );
