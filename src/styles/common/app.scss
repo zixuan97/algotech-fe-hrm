@@ -1,0 +1,35 @@
+@use '../variables/colors.scss';
+
+.app-layout {
+  height: 100vh;
+  animation: fadein 0.5s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.app-header {
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.app-header-light {
+  @extend .app-header;
+  border-bottom: 1px solid rgba(colors.$primary-light, 0.4);
+}
+
+.app-header-dark {
+  @extend .app-header;
+  border-bottom: 1px solid rgba(colors.$primary-dark, 0.6);
+}
+
+.app-sidebar {
+  padding: 20px 0;
+}
