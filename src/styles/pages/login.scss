@@ -2,33 +2,34 @@
 @use '../variables/fonts.scss';
 @use '../common/common.scss';
 
-.login {
-  display: flex;
+.login-content-light {
+  background-color: colors.$white;
 }
 
-.logo-box {
+.login-content-dark {
+  background-color: #303030;
+}
+
+.login-container {
   @extend .container-center;
-  flex-direction: column;
-  width: 30vw;
-  height: 100vh;
-  //   background-color: colors.$primary;
-  //   color: colors.$white;
-  //   font-family: fonts.$primary-font;
+  height: 100%;
+  width: 100%;
 }
 
 .login-box {
   @extend .container-center;
-  width: 70vw;
+  width: 30%;
   flex-direction: column;
-  //   color: colors.$primary;
-  // font-family: fonts.$primary-font;
+  white-space: nowrap;
 }
 
-.login-container {
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+.login-title {
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+.login-alert {
+  padding-bottom: 1rem;
 }
 
 .login-btn {

@@ -20,6 +20,8 @@ import {
   REPORTS_URL,
   ROOT_URL
 } from './components/routes/routes';
+import { Footer } from 'antd/lib/layout/layout';
+import moment from 'moment';
 
 const App = () => {
   const token = localStorage.token;
@@ -59,6 +61,9 @@ const App = () => {
                 <Route path={ACCOUNT_SETTINGS_URL} element={<></>} />
               </Route>
             </Routes>
+            <Footer style={{ textAlign: 'center' }}>
+              The Kettle Gourmet ©{moment().year()} All Rights Reserved
+            </Footer>
           </Layout>
         </Router>
       </ThemeState>
