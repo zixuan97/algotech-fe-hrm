@@ -8,11 +8,18 @@ import { getAxiosErrorMsg } from 'src/utils/errorUtils';
 import { UserInput } from 'src/pages/Login';
 import apiRoot from 'src/services/apiRoot';
 import useNext from '../../hooks/useNext';
+import { setAuthToken } from 'src/utils/authUtils';
+import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import { getUserSvc } from 'src/services/auth/authService';
+import { User } from 'src/models/types';
 
 const AuthState = (props: PropsWithChildren) => {
   const initialState: AuthStateAttr = {
-    token: localStorage.getItem('token'),
-    isAuthenticated: true,
+    token: sessionStorage.getItem('token') ?? localStorage.getItem('token'),
+    isAuthenticated: !!(
+      sessionStorage.getItem('token') ?? localStorage.getItem('token')
+    ),
+    rmbMe: true,
     user: null,
     error: null
   };
@@ -21,19 +28,26 @@ const AuthState = (props: PropsWithChildren) => {
   const nextState = useNext(state);
   // load user - check which user is logged in and get user data
   const loadUser = async () => {
-    try {
-      const res = await axios.get(`${apiRoot}/user`);
-
-      dispatch({
-        type: AuthActionTypes.USER_LOADED,
-        // res.data is the actual user data
-        payload: res.data
-      });
-    } catch (error) {
-      dispatch({
-        type: AuthActionTypes.AUTH_ERROR
-      });
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
     }
+
+    asyncFetchCallback(
+      getUserSvc(),
+      (user: User) => {
+        if (user.status !== 'DISABLED') {
+          dispatch({
+            type: AuthActionTypes.USER_LOADED,
+            // res.data is the actual user data
+            payload: user
+          });
+        } else {
+          dispatch({ type: AuthActionTypes.AUTH_ERROR });
+        }
+      },
+      () => dispatch({ type: AuthActionTypes.AUTH_ERROR })
+    );
   };
 
   // login user
@@ -66,17 +80,21 @@ const AuthState = (props: PropsWithChildren) => {
   // clear errors
   const clearErrors = () => dispatch({ type: AuthActionTypes.CLEAR_ERRORS });
 
+  const toggleRmbMe = () => dispatch({ type: AuthActionTypes.TOGGLE_RMB_ME });
+
   return (
     <AuthContext.Provider
       value={{
         token: state.token,
         isAuthenticated: state.isAuthenticated,
+        rmbMe: state.rmbMe,
         user: state.user,
         error: state.error,
         loadUser,
         login,
         logout,
-        clearErrors
+        clearErrors,
+        toggleRmbMe
       }}
     >
       {props.children}

@@ -5,10 +5,9 @@ import { Link, Location, Outlet, useLocation } from 'react-router-dom';
 import { FRONT_SLASH } from '../utils/constants';
 import { startCase } from 'lodash';
 import authContext from 'src/context/auth/authContext';
-import moment from 'moment';
 import Sidebar from 'src/components/common/Sidebar';
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 type HomeProps = {
   children?: React.ReactNode;
@@ -59,9 +58,6 @@ const Home = ({ children }: HomeProps) => {
             </Content>
           </Layout>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          The Kettle Gourmet ©{moment().year()} All Rights Reserved
-        </Footer>
       </Layout>
     </Layout>
   );

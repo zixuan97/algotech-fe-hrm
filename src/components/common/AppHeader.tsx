@@ -8,6 +8,7 @@ import {
   Switch,
   Typography
 } from 'antd';
+import authContext from '../../context/auth/authContext';
 import themeContext from 'src/context/theme/themeContext';
 import '../../styles/common/app.scss';
 import '../../styles/common/common.scss';
@@ -21,34 +22,38 @@ const { Text } = Typography;
 
 const AppHeader = () => {
   const { isDarkMode, updateDarkMode } = React.useContext(themeContext);
+  const { isAuthenticated, logout } = React.useContext(authContext);
 
   return (
     <Header className={`app-header-${isDarkMode ? 'dark' : 'light'}`}>
       <div className='container-spaced-out'>
         <div>The Kettle Gourmet</div>
         <Space size='middle'>
-          <Dropdown
-            placement='bottomRight'
-            overlay={
-              <Menu
-                mode='horizontal'
-                items={[
-                  {
-                    label: (
-                      <Link to={ACCOUNT_SETTINGS_URL}>Account Settings</Link>
-                    ),
-                    key: ACCOUNT_SETTINGS_URL
-                  },
-                  {
-                    label: <Link to={LOGIN_URL}>Logout</Link>,
-                    key: 'Logout'
-                  }
-                ]}
-              />
-            }
-          >
-            <Button icon={<UserOutlined />} shape='circle' type='primary' />
-          </Dropdown>
+          {isAuthenticated && (
+            <Dropdown
+              placement='bottomRight'
+              overlay={
+                <Menu
+                  mode='horizontal'
+                  items={[
+                    {
+                      label: (
+                        <Link to={ACCOUNT_SETTINGS_URL}>Account Settings</Link>
+                      ),
+                      key: ACCOUNT_SETTINGS_URL
+                    },
+                    {
+                      label: <Link to={LOGIN_URL}>Logout</Link>,
+                      key: 'Logout',
+                      onClick: logout
+                    }
+                  ]}
+                />
+              }
+            >
+              <Button icon={<UserOutlined />} shape='circle' type='primary' />
+            </Dropdown>
+          )}
           {/* TODO: shift this into account settings */}
           <Space>
             <Text>Dark Mode</Text>

@@ -1,7 +1,27 @@
 import React from 'react';
 import '../styles/pages/login.scss';
-import AuthContext from 'src/context/auth/authContext';
+import '../styles/common/common.scss';
+import AuthContext from '../context/auth/authContext';
 import { useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Image,
+  Input,
+  Layout,
+  Space,
+  Spin
+} from 'antd';
+import { Typography as AntTypography } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import TimeoutAlert, { AlertType } from '../components/common/TimeoutAlert';
+import ForgetPasswordModal from '../components/account/ForgetPasswordModal';
+import themeContext from 'src/context/theme/themeContext';
+
+const { Title } = AntTypography;
+
+const { Content } = Layout;
 
 export interface UserInput {
   email: string;
@@ -10,7 +30,9 @@ export interface UserInput {
 
 const Login = () => {
   const authContext = React.useContext(AuthContext);
-  const { login, clearErrors, isAuthenticated, error } = authContext;
+  const { login, clearErrors, toggleRmbMe, isAuthenticated, rmbMe, error } =
+    authContext;
+  const { isDarkMode } = React.useContext(themeContext);
 
   const navigate = useNavigate();
 
@@ -23,11 +45,13 @@ const Login = () => {
   }, [isAuthenticated, error, navigate, clearErrors]);
 
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [alert, setAlert] = React.useState<AlertType | null>(null);
   const [userInput, setUserInput] = React.useState<UserInput>({
     email: '',
     password: ''
   });
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [openPasswordModal, setOpenPasswordModal] =
+    React.useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setUserInput((prev: UserInput) => {
@@ -38,7 +62,11 @@ const Login = () => {
     e.preventDefault();
     const { email, password } = userInput;
     if (email === '' || password === '') {
-      // TODO: handle error case
+      setAlert({
+        type: 'warning',
+        message: 'Email and password fields cannot be empty!'
+      });
+      return;
     } else {
       setLoading(true);
       login(userInput);
@@ -46,71 +74,104 @@ const Login = () => {
   };
 
   return (
-    <div className='login'>
-      hey
-      {/*       
-      <Box className='logo-box'>
-        <h1>The Kettle Gourmet</h1>
-        <p>Human Resource Planning System</p>
-      </Box>
-      <Box className='login-box'>
-        <form onSubmit={handleLogin} className='login-container'>
-          <FormGroup>
-            <h1>Login to Kettle Gourmet HRM</h1>
-            <TextField
-              required
-              id='outlined-required'
-              label='Email Address'
-              name='email'
-              onChange={handleChange}
-            />
-            <FormControl variant='outlined' style={{ margin: '2vh 0' }}>
-              <InputLabel required htmlFor='outlined-adornment-password'>
-                Password
-              </InputLabel>
-              <OutlinedInput
-                required
-                id='outlined-adornment-password'
-                type={showPassword ? 'text' : 'password'}
-                name='password'
-                onChange={handleChange}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      aria-label='toggle password visibility'
-                      edge='end'
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label='Password'
-              />
-            </FormControl>
-            {error && (
-              <Alert severity='error' onClose={clearErrors}>
-                {`Error: ${error}`}
-              </Alert>
-            )}
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label='Stay signed in'
-            />
-            <div style={{ marginTop: '2vh' }}>
-              <Button
-                type='submit'
-                variant='contained'
-                className='login-btn'
-                color='primary'
-              >
-                Login
-              </Button>
+    <Content className={`login-content-${isDarkMode ? 'dark' : 'light'}`}>
+      <ForgetPasswordModal
+        openPasswordModal={openPasswordModal}
+        handleClose={() => setOpenPasswordModal(false)}
+      />
+      <div className='login-container'>
+        <div className='login-box'>
+          <Image
+            src={require('../resources/logo-brown.png')}
+            width={250}
+            preview={false}
+          />
+          <Title className='login-title'>The Kettle Gourmet HRM</Title>
+          {alert && (
+            <div className='login-alert'>
+              <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
             </div>
-          </FormGroup>
-        </form>
-      </Box> */}
-    </div>
+          )}
+          {error && (
+            <div className='login-alert'>
+              <TimeoutAlert
+                alert={{
+                  type: 'error',
+                  message: error
+                }}
+                clearAlert={clearErrors}
+              />
+            </div>
+          )}
+          <Form
+            name='basic'
+            initialValues={{ remember: true }}
+            autoComplete='off'
+            requiredMark={false}
+            size='large'
+            style={{ width: '100%' }}
+          >
+            <Form.Item
+              name='email'
+              rules={[{ required: true, message: 'Please input your email!' }]}
+            >
+              <Input
+                name='email'
+                placeholder='email'
+                prefix={<UserOutlined />}
+                onChange={handleChange}
+              />
+            </Form.Item>
+            <Form.Item
+              name='password'
+              rules={[
+                { required: true, message: 'Please input your password!' }
+              ]}
+            >
+              <Input.Password
+                name='password'
+                placeholder='password'
+                prefix={<LockOutlined />}
+                onChange={handleChange}
+              />
+            </Form.Item>
+            <div className='container-spaced-out'>
+              <Form.Item name='remember' valuePropName='checked'>
+                <Checkbox checked={rmbMe} onChange={() => toggleRmbMe()}>
+                  Remember me
+                </Checkbox>
+              </Form.Item>
+              <Space align='start'>
+                <Button
+                  type='link'
+                  size='small'
+                  onClick={() => setOpenPasswordModal(true)}
+                >
+                  Forgot password
+                </Button>
+              </Space>
+            </div>
+            <Form.Item>
+              {loading ? (
+                <Spin
+                  size='large'
+                  style={{ display: 'flex', justifyContent: 'center' }}
+                />
+              ) : (
+                <Button
+                  type='primary'
+                  htmlType='submit'
+                  className='login-btn'
+                  onClick={handleLogin}
+                >
+                  Login
+                </Button>
+              )}
+            </Form.Item>
+          </Form>
+        </div>
+      </div>
+    </Content>
   );
 };
 
