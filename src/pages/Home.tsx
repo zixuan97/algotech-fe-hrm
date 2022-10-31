@@ -51,7 +51,7 @@ const Home = ({ children }: HomeProps) => {
           <Breadcrumb style={{ margin: '24px 0' }}>
             {getBreadcrumbItems(location, isAuthenticated)}
           </Breadcrumb>
-          <Layout style={{ padding: '24px 0', height: '95%' }}>
+          <Layout style={{ paddingBottom: '24px', height: '95%' }}>
             <Content style={{ minHeight: 280, overflow: 'auto' }}>
               <Outlet />
               {children && children}

@@ -7,3 +7,4 @@ export const POLICIES_URL = ROOT_URL + 'policies';
 export const PROCESSES_URL = ROOT_URL + 'processes';
 export const REPORTS_URL = ROOT_URL + 'reports';
 export const ACCOUNT_SETTINGS_URL = ROOT_URL + 'accountSettings';
+export const EDITOR_URL = ROOT_URL + 'editor';

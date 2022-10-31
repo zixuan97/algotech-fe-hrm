@@ -13,6 +13,7 @@ import {
   ACCOUNT_SETTINGS_URL,
   COMPANY_URL,
   DASHBOARD_URL,
+  EDITOR_URL,
   LOGIN_URL,
   PEOPLE_URL,
   POLICIES_URL,
@@ -20,8 +21,10 @@ import {
   REPORTS_URL,
   ROOT_URL
 } from './components/routes/routes';
-import { Footer } from 'antd/lib/layout/layout';
 import moment from 'moment';
+import Editor from './pages/Editor';
+
+const { Footer } = Layout;
 
 const App = () => {
   const token = localStorage.token;
@@ -59,6 +62,8 @@ const App = () => {
                 <Route path={REPORTS_URL} element={<></>} />
                 {/* accounts routes */}
                 <Route path={ACCOUNT_SETTINGS_URL} element={<></>} />
+                {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
+                <Route path={EDITOR_URL} element={<Editor />} />
               </Route>
             </Routes>
             <Footer style={{ textAlign: 'center' }}>
