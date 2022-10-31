@@ -15,6 +15,7 @@ import '../../styles/common/common.scss';
 import { UserOutlined } from '@ant-design/icons';
 import { ACCOUNT_SETTINGS_URL, LOGIN_URL } from '../routes/routes';
 import { Link } from 'react-router-dom';
+import { useThemedClassName } from 'src/hooks/useThemedClassName';
 
 const { Header } = Layout;
 
@@ -25,7 +26,7 @@ const AppHeader = () => {
   const { isAuthenticated, logout } = React.useContext(authContext);
 
   return (
-    <Header className={`app-header-${isDarkMode ? 'dark' : 'light'}`}>
+    <Header className={useThemedClassName('app-header')}>
       <div className='container-spaced-out'>
         <div>The Kettle Gourmet</div>
         <Space size='middle'>
