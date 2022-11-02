@@ -22,6 +22,12 @@
   flex-direction: column;
 }
 
+.container-left-full {
+  @extend .container-left;
+  height: 100%;
+  width: 100%;
+}
+
 .container-spaced-out {
   display: flex;
   align-items: baseline;

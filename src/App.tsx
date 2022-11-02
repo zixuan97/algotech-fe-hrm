@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes
+} from 'react-router-dom';
 import React from 'react';
 import AuthRoute from './components/auth/AuthRoute';
 import AuthState from './context/auth/AuthState';
@@ -13,7 +18,7 @@ import {
   ACCOUNT_SETTINGS_URL,
   COMPANY_URL,
   DASHBOARD_URL,
-  EDITOR_URL,
+  EDIT_TOPIC_URL,
   LOGIN_URL,
   PEOPLE_URL,
   POLICIES_URL,
@@ -22,7 +27,10 @@ import {
   ROOT_URL
 } from './components/routes/routes';
 import moment from 'moment';
-import Editor from './pages/Editor';
+import EditTopic from './pages/policies/EditTopic';
+import NotFound from './pages/NotFound';
+import AccountSettings from './pages/AccountSettings';
+import AllPolicies from './pages/policies/AllPolicies';
 
 const { Footer } = Layout;
 
@@ -48,6 +56,10 @@ const App = () => {
                   </AuthRoute>
                 }
               >
+                <Route
+                  index
+                  element={<Navigate replace to={DASHBOARD_URL} />}
+                />
                 {/* dashboard routes */}
                 <Route path={DASHBOARD_URL} element={<></>} />
                 {/* company routes */}
@@ -55,16 +67,27 @@ const App = () => {
                 {/* people routes */}
                 <Route path={PEOPLE_URL} element={<></>} />
                 {/* policies routes */}
-                <Route path={POLICIES_URL} element={<></>} />
+                <Route path={POLICIES_URL} element={<AllPolicies />} />
                 {/* processes routes */}
                 <Route path={PROCESSES_URL} element={<></>} />
                 {/* report routes */}
                 <Route path={REPORTS_URL} element={<></>} />
                 {/* accounts routes */}
-                <Route path={ACCOUNT_SETTINGS_URL} element={<></>} />
+                <Route
+                  path={ACCOUNT_SETTINGS_URL}
+                  element={<AccountSettings />}
+                />
                 {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
-                <Route path={EDITOR_URL} element={<Editor />} />
+                <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
               </Route>
+              <Route
+                path='*'
+                element={
+                  <Home>
+                    <NotFound />
+                  </Home>
+                }
+              />
             </Routes>
             <Footer style={{ textAlign: 'center' }}>
               The Kettle Gourmet ©{moment().year()} All Rights Reserved
