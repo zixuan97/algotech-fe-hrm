@@ -5,13 +5,15 @@ import {
   LineChartOutlined,
   ShopOutlined,
   TeamOutlined,
-  ToolOutlined
+  ToolOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import { Grid, Layout, Menu, MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import {
   COMPANY_URL,
   DASHBOARD_URL,
+  LEAVE_QUOTA_URL,
   PEOPLE_URL,
   POLICIES_URL,
   PROCESSES_URL,
@@ -52,6 +54,17 @@ const menuItems: MenuProps['items'] = [
     label: <Link to={REPORTS_URL}>Reports</Link>,
     key: REPORTS_URL,
     icon: <LineChartOutlined />
+  },
+  {
+    label: 'Leave',
+    key: 'leave',
+    icon: <CalendarOutlined />,
+    children: [
+      {
+        label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
+        key: 'leave-quota'
+      }
+    ]
   }
 ];
 
