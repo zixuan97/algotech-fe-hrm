@@ -19,3 +19,6 @@ export const PROCESSES_URL = ROOT_URL + 'processes';
 
 // reports routes
 export const REPORTS_URL = ROOT_URL + 'reports';
+
+// leave routes
+export const LEAVE_QUOTA_URL = ROOT_URL + 'leave/LeaveQuota';

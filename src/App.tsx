@@ -19,6 +19,7 @@ import {
   COMPANY_URL,
   DASHBOARD_URL,
   EDIT_TOPIC_URL,
+  LEAVE_QUOTA_URL,
   LOGIN_URL,
   PEOPLE_URL,
   POLICIES_URL,
@@ -31,6 +32,7 @@ import EditTopic from './pages/policies/EditTopic';
 import NotFound from './pages/NotFound';
 import AccountSettings from './pages/AccountSettings';
 import AllPolicies from './pages/policies/AllPolicies';
+import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 
 const { Footer } = Layout;
 
@@ -73,6 +75,8 @@ const App = () => {
                 {/* report routes */}
                 <Route path={REPORTS_URL} element={<></>} />
                 {/* accounts routes */}
+                <Route path={LEAVE_QUOTA_URL} element={<ManageLeaveQuota />} />
+                {/* leave routes */}
                 <Route
                   path={ACCOUNT_SETTINGS_URL}
                   element={<AccountSettings />}

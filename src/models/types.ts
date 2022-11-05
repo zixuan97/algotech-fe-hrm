@@ -66,6 +66,17 @@ export interface QuizQuestion {
   quizId: number;
 }
 
+export interface LeaveQuota {
+  id: number | undefined;
+  tier: string;
+  annual: number;
+  childcare: number;
+  compassionate: number;
+  parental: number;
+  sick: number;
+  unpaid: number;
+}
+
 export enum ContentStatus {
   DRAFT = 'DRAFT',
   PENDING = 'PENDING',
