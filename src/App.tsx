@@ -21,6 +21,7 @@ import {
   EDIT_TOPIC_URL,
   LEAVE_QUOTA_URL,
   LOGIN_URL,
+  MY_LEAVE_APPLICATIONS,
   PEOPLE_URL,
   POLICIES_URL,
   PROCESSES_URL,
@@ -33,6 +34,7 @@ import NotFound from './pages/NotFound';
 import AccountSettings from './pages/AccountSettings';
 import AllPolicies from './pages/policies/AllPolicies';
 import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
+import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
 
 const { Footer } = Layout;
 
@@ -75,11 +77,15 @@ const App = () => {
                 {/* report routes */}
                 <Route path={REPORTS_URL} element={<></>} />
                 {/* accounts routes */}
-                <Route path={LEAVE_QUOTA_URL} element={<ManageLeaveQuota />} />
-                {/* leave routes */}
                 <Route
                   path={ACCOUNT_SETTINGS_URL}
                   element={<AccountSettings />}
+                />
+                {/* leave routes */}
+                <Route path={LEAVE_QUOTA_URL} element={<ManageLeaveQuota />} />
+                <Route
+                  path={MY_LEAVE_APPLICATIONS}
+                  element={<ViewMyLeaveApplications />}
                 />
                 {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
                 <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />

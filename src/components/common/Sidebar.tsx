@@ -14,6 +14,7 @@ import {
   COMPANY_URL,
   DASHBOARD_URL,
   LEAVE_QUOTA_URL,
+  MY_LEAVE_APPLICATIONS,
   PEOPLE_URL,
   POLICIES_URL,
   PROCESSES_URL,
@@ -63,6 +64,10 @@ const menuItems: MenuProps['items'] = [
       {
         label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
         key: 'leave-quota'
+      },
+      {
+        label: <Link to={MY_LEAVE_APPLICATIONS}>My Leave Applications</Link>,
+        key: 'my-leave-applications'
       }
     ]
   }
