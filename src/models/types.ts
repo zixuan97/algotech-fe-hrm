@@ -77,6 +77,21 @@ export interface LeaveQuota {
   unpaid: number;
 }
 
+export interface LeaveApplication {
+  id: number;
+  applicationDate: Date;
+  startDate: Date;
+  endDate: Date;
+  leaveType: LeaveType;
+  status: LeaveStatus;
+  description: string;
+  vettedBy?: string;
+  commentsByVetter?: string;
+  lastUpdated: Date;
+  employeeId: number;
+  employee: User;
+}
+
 export enum ContentStatus {
   DRAFT = 'DRAFT',
   PENDING = 'PENDING',
@@ -86,4 +101,20 @@ export enum ContentStatus {
 export enum AnswerType {
   MCQ = 'MCQ',
   WRITTEN = 'WRITTEN'
+}
+
+export enum LeaveType {
+  ANNUAL = 'ANNUAL',
+  CHILDCARE = 'CHILDCARE',
+  COMPASSIONATE = 'COMPASSIONATE',
+  PARENTAL = 'PARENTAL',
+  SICK = 'SICK',
+  UNPAID = 'UNPAID'
+}
+
+export enum LeaveStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED'
 }

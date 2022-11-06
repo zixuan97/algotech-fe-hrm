@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 import AuthContext from './authContext';
 import authReducer from './authReducer';
@@ -26,6 +26,13 @@ const AuthState = (props: PropsWithChildren) => {
 
   const [state, dispatch] = useReducer(authReducer, initialState);
   const nextState = useNext(state);
+
+  useEffect(() => {
+    if (initialState.token) {
+      loadUser();
+    }
+  }, [initialState.token]);
+
   // load user - check which user is logged in and get user data
   const loadUser = async () => {
     const token = localStorage.getItem('token');

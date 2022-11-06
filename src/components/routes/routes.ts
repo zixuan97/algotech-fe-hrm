@@ -22,3 +22,4 @@ export const REPORTS_URL = ROOT_URL + 'reports';
 
 // leave routes
 export const LEAVE_QUOTA_URL = ROOT_URL + 'leave/LeaveQuota';
+export const MY_LEAVE_APPLICATIONS = ROOT_URL + 'leave/MyLeaveApplications';
