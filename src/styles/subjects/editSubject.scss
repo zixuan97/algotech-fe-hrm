@@ -1,0 +1,55 @@
+.subject-card-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 0 16px;
+  height: 100%;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.subject-card {
+  height: 280px;
+  width: 100%;
+  flex: 0 0 calc(100% / 3 - 16px);
+}
+
+.subject-card-tall {
+  @extend .subject-card;
+  height: 320px;
+}
+
+.completion-rate-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 40px;
+  //   margin-bottom: 16px;
+}
+
+.users-assigned-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.status-dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot-draft {
+  @extend .status-dot;
+  background-color: #717171;
+}
+
+.status-dot-pending {
+  @extend .status-dot;
+  background-color: #f8a13e;
+}
+
+.status-dot-finished {
+  @extend .status-dot;
+  background-color: #75c081;
+}

@@ -3,22 +3,20 @@ import {
   DesktopOutlined,
   FileTextOutlined,
   LineChartOutlined,
-  ShopOutlined,
   TeamOutlined,
   ToolOutlined,
-  CalendarOutlined
+  CalendarOutlined,
 } from '@ant-design/icons';
 import { Grid, Layout, Menu, MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  COMPANY_URL,
   DASHBOARD_URL,
   LEAVE_QUOTA_URL,
   MY_LEAVE_APPLICATIONS,
   PEOPLE_URL,
-  POLICIES_URL,
+  SUBJECTS_URL,
   PROCESSES_URL,
-  REPORTS_URL
+  REPORTS_URL,
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 
@@ -31,19 +29,19 @@ const menuItems: MenuProps['items'] = [
     key: DASHBOARD_URL,
     icon: <DesktopOutlined />
   },
-  {
-    label: <Link to={COMPANY_URL}>Company</Link>,
-    key: COMPANY_URL,
-    icon: <ShopOutlined />
-  },
+  // {
+  //   label: <Link to={COMPANY_URL}>Company</Link>,
+  //   key: COMPANY_URL,
+  //   icon: <ShopOutlined />
+  // },
   {
     label: <Link to={PEOPLE_URL}>People</Link>,
     key: PEOPLE_URL,
     icon: <TeamOutlined />
   },
   {
-    label: <Link to={POLICIES_URL}>Policies</Link>,
-    key: POLICIES_URL,
+    label: <Link to={SUBJECTS_URL}>Subjects</Link>,
+    key: SUBJECTS_URL,
     icon: <FileTextOutlined />
   },
   {
