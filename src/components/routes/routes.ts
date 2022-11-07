@@ -10,9 +10,10 @@ export const COMPANY_URL = ROOT_URL + 'company';
 // people routes
 export const PEOPLE_URL = ROOT_URL + 'people';
 
-// policies routes
-export const POLICIES_URL = ROOT_URL + 'policies';
-export const EDIT_TOPIC_URL = POLICIES_URL + '/editTopic';
+// subjects routes
+export const SUBJECTS_URL = ROOT_URL + 'subjects';
+export const EDIT_SUBJECT_URL = SUBJECTS_URL + '/edit';
+export const EDIT_TOPIC_URL = SUBJECTS_URL + '/editTopic';
 
 // processes routes
 export const PROCESSES_URL = ROOT_URL + 'processes';

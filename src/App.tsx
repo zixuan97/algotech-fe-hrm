@@ -23,18 +23,20 @@ import {
   LOGIN_URL,
   MY_LEAVE_APPLICATIONS,
   PEOPLE_URL,
-  POLICIES_URL,
+  SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
-  ROOT_URL
+  ROOT_URL,
+  EDIT_SUBJECT_URL
 } from './components/routes/routes';
 import moment from 'moment';
-import EditTopic from './pages/policies/EditTopic';
+import EditTopic from './pages/subjects/EditTopic';
 import NotFound from './pages/NotFound';
 import AccountSettings from './pages/AccountSettings';
-import AllPolicies from './pages/policies/AllPolicies';
+import AllSubjects from './pages/subjects/AllSubjects';
 import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
+import EditSubject from './pages/subjects/EditSubject';
 
 const { Footer } = Layout;
 
@@ -70,8 +72,10 @@ const App = () => {
                 <Route path={COMPANY_URL} element={<></>} />
                 {/* people routes */}
                 <Route path={PEOPLE_URL} element={<></>} />
-                {/* policies routes */}
-                <Route path={POLICIES_URL} element={<AllPolicies />} />
+                {/* subjects routes */}
+                <Route path={SUBJECTS_URL} element={<AllSubjects />} />
+                <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
+                <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
                 {/* processes routes */}
                 <Route path={PROCESSES_URL} element={<></>} />
                 {/* report routes */}

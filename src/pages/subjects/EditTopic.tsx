@@ -2,11 +2,11 @@ import { Button, Input, Select, Space, Typography } from 'antd';
 import React from 'react';
 import TextEditor from '../TextEditor';
 import '../../styles/common/common.scss';
-import '../../styles/policies/editTopic.scss';
+import '../../styles/subjects/editTopic.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentStatus, Step } from 'src/models/types';
 import { startCase } from 'lodash';
-import StepsList from 'src/components/policies/StepsList';
+import StepsList from 'src/components/subjects/StepsList';
 import { stripHtml } from 'src/utils/formatUtils';
 
 const { Title, Text } = Typography;
