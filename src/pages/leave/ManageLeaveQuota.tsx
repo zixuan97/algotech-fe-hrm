@@ -38,9 +38,9 @@ const ManageLeaveQuota = () => {
       (res) => {
         const sortedData = res.sort((a, b) => a.tier.localeCompare(b.tier));
         setData(sortedData);
-        setLoading(false);
       },
-      () => setLoading(false)
+      () => void 0,
+      { updateLoading: setLoading }
     );
   }, []);
 
