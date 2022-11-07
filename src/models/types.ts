@@ -5,12 +5,22 @@ export enum UserStatus {
   REJECTED = 'REJECTED'
 }
 
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  INTERN = 'INTERN',
+  PARTTIME = 'PARTTIME',
+  FULLTIME = 'FULLTIME',
+  CUSTOMER = 'CUSTOMER',
+  B2B = 'B2B'
+}
+
 export interface User {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  role: UserRole;
   status: UserStatus;
   isVerified: boolean;
   company?: string;

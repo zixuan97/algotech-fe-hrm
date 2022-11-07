@@ -1,6 +1,7 @@
 export const ROOT_URL = '/';
 // app level routes
 export const ACCOUNT_SETTINGS_URL = ROOT_URL + 'accountSettings';
+export const MY_ACCOUNT_URL = ROOT_URL + 'myAccount';
 export const LOGIN_URL = ROOT_URL + 'login';
 export const DASHBOARD_URL = ROOT_URL + 'dashboard';
 

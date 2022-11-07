@@ -5,7 +5,12 @@ import themeContext from 'src/context/theme/themeContext';
 import '../../styles/common/app.scss';
 import '../../styles/common/common.scss';
 import { UserOutlined } from '@ant-design/icons';
-import { ACCOUNT_SETTINGS_URL, LOGIN_URL, ROOT_URL } from '../routes/routes';
+import {
+  ACCOUNT_SETTINGS_URL,
+  LOGIN_URL,
+  MY_ACCOUNT_URL,
+  ROOT_URL
+} from '../routes/routes';
 import { Link } from 'react-router-dom';
 import { useThemedClassName } from 'src/hooks/useThemedClassName';
 
@@ -29,6 +34,10 @@ const AppHeader = () => {
                 <Menu
                   mode='horizontal'
                   items={[
+                    {
+                      label: <Link to={MY_ACCOUNT_URL}>My Account</Link>,
+                      key: MY_ACCOUNT_URL
+                    },
                     {
                       label: (
                         <Link to={ACCOUNT_SETTINGS_URL}>Account Settings</Link>

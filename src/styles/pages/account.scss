@@ -1,0 +1,16 @@
+.account-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.account-alert {
+  padding-bottom: 1rem;
+  width: max-content;
+}

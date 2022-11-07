@@ -21,6 +21,7 @@ import {
   EDIT_TOPIC_URL,
   LEAVE_QUOTA_URL,
   LOGIN_URL,
+  MY_ACCOUNT_URL,
   MY_LEAVE_APPLICATIONS,
   PEOPLE_URL,
   SUBJECTS_URL,
@@ -37,6 +38,7 @@ import AllSubjects from './pages/subjects/AllSubjects';
 import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
 import EditSubject from './pages/subjects/EditSubject';
+import ViewMyAccount from './pages/account/ViewMyAccount';
 
 const { Footer } = Layout;
 
@@ -53,11 +55,26 @@ const App = () => {
           <Layout className='app-layout'>
             <AppHeader />
             <Routes>
+              {/* public routes */}
               <Route path={LOGIN_URL} element={<Login />} />
+              {/* private routes */}
+              <Route
+                path={MY_ACCOUNT_URL}
+                element={
+                  <AuthRoute redirectTo={LOGIN_URL}>
+                    <Home>
+                      <ViewMyAccount />
+                    </Home>
+                  </AuthRoute>
+                }
+              />
               <Route
                 path={ROOT_URL}
                 element={
-                  <AuthRoute redirectTo={LOGIN_URL}>
+                  <AuthRoute
+                    redirectTo={LOGIN_URL}
+                    unverifiedRedirect={MY_ACCOUNT_URL}
+                  >
                     <Home />
                   </AuthRoute>
                 }
@@ -85,6 +102,7 @@ const App = () => {
                   path={ACCOUNT_SETTINGS_URL}
                   element={<AccountSettings />}
                 />
+                <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                 {/* leave routes */}
                 <Route path={LEAVE_QUOTA_URL} element={<ManageLeaveQuota />} />
                 <Route
