@@ -20,11 +20,9 @@ const ViewMyLeaveApplications = () => {
       setLoading(true);
       asyncFetchCallback(
         getLeaveApplicationsByEmployeeId(user.id),
-        (res) => {
-          setLeaveApplications(res);
-          setLoading(false);
-        },
-        () => setLoading(false)
+        (res) => setLeaveApplications(res),
+        () => void 0,
+        { updateLoading: setLoading }
       );
     }
   }, [user]);
