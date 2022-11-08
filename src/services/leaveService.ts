@@ -23,3 +23,9 @@ export const getLeaveApplicationsByEmployeeId = async (
 ): Promise<LeaveApplication[]> => {
   return axios.get(`${apiRoot}/leave/all/${id}`).then((res) => res.data);
 };
+
+export const getAllApprovedLeaveApplications = async (): Promise<
+  LeaveApplication[]
+> => {
+  return axios.get(`${apiRoot}/leave/approved/all`).then((res) => res.data);
+};

@@ -5,7 +5,7 @@ import {
   LineChartOutlined,
   TeamOutlined,
   ToolOutlined,
-  CalendarOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import { Grid, Layout, Menu, MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
@@ -17,6 +17,7 @@ import {
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
+  COMPANY_LEAVE_SCHEDULE
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 
@@ -62,6 +63,10 @@ const menuItems: MenuProps['items'] = [
       {
         label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
         key: 'leave-quota'
+      },
+      {
+        label: <Link to={COMPANY_LEAVE_SCHEDULE}>Company Leave Schedule</Link>,
+        key: 'company-leave-schedule'
       },
       {
         label: <Link to={MY_LEAVE_APPLICATIONS}>My Leave Applications</Link>,

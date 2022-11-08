@@ -103,7 +103,7 @@ const ViewMyAccount = () => {
             user={user}
           />
         )}
-        <Typography.Title level={1}>Your Profile Page</Typography.Title>
+        <Typography.Title level={1}>My Account</Typography.Title>
         <div className='button-group'>
           {edit && (
             <EditButtonGroup

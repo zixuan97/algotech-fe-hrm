@@ -37,10 +37,12 @@ const ViewMyLeaveApplications = () => {
     {
       title: 'Leave Duration',
       render: (record: LeaveApplication) => {
+        let displayFormat = 'DD MMM YYYY hh:mm A';
+        const startDate = moment(record.startDate).format(displayFormat);
+        const endDate = moment(record.endDate).format(displayFormat);
         return (
           <>
-            {moment(record.startDate).format('DD MMM YYYY')} -{' '}
-            {moment(record.endDate).format('DD MMM YYYY')}
+            {startDate} - {endDate}
           </>
         );
       }
