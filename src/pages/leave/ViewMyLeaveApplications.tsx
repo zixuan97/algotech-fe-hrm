@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Typography } from 'antd';
+import { useNavigate, createSearchParams } from 'react-router-dom';
+import { Button, Table, Typography } from 'antd';
 import authContext from 'src/context/auth/authContext';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { getLeaveApplicationsByEmployeeId } from 'src/services/leaveService';
@@ -8,8 +9,9 @@ import moment from 'moment';
 import LeaveStatusCell from 'src/components/leave/LeaveStatusCell';
 
 const ViewMyLeaveApplications = () => {
-  const { user } = React.useContext(authContext);
+  const navigate = useNavigate();
 
+  const { user } = React.useContext(authContext);
   const [leaveApplications, setLeaveApplications] = useState<
     LeaveApplication[]
   >([]);
@@ -20,7 +22,12 @@ const ViewMyLeaveApplications = () => {
       setLoading(true);
       asyncFetchCallback(
         getLeaveApplicationsByEmployeeId(user.id),
-        (res) => setLeaveApplications(res),
+        (res) => {
+          const sortedData = res.sort((a, b) =>
+            moment(a.startDate).diff(b.startDate)
+          );
+          setLeaveApplications(sortedData);
+        },
         () => void 0,
         { updateLoading: setLoading }
       );
@@ -37,10 +44,12 @@ const ViewMyLeaveApplications = () => {
     {
       title: 'Leave Duration',
       render: (record: LeaveApplication) => {
+        let displayFormat = 'DD MMM YYYY hh:mm A';
+        const startDate = moment(record.startDate).format(displayFormat);
+        const endDate = moment(record.endDate).format(displayFormat);
         return (
           <>
-            {moment(record.startDate).format('DD MMM YYYY')} -{' '}
-            {moment(record.endDate).format('DD MMM YYYY')}
+            {startDate} - {endDate}
           </>
         );
       }
@@ -66,6 +75,26 @@ const ViewMyLeaveApplications = () => {
       title: 'Last Updated',
       render: (record: LeaveApplication) => {
         return <>{moment(record.lastUpdated).format('DD MMM YYYY')}</>;
+      }
+    },
+    {
+      title: 'Action',
+      render: (record: LeaveApplication) => {
+        return (
+          <Button
+            type='primary'
+            onClick={() =>
+              navigate({
+                pathname: '/leave/leaveApplicationDetails',
+                search: createSearchParams({
+                  id: record.id.toString()
+                }).toString()
+              })
+            }
+          >
+            View Application
+          </Button>
+        );
       }
     }
   ];

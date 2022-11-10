@@ -23,3 +23,25 @@ export const getLeaveApplicationsByEmployeeId = async (
 ): Promise<LeaveApplication[]> => {
   return axios.get(`${apiRoot}/leave/all/${id}`).then((res) => res.data);
 };
+
+export const getAllApprovedLeaveApplications = async (): Promise<
+  LeaveApplication[]
+> => {
+  return axios.get(`${apiRoot}/leave/approved/all`).then((res) => res.data);
+};
+
+export const getLeaveApplicationById = async (
+  id: string | number
+): Promise<LeaveApplication> => {
+  return axios.get(`${apiRoot}/leave/${id}`).then((res) => res.data);
+};
+
+export const editLeaveApplication = async (body: object): Promise<void> => {
+  return axios.put(`${apiRoot}/leave`, body);
+};
+
+export const cancelLeaveApplication = async (
+  id: string | number
+): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/cancel/${id}`).then((res) => res.data);
+};

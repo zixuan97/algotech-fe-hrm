@@ -1,0 +1,64 @@
+.leave-application-details {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.leave-application-details-top-section {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.leave-application-details-row-display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+.leave-application-details-title {
+  padding-top: 1rem;
+  padding-left: 1rem;
+  white-space: nowrap;
+}
+
+.leave-application-details-button-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  gap: 10px 10px;
+}
+
+.leave-application-card {
+  padding-top: 1rem;
+}
+
+.leave-application-status-title {
+  padding-top: 0.5rem;
+  padding-right: 2rem;
+}
+
+.leave-application-displayed-field {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 2rem;
+}
+
+.leave-application-select {
+  width: 200px;
+}
+
+.leave-application-status-tag {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100px !important;
+  height: 35px !important;
+  font-size: 14px !important;
+  color: black !important;
+}

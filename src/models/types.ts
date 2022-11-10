@@ -1,3 +1,5 @@
+import type { Moment } from 'moment';
+
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
   DISABLED = 'DISABLED',
@@ -95,11 +97,21 @@ export interface LeaveApplication {
   leaveType: LeaveType;
   status: LeaveStatus;
   description: string;
-  vettedBy?: string;
+  vettedBy?: User;
   commentsByVetter?: string;
   lastUpdated: Date;
   employeeId: number;
   employee: User;
+}
+
+export interface CalendarObject {
+  id: number;
+  calDate: Moment;
+  startDate: string;
+  endDate: string;
+  employeeId: number;
+  employeeName: string;
+  color: string;
 }
 
 export enum ContentStatus {

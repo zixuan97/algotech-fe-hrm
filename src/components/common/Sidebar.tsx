@@ -5,18 +5,19 @@ import {
   LineChartOutlined,
   TeamOutlined,
   ToolOutlined,
-  CalendarOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import { Grid, Layout, Menu, MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import {
   DASHBOARD_URL,
   LEAVE_QUOTA_URL,
-  MY_LEAVE_APPLICATIONS,
+  MY_LEAVE_APPLICATIONS_URL,
   PEOPLE_URL,
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
+  COMPANY_LEAVE_SCHEDULE_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 
@@ -64,7 +65,15 @@ const menuItems: MenuProps['items'] = [
         key: 'leave-quota'
       },
       {
-        label: <Link to={MY_LEAVE_APPLICATIONS}>My Leave Applications</Link>,
+        label: (
+          <Link to={COMPANY_LEAVE_SCHEDULE_URL}>Company Leave Schedule</Link>
+        ),
+        key: 'company-leave-schedule'
+      },
+      {
+        label: (
+          <Link to={MY_LEAVE_APPLICATIONS_URL}>My Leave Applications</Link>
+        ),
         key: 'my-leave-applications'
       }
     ]

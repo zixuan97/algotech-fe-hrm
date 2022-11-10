@@ -1,0 +1,22 @@
+@use '../variables/colors.scss';
+@use '../variables/fonts.scss';
+@use '../common/common.scss';
+
+.calendar-month-cell-light {
+  background-color: colors.$primary-light;
+  color: white;
+  padding: 0.1rem 2rem 0.2rem 2rem;
+  width: max-content;
+}
+
+.calendar-month-cell-dark {
+  background-color: colors.$primary-dark;
+  color: black;
+  padding: 0.1rem 2rem 0.2rem 2rem;
+  width: max-content;
+}
+
+.calendar-spin {
+  display: flex;
+  justify-content: center;
+}

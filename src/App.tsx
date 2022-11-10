@@ -22,13 +22,15 @@ import {
   LEAVE_QUOTA_URL,
   LOGIN_URL,
   MY_ACCOUNT_URL,
-  MY_LEAVE_APPLICATIONS,
+  MY_LEAVE_APPLICATIONS_URL,
   PEOPLE_URL,
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
   ROOT_URL,
-  EDIT_SUBJECT_URL
+  EDIT_SUBJECT_URL,
+  COMPANY_LEAVE_SCHEDULE_URL,
+  LEAVE_APPLICATION_DETAILS_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -39,6 +41,8 @@ import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
 import EditSubject from './pages/subjects/EditSubject';
 import ViewMyAccount from './pages/account/ViewMyAccount';
+import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
+import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
 
 const { Footer } = Layout;
 
@@ -106,8 +110,16 @@ const App = () => {
                 {/* leave routes */}
                 <Route path={LEAVE_QUOTA_URL} element={<ManageLeaveQuota />} />
                 <Route
-                  path={MY_LEAVE_APPLICATIONS}
+                  path={COMPANY_LEAVE_SCHEDULE_URL}
+                  element={<ViewCompanyLeaveSchedule />}
+                />
+                <Route
+                  path={MY_LEAVE_APPLICATIONS_URL}
                   element={<ViewMyLeaveApplications />}
+                />
+                <Route
+                  path={LEAVE_APPLICATION_DETAILS_URL}
+                  element={<LeaveApplicationDetails />}
                 />
                 {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
                 <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
