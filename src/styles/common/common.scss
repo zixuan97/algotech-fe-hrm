@@ -44,4 +44,10 @@
 
 .alert {
   padding-bottom: 1rem;
+  width: max-content;
+}
+
+.spin {
+  display: flex;
+  justify-content: center;
 }

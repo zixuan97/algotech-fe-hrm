@@ -97,7 +97,7 @@ export interface LeaveApplication {
   leaveType: LeaveType;
   status: LeaveStatus;
   description: string;
-  vettedBy?: string;
+  vettedBy?: User;
   commentsByVetter?: string;
   lastUpdated: Date;
   employeeId: number;
