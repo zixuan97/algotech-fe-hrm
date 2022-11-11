@@ -53,3 +53,17 @@
   @extend .status-dot;
   background-color: #75c081;
 }
+
+.top-fields-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 0 16px;
+}
+
+.top-fields-inputs {
+  flex: 0 0 calc((100% / 6) * 5 - 8px);
+}
+
+.top-fields-subject-type {
+  flex: 0 0 calc((100% / 6) - 16px);
+}

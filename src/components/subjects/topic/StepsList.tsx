@@ -1,8 +1,8 @@
 import { Button, List } from 'antd';
 import { useThemedClassName } from 'src/hooks/useThemedClassName';
 import { Step } from 'src/models/types';
-import '../../styles/subjects/editTopic.scss';
-import '../../styles/common/common.scss';
+import '../../../styles/subjects/editTopic.scss';
+import '../../../styles/common/common.scss';
 import StepsMoreButton from './StepsMoreButton';
 
 type StepsListProps = {

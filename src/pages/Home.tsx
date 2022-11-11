@@ -1,61 +1,33 @@
 import React from 'react';
 
 import { Breadcrumb, Divider, Grid, Layout } from 'antd';
-import { Link, Location, Outlet, useLocation } from 'react-router-dom';
-import { FRONT_SLASH } from '../utils/constants';
-import { startCase } from 'lodash';
-import authContext from 'src/context/auth/authContext';
+import { Outlet } from 'react-router-dom';
 import Sidebar from 'src/components/common/Sidebar';
+import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 
 const { Content } = Layout;
 const { useBreakpoint } = Grid;
 
-type HomeProps = {
-  children?: React.ReactNode;
-};
-
-const getBreadcrumbItems = (location: Location, isAuthenticated: boolean) => {
-  const locations = location.pathname.split(FRONT_SLASH);
-  if (!isAuthenticated) {
-    return (
-      <Breadcrumb.Item key={location.pathname}>
-        <Link to={location.pathname}>
-          {startCase(locations[locations.length - 1])}
-        </Link>
-      </Breadcrumb.Item>
-    );
-  }
-  const breadcrumbs = [];
-  let currPath = '';
-  for (let i = 0; i < locations.length; i++) {
-    currPath = `${currPath}${locations[i]}/`;
-    const actualPath = currPath.replace(/\/+$/, '');
-
-    breadcrumbs.push(
-      <Breadcrumb.Item key={actualPath}>
-        <Link to={actualPath}>{startCase(locations[i])}</Link>
-      </Breadcrumb.Item>
-    );
-  }
-  return breadcrumbs.slice(1);
-};
-
-const Home = ({ children }: HomeProps) => {
-  const location = useLocation();
+const Home = ({ children }: React.PropsWithChildren) => {
   const screens = useBreakpoint();
-  const { isAuthenticated } = React.useContext(authContext);
+  const { getBreadcrumbItems } = React.useContext(breadcrumbContext);
 
   return (
     <Layout>
       <Sidebar />
       <Layout>
-        <Content style={{ padding: screens.xxl ? '20px 60px' : '10px 40px' }}>
+        <Content
+          style={{
+            padding: screens.xxl ? '20px 60px' : '20px 40px',
+            overflow: 'auto'
+          }}
+        >
           <Breadcrumb style={{ margin: '12px 0' }}>
-            {getBreadcrumbItems(location, isAuthenticated)}
+            {getBreadcrumbItems()}
           </Breadcrumb>
           <Divider />
-          <Layout style={{ paddingBottom: '24px', height: '95%' }}>
-            <Content style={{ minHeight: 280, overflow: 'auto' }}>
+          <Layout style={{ paddingBottom: '24px', height: '85%' }}>
+            <Content style={{ minHeight: 280 }}>
               <Outlet />
               {children && children}
             </Content>

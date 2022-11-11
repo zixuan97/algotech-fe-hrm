@@ -37,9 +37,9 @@ export interface Step {
 }
 
 export interface Topic {
-  id: number;
+  id?: number;
   subjectOrder: number;
-  name: string;
+  title: string;
   status: ContentStatus;
   subjectId: number;
   steps: Step[];
@@ -47,16 +47,22 @@ export interface Topic {
 
 export interface Subject {
   id: number;
+  title: string;
   description: string;
+  type: SubjectType;
   isPublished: boolean;
   completionRate: number;
   quizzes: Quiz[];
   topics: Topic[];
   usersAssigned: User[];
+  createdAt: Date;
+  createdBy: User;
+  lastUpdatedAt: Date;
+  lastUpdatedBy: User;
 }
 
 export interface Quiz {
-  id: number;
+  id?: number;
   subjectOrder: number;
   title: string;
   description: string;
@@ -139,4 +145,10 @@ export enum LeaveStatus {
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
   CANCELLED = 'CANCELLED'
+}
+
+export enum SubjectType {
+  COMPANY = 'COMPANY',
+  POLICY = 'POLICY',
+  PROCESS = 'PROCESS'
 }

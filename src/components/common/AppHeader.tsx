@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button, Dropdown, Layout, Menu, Space, Typography } from 'antd';
+import { Button, Dropdown, Layout, Menu, Space } from 'antd';
 import authContext from '../../context/auth/authContext';
-import themeContext from 'src/context/theme/themeContext';
 import '../../styles/common/app.scss';
 import '../../styles/common/common.scss';
 import { UserOutlined } from '@ant-design/icons';
@@ -16,10 +15,7 @@ import { useThemedClassName } from 'src/hooks/useThemedClassName';
 
 const { Header } = Layout;
 
-const { Text } = Typography;
-
 const AppHeader = () => {
-  const { isDarkMode, updateDarkMode } = React.useContext(themeContext);
   const { isAuthenticated, logout } = React.useContext(authContext);
 
   return (
