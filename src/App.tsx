@@ -21,13 +21,16 @@ import {
   EDIT_TOPIC_URL,
   LEAVE_QUOTA_URL,
   LOGIN_URL,
-  MY_LEAVE_APPLICATIONS,
+  MY_ACCOUNT_URL,
+  MY_LEAVE_APPLICATIONS_URL,
   PEOPLE_URL,
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
   ROOT_URL,
-  EDIT_SUBJECT_URL
+  EDIT_SUBJECT_URL,
+  COMPANY_LEAVE_SCHEDULE_URL,
+  LEAVE_APPLICATION_DETAILS_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -38,6 +41,9 @@ import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
 import EditSubject from './pages/subjects/EditSubject';
 import BreadcrumbState from './context/breadcrumbs/BreadcrumbState';
+import ViewMyAccount from './pages/account/ViewMyAccount';
+import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
+import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
 
 const { Footer } = Layout;
 
@@ -55,11 +61,26 @@ const App = () => {
             <Layout className='app-layout'>
               <AppHeader />
               <Routes>
+                {/* public routes */}
                 <Route path={LOGIN_URL} element={<Login />} />
+                {/* private routes */}
+                <Route
+                  path={MY_ACCOUNT_URL}
+                  element={
+                    <AuthRoute redirectTo={LOGIN_URL}>
+                      <Home>
+                        <ViewMyAccount />
+                      </Home>
+                    </AuthRoute>
+                  }
+                />
                 <Route
                   path={ROOT_URL}
                   element={
-                    <AuthRoute redirectTo={LOGIN_URL}>
+                    <AuthRoute
+                      redirectTo={LOGIN_URL}
+                      unverifiedRedirect={MY_ACCOUNT_URL}
+                    >
                       <Home />
                     </AuthRoute>
                   }
@@ -93,8 +114,29 @@ const App = () => {
                     element={<ManageLeaveQuota />}
                   />
                   <Route
-                    path={MY_LEAVE_APPLICATIONS}
+                    path={MY_LEAVE_APPLICATIONS_URL}
                     element={<ViewMyLeaveApplications />}
+                  />
+                  {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
+                  <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
+
+                  <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
+                  {/* leave routes */}
+                  <Route
+                    path={LEAVE_QUOTA_URL}
+                    element={<ManageLeaveQuota />}
+                  />
+                  <Route
+                    path={COMPANY_LEAVE_SCHEDULE_URL}
+                    element={<ViewCompanyLeaveSchedule />}
+                  />
+                  <Route
+                    path={MY_LEAVE_APPLICATIONS_URL}
+                    element={<ViewMyLeaveApplications />}
+                  />
+                  <Route
+                    path={LEAVE_APPLICATION_DETAILS_URL}
+                    element={<LeaveApplicationDetails />}
                   />
                   {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
                   <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
