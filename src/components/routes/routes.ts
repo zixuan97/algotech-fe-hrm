@@ -12,7 +12,7 @@ export const PEOPLE_URL = ROOT_URL + 'people';
 
 // subjects routes
 export const SUBJECTS_URL = ROOT_URL + 'subjects';
-export const EDIT_SUBJECT_URL = SUBJECTS_URL + '/edit';
+export const EDIT_SUBJECT_URL = SUBJECTS_URL + '/:subjectId/edit';
 export const EDIT_TOPIC_URL = SUBJECTS_URL + '/editTopic';
 
 // processes routes

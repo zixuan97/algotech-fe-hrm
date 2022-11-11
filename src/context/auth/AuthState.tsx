@@ -10,7 +10,7 @@ import apiRoot from 'src/services/apiRoot';
 import useNext from '../../hooks/useNext';
 import { setAuthToken } from 'src/utils/authUtils';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { getUserSvc } from 'src/services/auth/authService';
+import { getUserSvc } from 'src/services/userService';
 import { User } from 'src/models/types';
 
 const AuthState = (props: PropsWithChildren) => {

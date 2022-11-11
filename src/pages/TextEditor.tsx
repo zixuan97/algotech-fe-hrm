@@ -10,7 +10,7 @@ const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'], // toggled buttons
   ['blockquote', 'divider'],
 
-  [{ header: 1 }, { header: 2 }], // custom button values
+  // [{ header: 1 }, { header: 2 }], // custom button values
   [{ list: 'ordered' }, { list: 'bullet' }],
   //   [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
   [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
@@ -42,7 +42,6 @@ const TextEditor = ({
         value={content}
         onChange={(value) => {
           updateContent(value);
-          console.log(value);
         }}
         modules={{ toolbar: toolbarOptions, divider: true }}
         style={{ height: '100%' }}

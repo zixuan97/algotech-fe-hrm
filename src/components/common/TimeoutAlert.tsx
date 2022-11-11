@@ -15,10 +15,16 @@ export interface AlertType {
 type AlertProps = {
   alert: AlertType | null;
   clearAlert: () => void;
+  closable?: boolean;
   timeout?: number;
 };
 
-const TimeoutAlert = ({ alert, clearAlert, timeout = 3000 }: AlertProps) => {
+const TimeoutAlert = ({
+  alert,
+  clearAlert,
+  closable = true,
+  timeout = 3000
+}: AlertProps) => {
   const location = useLocation();
 
   const [timeoutId, setTimeoutId] = React.useState<NodeJS.Timeout>();
@@ -47,6 +53,7 @@ const TimeoutAlert = ({ alert, clearAlert, timeout = 3000 }: AlertProps) => {
       description={description}
       onClose={clearAlert}
       showIcon
+      closable={closable}
     />
   );
 };

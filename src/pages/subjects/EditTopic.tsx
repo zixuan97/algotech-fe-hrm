@@ -6,7 +6,7 @@ import '../../styles/subjects/editTopic.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentStatus, Step } from 'src/models/types';
 import { startCase } from 'lodash';
-import StepsList from 'src/components/subjects/StepsList';
+import StepsList from 'src/components/subjects/topic/StepsList';
 import { stripHtml } from 'src/utils/formatUtils';
 
 const { Title, Text } = Typography;

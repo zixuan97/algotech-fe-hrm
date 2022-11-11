@@ -37,6 +37,7 @@ import AllSubjects from './pages/subjects/AllSubjects';
 import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
 import EditSubject from './pages/subjects/EditSubject';
+import BreadcrumbState from './context/breadcrumbs/BreadcrumbState';
 
 const { Footer } = Layout;
 
@@ -50,63 +51,68 @@ const App = () => {
     <AuthState>
       <ThemeState>
         <Router>
-          <Layout className='app-layout'>
-            <AppHeader />
-            <Routes>
-              <Route path={LOGIN_URL} element={<Login />} />
-              <Route
-                path={ROOT_URL}
-                element={
-                  <AuthRoute redirectTo={LOGIN_URL}>
-                    <Home />
-                  </AuthRoute>
-                }
-              >
+          <BreadcrumbState>
+            <Layout className='app-layout'>
+              <AppHeader />
+              <Routes>
+                <Route path={LOGIN_URL} element={<Login />} />
                 <Route
-                  index
-                  element={<Navigate replace to={DASHBOARD_URL} />}
-                />
-                {/* dashboard routes */}
-                <Route path={DASHBOARD_URL} element={<></>} />
-                {/* company routes */}
-                <Route path={COMPANY_URL} element={<></>} />
-                {/* people routes */}
-                <Route path={PEOPLE_URL} element={<></>} />
-                {/* subjects routes */}
-                <Route path={SUBJECTS_URL} element={<AllSubjects />} />
-                <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
-                <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
-                {/* processes routes */}
-                <Route path={PROCESSES_URL} element={<></>} />
-                {/* report routes */}
-                <Route path={REPORTS_URL} element={<></>} />
-                {/* accounts routes */}
+                  path={ROOT_URL}
+                  element={
+                    <AuthRoute redirectTo={LOGIN_URL}>
+                      <Home />
+                    </AuthRoute>
+                  }
+                >
+                  <Route
+                    index
+                    element={<Navigate replace to={DASHBOARD_URL} />}
+                  />
+                  {/* dashboard routes */}
+                  <Route path={DASHBOARD_URL} element={<></>} />
+                  {/* company routes */}
+                  <Route path={COMPANY_URL} element={<></>} />
+                  {/* people routes */}
+                  <Route path={PEOPLE_URL} element={<></>} />
+                  {/* subjects routes */}
+                  <Route path={SUBJECTS_URL} element={<AllSubjects />} />
+                  <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
+                  <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
+                  {/* processes routes */}
+                  <Route path={PROCESSES_URL} element={<></>} />
+                  {/* report routes */}
+                  <Route path={REPORTS_URL} element={<></>} />
+                  {/* accounts routes */}
+                  <Route
+                    path={ACCOUNT_SETTINGS_URL}
+                    element={<AccountSettings />}
+                  />
+                  {/* leave routes */}
+                  <Route
+                    path={LEAVE_QUOTA_URL}
+                    element={<ManageLeaveQuota />}
+                  />
+                  <Route
+                    path={MY_LEAVE_APPLICATIONS}
+                    element={<ViewMyLeaveApplications />}
+                  />
+                  {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
+                  <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
+                </Route>
                 <Route
-                  path={ACCOUNT_SETTINGS_URL}
-                  element={<AccountSettings />}
+                  path='*'
+                  element={
+                    <Home>
+                      <NotFound />
+                    </Home>
+                  }
                 />
-                {/* leave routes */}
-                <Route path={LEAVE_QUOTA_URL} element={<ManageLeaveQuota />} />
-                <Route
-                  path={MY_LEAVE_APPLICATIONS}
-                  element={<ViewMyLeaveApplications />}
-                />
-                {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
-                <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
-              </Route>
-              <Route
-                path='*'
-                element={
-                  <Home>
-                    <NotFound />
-                  </Home>
-                }
-              />
-            </Routes>
-            <Footer style={{ textAlign: 'center' }}>
-              The Kettle Gourmet ©{moment().year()} All Rights Reserved
-            </Footer>
-          </Layout>
+              </Routes>
+              <Footer style={{ textAlign: 'center' }}>
+                The Kettle Gourmet ©{moment().year()} All Rights Reserved
+              </Footer>
+            </Layout>
+          </BreadcrumbState>
         </Router>
       </ThemeState>
     </AuthState>
