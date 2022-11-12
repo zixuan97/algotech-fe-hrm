@@ -101,7 +101,7 @@ const ViewMyLeaveApplications = () => {
 
   return (
     <span>
-      <Typography.Title level={1}>My Leave Applications</Typography.Title>
+      <Typography.Title level={2}>My Leave Applications</Typography.Title>
       <Table
         bordered
         dataSource={leaveApplications}

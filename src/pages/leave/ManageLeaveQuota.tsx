@@ -11,14 +11,17 @@ import {
 import { LeaveQuota } from 'src/models/types';
 import {
   createLeaveQuota,
+  deleteAndReplaceLeaveQuota,
   deleteLeaveQuota,
   editLeaveQuota,
-  getAllLeaveQuota
+  getAllLeaveQuota,
+  getTierSize
 } from 'src/services/leaveService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import LeaveQuotaEditableCell from 'src/components/leave/LeaveQuotaEditableCell';
-import ConfirmationModalButton from 'src/components/common/ConfirmationModalButton';
+import ConfirmationModal from 'src/components/common/ConfirmationModal';
+import ReplaceTierModal from 'src/components/leave/ReplaceTierModal';
 
 const ManageLeaveQuota = () => {
   const [form] = Form.useForm();
@@ -28,6 +31,11 @@ const ManageLeaveQuota = () => {
   const [addNewQuota, setAddNewQuota] = useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [alert, setAlert] = React.useState<AlertType | null>(null);
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    useState<boolean>(false);
+  const [replaceTierModalOpen, setReplaceTierModalOpen] =
+    useState<boolean>(false);
+  const [selectedTier, setSelectedTier] = useState<string>('');
 
   const isEditing = (record: LeaveQuota) => record.tier === editingKey;
 
@@ -163,13 +171,30 @@ const ManageLeaveQuota = () => {
 
   const handleDelete = async (record: LeaveQuota) => {
     setLoading(true);
+    setCurrentRow(record);
+
+    await asyncFetchCallback(getTierSize(record.tier!), (res) => {
+      if (res > 0) {
+        setReplaceTierModalOpen(true);
+      } else {
+        setConfirmationModalOpen(true);
+      }
+      setLoading(false);
+    });
+  };
+
+  const handleDeleteLeaveQuota = async (id: number) => {
+    setConfirmationModalOpen(false);
+    setLoading(true);
+
     await asyncFetchCallback(
-      deleteLeaveQuota(record.id!),
+      deleteLeaveQuota(id),
       (res) => {
-        const newData = data.filter((item) => item.id !== record.id);
+        const newData = data.filter((item) => item.id !== id);
         const sortedData = newData.sort((a, b) => a.tier.localeCompare(b.tier));
         setData(sortedData);
         setData([...newData]);
+        setCurrentRow({});
         setLoading(false);
         setAlert({
           type: 'success',
@@ -177,10 +202,45 @@ const ManageLeaveQuota = () => {
         });
       },
       (err) => {
+        setCurrentRow({});
         setLoading(false);
         setAlert({
           type: 'error',
           message: 'Leave quota was not deleted successfully, please try again!'
+        });
+      }
+    );
+  };
+
+  const handleDeleteAndReplaceLeaveQuota = async () => {
+    setReplaceTierModalOpen(false);
+    setLoading(true);
+
+    let reqBody = {
+      deletedTier: currentRow?.tier,
+      newTier: selectedTier
+    };
+
+    await asyncFetchCallback(
+      deleteAndReplaceLeaveQuota(reqBody),
+      (res) => {
+        const newData = data.filter((item) => item.id !== currentRow?.id);
+        const sortedData = newData.sort((a, b) => a.tier.localeCompare(b.tier));
+        setData(sortedData);
+        setData([...newData]);
+        setCurrentRow({});
+        setLoading(false);
+        setAlert({
+          type: 'success',
+          message: `${currentRow?.tier} deleted successfully! All employees have been reassigned to ${selectedTier}`
+        });
+      },
+      (err) => {
+        setCurrentRow({});
+        setLoading(false);
+        setAlert({
+          type: 'error',
+          message: 'Tier was not deleted successfully, please try again!'
         });
       }
     );
@@ -280,13 +340,9 @@ const ManageLeaveQuota = () => {
               onClick={() => edit(record)}
             />
             <Divider type='vertical' />
-            <ConfirmationModalButton
+            <Button
               icon={<DeleteOutlined />}
-              modalProps={{
-                title: 'Delete Leave Quota',
-                body: 'Are you sure you want to delete this leave quota?',
-                onConfirm: () => handleDelete(record)
-              }}
+              onClick={() => handleDelete(record)}
             />
           </span>
         );
@@ -313,7 +369,7 @@ const ManageLeaveQuota = () => {
 
   return (
     <Form form={form} component={false}>
-      <Typography.Title level={1}>Manage Leave Quota</Typography.Title>
+      <Typography.Title level={2}>Manage Leave Quota</Typography.Title>
       {alert && (
         <div className='leave-quota-alert'>
           <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
@@ -349,6 +405,21 @@ const ManageLeaveQuota = () => {
             </Table.Summary.Row>
           </Table.Summary>
         )}
+      />
+      <ConfirmationModal
+        open={confirmationModalOpen}
+        title='Delete Tier'
+        body='Are you sure you want to delete this tier?'
+        onConfirm={() => handleDeleteLeaveQuota(currentRow!.id!)}
+        onClose={() => setConfirmationModalOpen(false)}
+      />
+      <ReplaceTierModal
+        open={replaceTierModalOpen}
+        tierToDelete={currentRow?.tier}
+        data={data}
+        onConfirm={handleDeleteAndReplaceLeaveQuota}
+        onClose={() => setReplaceTierModalOpen(false)}
+        onSelectTier={(selectedTier) => setSelectedTier(selectedTier)}
       />
     </Form>
   );

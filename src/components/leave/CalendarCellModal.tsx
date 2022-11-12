@@ -3,22 +3,13 @@ import { Badge, Modal, Divider, Card } from 'antd';
 import type { Moment } from 'moment';
 import { CalendarObject } from 'src/models/types';
 
-const predefinedColours = [
-  'pink',
-  'orange',
-  'red',
-  'blue',
-  'cyan',
-  'lime',
-  'volcano'
-];
-
 type CalendarCellModalProps = {
   open: boolean;
   onClose: () => void;
   date: Moment | undefined;
   data: CalendarObject[];
   mode: string;
+  colours: string[];
 };
 
 const CalendarCellModal = ({
@@ -26,7 +17,8 @@ const CalendarCellModal = ({
   onClose,
   date,
   data,
-  mode
+  mode,
+  colours
 }: CalendarCellModalProps) => {
   let stringValue: string;
   let listData;
@@ -56,14 +48,14 @@ const CalendarCellModal = ({
         <>
           {mode === 'month' && (
             <Badge
-              color={predefinedColours[item.id - 1]}
+              color={colours[item.id - 1]}
               text={`${item.employeeName} on leave`}
             />
           )}
           {mode === 'year' && (
             <Badge.Ribbon
               text={`${item.employeeName}`}
-              color={predefinedColours[item.id - 1]}
+              color={colours[item.id - 1]}
             >
               <Card title='Leave Duration' size='small'>
                 {item.startDate} - {item.endDate}

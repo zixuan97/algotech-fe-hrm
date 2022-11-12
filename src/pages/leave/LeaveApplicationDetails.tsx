@@ -222,27 +222,29 @@ const LeaveApplicationDetails = () => {
             <Button onClick={() => navigate(-1)} icon={<LeftOutlined />} />
           </Tooltip>
           <Typography.Title
-            level={1}
+            level={2}
             className='leave-application-details-title'
           >
             View Leave Application
           </Typography.Title>
         </div>
         <div className='leave-application-details-button-container'>
-          <Button
-            type='primary'
-            onClick={() => {
-              if (!edit) {
-                setEdit(true);
-              } else {
-                handleLeaveApplicationUpdate();
-              }
-            }}
-          >
-            {edit ? 'Save Changes' : 'Edit'}
-          </Button>
+          {originalLeaveApplication?.status === 'PENDING' && (
+            <Button
+              type='primary'
+              onClick={() => {
+                if (!edit) {
+                  setEdit(true);
+                } else {
+                  handleLeaveApplicationUpdate();
+                }
+              }}
+            >
+              {edit ? 'Save Changes' : 'Edit'}
+            </Button>
+          )}
           {edit && <Button onClick={handleCancelUpdate}>Cancel</Button>}
-          {!edit && originalLeaveApplication?.status === 'PENDING' && (
+          {!edit && (
             <ConfirmationModalButton
               modalProps={{
                 title: 'Cancel Leave Application',
@@ -250,7 +252,7 @@ const LeaveApplicationDetails = () => {
                 onConfirm: handleLeaveApplicationCancel
               }}
             >
-              Cancel
+              Cancel Leave
             </ConfirmationModalButton>
           )}
         </div>
@@ -263,10 +265,7 @@ const LeaveApplicationDetails = () => {
       <Card className='leave-application-card'>
         <Spin size='large' spinning={loading} className='spin'>
           <div className='leave-application-displayed-field'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Leave Duration:
             </Typography.Title>
             {!edit ? (
@@ -286,10 +285,7 @@ const LeaveApplicationDetails = () => {
             )}
           </div>
           <div className='leave-application-displayed-field'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Type of Leave:
             </Typography.Title>
             {!edit ? (
@@ -306,10 +302,7 @@ const LeaveApplicationDetails = () => {
             )}
           </div>
           <div className='leave-application-displayed-field'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Description:
             </Typography.Title>
             {!edit ? (
@@ -328,10 +321,7 @@ const LeaveApplicationDetails = () => {
             )}
           </div>
           <div className='leave-application-details-row-display'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Status:
             </Typography.Title>
             {(originalLeaveApplication?.status === 'APPROVED' ||
@@ -349,21 +339,34 @@ const LeaveApplicationDetails = () => {
                   header={toLowerCase(originalLeaveApplication?.status)}
                   key='1'
                 >
-                  <p>
-                    Approved By: {originalLeaveApplication?.vettedBy?.firstName}
-                  </p>
-                  <p>
-                    Comments By Vetter:{' '}
-                    {originalLeaveApplication?.commentsByVetter
-                      ? originalLeaveApplication?.commentsByVetter
-                      : '-'}
-                  </p>
-                  <p>
-                    Last Updated:{' '}
-                    {moment(originalLeaveApplication?.lastUpdated).format(
-                      'DD MMM YYYY'
-                    )}
-                  </p>
+                  <div className='leave-application-displayed-field'>
+                    <Typography className='leave-application-status-title'>
+                      Approved By:
+                    </Typography>
+                    <Typography>
+                      {originalLeaveApplication?.vettedBy?.firstName}
+                    </Typography>
+                  </div>
+                  <div className='leave-application-displayed-field'>
+                    <Typography className='leave-application-status-title'>
+                      Comments By Vetter:
+                    </Typography>
+                    <Typography>
+                      {originalLeaveApplication?.commentsByVetter
+                        ? originalLeaveApplication?.commentsByVetter
+                        : '-'}
+                    </Typography>
+                  </div>
+                  <div className='leave-application-displayed-field'>
+                    <Typography className='leave-application-status-title'>
+                      Last Updated:
+                    </Typography>
+                    <Typography>
+                      {moment(originalLeaveApplication?.lastUpdated).format(
+                        'DD MMM YYYY'
+                      )}
+                    </Typography>
+                  </div>
                 </Panel>
               </Collapse>
             )}

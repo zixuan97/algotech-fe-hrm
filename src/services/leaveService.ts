@@ -6,6 +6,12 @@ export const getAllLeaveQuota = async (): Promise<LeaveQuota[]> => {
   return axios.get(`${apiRoot}/leave/allquota`).then((res) => res.data);
 };
 
+export const getTierSize = async (tierName: string): Promise<number> => {
+  return axios
+    .get(`${apiRoot}/leave/size/tier/${tierName}`)
+    .then((res) => res.data);
+};
+
 export const createLeaveQuota = async (body: object): Promise<void> => {
   return axios.post(`${apiRoot}/leave/quota`, body);
 };
@@ -16,6 +22,12 @@ export const editLeaveQuota = async (body: object): Promise<void> => {
 
 export const deleteLeaveQuota = async (id: string | number): Promise<void> => {
   return axios.delete(`${apiRoot}/leave/quota/${id}`);
+};
+
+export const deleteAndReplaceLeaveQuota = async (
+  body: object
+): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/deletedtier/newtier`, body);
 };
 
 export const getLeaveApplicationsByEmployeeId = async (
