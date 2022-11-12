@@ -11,6 +11,7 @@ import {
 import { LeaveQuota } from 'src/models/types';
 import {
   createLeaveQuota,
+  deleteAndReplaceLeaveQuota,
   deleteLeaveQuota,
   editLeaveQuota,
   getAllLeaveQuota,
@@ -34,6 +35,7 @@ const ManageLeaveQuota = () => {
     useState<boolean>(false);
   const [replaceTierModalOpen, setReplaceTierModalOpen] =
     useState<boolean>(false);
+  const [selectedTier, setSelectedTier] = useState<string>('');
 
   const isEditing = (record: LeaveQuota) => record.tier === editingKey;
 
@@ -183,6 +185,8 @@ const ManageLeaveQuota = () => {
 
   const handleDeleteLeaveQuota = async (id: number) => {
     setConfirmationModalOpen(false);
+    setLoading(true);
+
     await asyncFetchCallback(
       deleteLeaveQuota(id),
       (res) => {
@@ -203,6 +207,40 @@ const ManageLeaveQuota = () => {
         setAlert({
           type: 'error',
           message: 'Leave quota was not deleted successfully, please try again!'
+        });
+      }
+    );
+  };
+
+  const handleDeleteAndReplaceLeaveQuota = async () => {
+    setReplaceTierModalOpen(false);
+    setLoading(true);
+
+    let reqBody = {
+      deletedTier: currentRow?.tier,
+      newTier: selectedTier
+    };
+
+    await asyncFetchCallback(
+      deleteAndReplaceLeaveQuota(reqBody),
+      (res) => {
+        const newData = data.filter((item) => item.id !== currentRow?.id);
+        const sortedData = newData.sort((a, b) => a.tier.localeCompare(b.tier));
+        setData(sortedData);
+        setData([...newData]);
+        setCurrentRow({});
+        setLoading(false);
+        setAlert({
+          type: 'success',
+          message: `${currentRow?.tier} deleted successfully! All employees have been reassigned to ${selectedTier}`
+        });
+      },
+      (err) => {
+        setCurrentRow({});
+        setLoading(false);
+        setAlert({
+          type: 'error',
+          message: 'Tier was not deleted successfully, please try again!'
         });
       }
     );
@@ -378,8 +416,10 @@ const ManageLeaveQuota = () => {
       <ReplaceTierModal
         open={replaceTierModalOpen}
         tierToDelete={currentRow?.tier}
-        onConfirm={() => {}}
+        data={data}
+        onConfirm={handleDeleteAndReplaceLeaveQuota}
         onClose={() => setReplaceTierModalOpen(false)}
+        onSelectTier={(selectedTier) => setSelectedTier(selectedTier)}
       />
     </Form>
   );

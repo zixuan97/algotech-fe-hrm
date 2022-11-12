@@ -24,6 +24,12 @@ export const deleteLeaveQuota = async (id: string | number): Promise<void> => {
   return axios.delete(`${apiRoot}/leave/quota/${id}`);
 };
 
+export const deleteAndReplaceLeaveQuota = async (
+  body: object
+): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/deletedtier/newtier`, body);
+};
+
 export const getLeaveApplicationsByEmployeeId = async (
   id: string | number
 ): Promise<LeaveApplication[]> => {
