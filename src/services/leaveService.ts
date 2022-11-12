@@ -6,6 +6,12 @@ export const getAllLeaveQuota = async (): Promise<LeaveQuota[]> => {
   return axios.get(`${apiRoot}/leave/allquota`).then((res) => res.data);
 };
 
+export const getTierSize = async (tierName: string): Promise<number> => {
+  return axios
+    .get(`${apiRoot}/leave/size/tier/${tierName}`)
+    .then((res) => res.data);
+};
+
 export const createLeaveQuota = async (body: object): Promise<void> => {
   return axios.post(`${apiRoot}/leave/quota`, body);
 };
