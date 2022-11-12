@@ -24,6 +24,8 @@ import {
   MY_ACCOUNT_URL,
   MY_LEAVE_APPLICATIONS_URL,
   PEOPLE_URL,
+  PEOPLE_MANAGE_URL,
+  PEOPLE_ROLES_URL,
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
@@ -49,6 +51,8 @@ import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
 import AllLeaveApplications from './pages/leave/AllLeaveApplications';
 import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
 import OrganisationChart from './pages/people/OrganisationInfo';
+import ManagePeople from './pages/people/ManagePeople';
+import ManageRoles from './pages/people/ManageRoles';
 
 const { Footer } = Layout;
 
@@ -100,6 +104,8 @@ const App = () => {
                   <Route path={COMPANY_URL} element={<></>} />
                   {/* people routes */}
                   <Route path={PEOPLE_URL} element={<OrganisationChart />} />
+                  <Route path={PEOPLE_MANAGE_URL} element={<ManagePeople />} />
+                  <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
                   <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
