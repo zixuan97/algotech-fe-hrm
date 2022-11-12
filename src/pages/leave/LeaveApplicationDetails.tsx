@@ -263,10 +263,7 @@ const LeaveApplicationDetails = () => {
       <Card className='leave-application-card'>
         <Spin size='large' spinning={loading} className='spin'>
           <div className='leave-application-displayed-field'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Leave Duration:
             </Typography.Title>
             {!edit ? (
@@ -286,10 +283,7 @@ const LeaveApplicationDetails = () => {
             )}
           </div>
           <div className='leave-application-displayed-field'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Type of Leave:
             </Typography.Title>
             {!edit ? (
@@ -306,10 +300,7 @@ const LeaveApplicationDetails = () => {
             )}
           </div>
           <div className='leave-application-displayed-field'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Description:
             </Typography.Title>
             {!edit ? (
@@ -328,10 +319,7 @@ const LeaveApplicationDetails = () => {
             )}
           </div>
           <div className='leave-application-details-row-display'>
-            <Typography.Title
-              level={4}
-              className='leave-application-status-title'
-            >
+            <Typography.Title level={4} className='leave-application-title'>
               Status:
             </Typography.Title>
             {(originalLeaveApplication?.status === 'APPROVED' ||
@@ -349,21 +337,34 @@ const LeaveApplicationDetails = () => {
                   header={toLowerCase(originalLeaveApplication?.status)}
                   key='1'
                 >
-                  <p>
-                    Approved By: {originalLeaveApplication?.vettedBy?.firstName}
-                  </p>
-                  <p>
-                    Comments By Vetter:{' '}
-                    {originalLeaveApplication?.commentsByVetter
-                      ? originalLeaveApplication?.commentsByVetter
-                      : '-'}
-                  </p>
-                  <p>
-                    Last Updated:{' '}
-                    {moment(originalLeaveApplication?.lastUpdated).format(
-                      'DD MMM YYYY'
-                    )}
-                  </p>
+                  <div className='leave-application-displayed-field'>
+                    <Typography className='leave-application-status-title'>
+                      Approved By:
+                    </Typography>
+                    <Typography>
+                      {originalLeaveApplication?.vettedBy?.firstName}
+                    </Typography>
+                  </div>
+                  <div className='leave-application-displayed-field'>
+                    <Typography className='leave-application-status-title'>
+                      Comments By Vetter:
+                    </Typography>
+                    <Typography>
+                      {originalLeaveApplication?.commentsByVetter
+                        ? originalLeaveApplication?.commentsByVetter
+                        : '-'}
+                    </Typography>
+                  </div>
+                  <div className='leave-application-displayed-field'>
+                    <Typography className='leave-application-status-title'>
+                      Last Updated:
+                    </Typography>
+                    <Typography>
+                      {moment(originalLeaveApplication?.lastUpdated).format(
+                        'DD MMM YYYY'
+                      )}
+                    </Typography>
+                  </div>
                 </Panel>
               </Collapse>
             )}

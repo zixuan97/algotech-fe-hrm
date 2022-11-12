@@ -36,17 +36,22 @@
   padding-top: 1rem;
 }
 
-.leave-application-status-title {
-  padding-top: 0.5rem;
-  padding-right: 2rem;
-}
-
 .leave-application-displayed-field {
   display: flex;
   width: 100%;
   flex-direction: row;
   align-items: center;
   padding-bottom: 2rem;
+}
+
+.leave-application-title {
+  padding-top: 0.5rem;
+  padding-right: 2rem;
+}
+
+.leave-application-status-title {
+  font-weight: bold;
+  padding-right: 1rem;
 }
 
 .leave-application-select {
