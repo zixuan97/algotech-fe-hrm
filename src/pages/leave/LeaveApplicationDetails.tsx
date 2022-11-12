@@ -222,27 +222,29 @@ const LeaveApplicationDetails = () => {
             <Button onClick={() => navigate(-1)} icon={<LeftOutlined />} />
           </Tooltip>
           <Typography.Title
-            level={1}
+            level={2}
             className='leave-application-details-title'
           >
             View Leave Application
           </Typography.Title>
         </div>
         <div className='leave-application-details-button-container'>
-          <Button
-            type='primary'
-            onClick={() => {
-              if (!edit) {
-                setEdit(true);
-              } else {
-                handleLeaveApplicationUpdate();
-              }
-            }}
-          >
-            {edit ? 'Save Changes' : 'Edit'}
-          </Button>
+          {originalLeaveApplication?.status === 'PENDING' && (
+            <Button
+              type='primary'
+              onClick={() => {
+                if (!edit) {
+                  setEdit(true);
+                } else {
+                  handleLeaveApplicationUpdate();
+                }
+              }}
+            >
+              {edit ? 'Save Changes' : 'Edit'}
+            </Button>
+          )}
           {edit && <Button onClick={handleCancelUpdate}>Cancel</Button>}
-          {!edit && originalLeaveApplication?.status === 'PENDING' && (
+          {!edit && (
             <ConfirmationModalButton
               modalProps={{
                 title: 'Cancel Leave Application',
@@ -250,7 +252,7 @@ const LeaveApplicationDetails = () => {
                 onConfirm: handleLeaveApplicationCancel
               }}
             >
-              Cancel
+              Cancel Leave
             </ConfirmationModalButton>
           )}
         </div>

@@ -369,7 +369,7 @@ const ManageLeaveQuota = () => {
 
   return (
     <Form form={form} component={false}>
-      <Typography.Title level={1}>Manage Leave Quota</Typography.Title>
+      <Typography.Title level={2}>Manage Leave Quota</Typography.Title>
       {alert && (
         <div className='leave-quota-alert'>
           <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
