@@ -23,11 +23,15 @@ const ViewCompanyLeaveSchedule = () => {
   const [openCalendarCellModal, setOpenCalendarCellModal] =
     React.useState<boolean>(false);
 
-  const colours = interpolateColors(leaveDates.length, interpolateRdYlBu, {
-    colorStart: 0.2,
-    colorEnd: 1,
-    useEndAsStart: false
-  });
+  const colours = interpolateColors(
+    [...leaveDates.map((o) => o.employeeId)],
+    interpolateRdYlBu,
+    {
+      colorStart: 0.4,
+      colorEnd: 1,
+      useEndAsStart: false
+    }
+  );
 
   useEffect(() => {
     updateBreadcrumbItems([
@@ -43,6 +47,7 @@ const ViewCompanyLeaveSchedule = () => {
     asyncFetchCallback(
       getAllApprovedLeaveApplications(),
       (res) => {
+        console.log(res);
         const leaveDatesArr = res.flatMap((o) => {
           const startDate = moment(o.startDate);
           const endDate = moment(o.endDate);
