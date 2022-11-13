@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import '../../styles/pages/companyLeaveSchedule.scss';
 import { Spin, Typography } from 'antd';
 import { interpolateRdYlBu } from 'd3-scale-chromatic';
 import type { Moment } from 'moment';
 import moment from 'moment';
-
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { getAllApprovedLeaveApplications } from 'src/services/leaveService';
 import CalendarCellModal from 'src/components/leave/CalendarCellModal';
 import { CalendarObject } from 'src/models/types';
 import LeaveCalendar from 'src/components/leave/LeaveCalendar';
 import interpolateColors from 'src/utils/colourUtils';
-
-import '../../styles/pages/companyLeaveSchedule.scss';
+import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import { COMPANY_LEAVE_SCHEDULE_URL } from 'src/components/routes/routes';
 
 const ViewCompanyLeaveSchedule = () => {
+  const { updateBreadcrumbItems } = useContext(breadcrumbContext);
+
   const [leaveDates, setLeaveDates] = useState<CalendarObject[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
@@ -21,15 +23,20 @@ const ViewCompanyLeaveSchedule = () => {
   const [openCalendarCellModal, setOpenCalendarCellModal] =
     React.useState<boolean>(false);
 
-    const colours = interpolateColors(
-      leaveDates.length, 
-      interpolateRdYlBu, 
+  const colours = interpolateColors(leaveDates.length, interpolateRdYlBu, {
+    colorStart: 0.2,
+    colorEnd: 1,
+    useEndAsStart: false
+  });
+
+  useEffect(() => {
+    updateBreadcrumbItems([
       {
-        colorStart: 0.2,
-        colorEnd: 1,
-        useEndAsStart: false
+        label: 'Company Leave Schedule',
+        to: COMPANY_LEAVE_SCHEDULE_URL
       }
-    );
+    ]);
+  }, [updateBreadcrumbItems]);
 
   useEffect(() => {
     setLoading(true);
