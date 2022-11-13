@@ -21,7 +21,7 @@ const StepsList = ({
   const selectedStepsListItemClassName = useThemedClassName('steps-list-item');
 
   return (
-    <List style={{ marginBottom: '32px' }}>
+    <List>
       {steps.map((step, index) => (
         <List.Item
           key={step.id}

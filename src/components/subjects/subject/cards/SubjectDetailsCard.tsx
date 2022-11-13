@@ -1,7 +1,7 @@
 import { Card, Descriptions, Space, Switch, Typography } from 'antd';
 import moment from 'moment';
 import { User } from 'src/models/types';
-import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
+import { READABLE_DDMMYY_TIME_12H } from 'src/utils/dateUtils';
 import '../../../../styles/common/common.scss';
 import '../../../../styles/subjects/editSubject.scss';
 
@@ -36,14 +36,14 @@ const SubjectDetailsCard = ({
               createdAt &&
               `${createdBy.firstName} ${createdBy.lastName} on ${moment(
                 createdAt
-              ).format(READABLE_DDMMYY_TIME)}`}
+              ).format(READABLE_DDMMYY_TIME_12H)}`}
           </Descriptions.Item>
           <Descriptions.Item label='Last Updated By'>
             {lastUpdatedBy &&
               lastUpdatedAt &&
               `${lastUpdatedBy.firstName} ${lastUpdatedBy.lastName} on ${moment(
                 lastUpdatedAt
-              ).format(READABLE_DDMMYY_TIME)}`}
+              ).format(READABLE_DDMMYY_TIME_12H)}`}
           </Descriptions.Item>
           <Descriptions.Item label='Published'>
             <Switch checked={isPublished} onChange={updateIsPublished} />

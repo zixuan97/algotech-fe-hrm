@@ -13,8 +13,10 @@ export const PEOPLE_URL = ROOT_URL + 'people';
 
 // subjects routes
 export const SUBJECTS_URL = ROOT_URL + 'subjects';
-export const EDIT_SUBJECT_URL = SUBJECTS_URL + '/:subjectId/edit';
-export const EDIT_TOPIC_URL = SUBJECTS_URL + '/editTopic';
+export const SUBJECT_ID_URL = SUBJECTS_URL + '/:subjectId';
+export const EDIT_SUBJECT_URL = SUBJECT_ID_URL + '/edit';
+export const EDIT_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/edit';
+export const EDIT_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/edit';
 
 // processes routes
 export const PROCESSES_URL = ROOT_URL + 'processes';

@@ -34,14 +34,16 @@ export interface Step {
   title: string;
   content: string;
   topicId: number;
+  topicOrder: number;
 }
 
 export interface Topic {
-  id?: number;
+  id: number;
   subjectOrder: number;
   title: string;
   status: ContentStatus;
   subjectId: number;
+  subject: Subject;
   steps: Step[];
 }
 
@@ -82,6 +84,7 @@ export interface QuizQuestion {
   minWordCount?: number;
   correctAnswer: string;
   quizId: number;
+  quizOrder: number;
 }
 
 export interface LeaveQuota {
