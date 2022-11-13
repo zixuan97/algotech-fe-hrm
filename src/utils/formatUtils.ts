@@ -11,7 +11,7 @@ export const getFirstLastNameInitials = (
   firstName: string,
   lastName: string
 ): string => {
-  if (!firstName.length && !lastName.length) return '';
+  if (!firstName?.length && !lastName?.length) return '';
   if (!firstName.length && lastName.length) {
     return lastName.length > 1
       ? lastName.charAt(0) + lastName.charAt(lastName.length - 1)

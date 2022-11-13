@@ -1,8 +1,7 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, useContext } from 'react';
 import '../../styles/common/common.scss';
 import '../../styles/pages/leaveApplicationDetails.scss';
-import { useNavigate } from 'react-router';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, generatePath } from 'react-router';
 import { LeftOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -26,6 +25,11 @@ import { DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import ConfirmationModalButton from 'src/components/common/ConfirmationModalButton';
+import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import {
+  LEAVE_APPLICATION_DETAILS_URL,
+  MY_LEAVE_APPLICATIONS_URL
+} from 'src/components/routes/routes';
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -57,9 +61,9 @@ const leaveOptions = [
 
 const LeaveApplicationDetails = () => {
   const navigate = useNavigate();
+  const { updateBreadcrumbItems } = useContext(breadcrumbContext);
 
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get('id');
+  const { leaveId } = useParams();
 
   const [originalLeaveApplication, setOriginalLeaveApplication] =
     useState<LeaveApplication>();
@@ -71,10 +75,23 @@ const LeaveApplicationDetails = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (id) {
+    updateBreadcrumbItems([
+      {
+        label: 'My Leave Applications',
+        to: MY_LEAVE_APPLICATIONS_URL
+      },
+      {
+        label: 'Leave Application Details',
+        to: generatePath(LEAVE_APPLICATION_DETAILS_URL, { leaveId })
+      }
+    ]);
+  }, [updateBreadcrumbItems, leaveId]);
+
+  useEffect(() => {
+    if (leaveId) {
       setLoading(true);
       asyncFetchCallback(
-        getLeaveApplicationById(id),
+        getLeaveApplicationById(leaveId),
         (res) => {
           setOriginalLeaveApplication(res);
           setUpdatedLeaveApplication(res);
@@ -84,7 +101,7 @@ const LeaveApplicationDetails = () => {
         { updateLoading: setLoading }
       );
     }
-  }, [id]);
+  }, [leaveId]);
 
   const toLowerCase = (string: string | undefined) => {
     if (string) {

@@ -108,18 +108,6 @@ const App = () => {
                     path={ACCOUNT_SETTINGS_URL}
                     element={<AccountSettings />}
                   />
-                  {/* leave routes */}
-                  <Route
-                    path={LEAVE_QUOTA_URL}
-                    element={<ManageLeaveQuota />}
-                  />
-                  <Route
-                    path={MY_LEAVE_APPLICATIONS_URL}
-                    element={<ViewMyLeaveApplications />}
-                  />
-                  {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
-                  <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
-
                   <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                   {/* leave routes */}
                   <Route

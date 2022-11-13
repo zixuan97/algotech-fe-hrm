@@ -23,9 +23,9 @@ export const PROCESSES_URL = ROOT_URL + 'processes';
 export const REPORTS_URL = ROOT_URL + 'reports';
 
 // leave routes
-export const LEAVE_QUOTA_URL = ROOT_URL + 'leave/leaveQuota';
-export const MY_LEAVE_APPLICATIONS_URL = ROOT_URL + 'leave/myLeaveApplications';
-export const COMPANY_LEAVE_SCHEDULE_URL =
-  ROOT_URL + 'leave/companyLeaveSchedule';
+export const LEAVE_URL = ROOT_URL + 'leave';
+export const LEAVE_QUOTA_URL = LEAVE_URL + '/leaveQuota';
+export const MY_LEAVE_APPLICATIONS_URL = LEAVE_URL + '/myLeaveApplications';
+export const COMPANY_LEAVE_SCHEDULE_URL = LEAVE_URL + '/companyLeaveSchedule';
 export const LEAVE_APPLICATION_DETAILS_URL =
-  ROOT_URL + 'leave/leaveApplicationDetails';
+  LEAVE_URL + '/:leaveId/leaveApplicationDetails';

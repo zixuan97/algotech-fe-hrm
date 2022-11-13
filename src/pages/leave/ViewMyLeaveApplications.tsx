@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, createSearchParams } from 'react-router-dom';
+import { useNavigate, generatePath } from 'react-router-dom';
 import { Button, Table, Typography } from 'antd';
 import authContext from 'src/context/auth/authContext';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
@@ -7,6 +7,7 @@ import { getLeaveApplicationsByEmployeeId } from 'src/services/leaveService';
 import { LeaveApplication } from 'src/models/types';
 import moment from 'moment';
 import LeaveStatusCell from 'src/components/leave/LeaveStatusCell';
+import { LEAVE_APPLICATION_DETAILS_URL } from 'src/components/routes/routes';
 
 const ViewMyLeaveApplications = () => {
   const navigate = useNavigate();
@@ -84,12 +85,11 @@ const ViewMyLeaveApplications = () => {
           <Button
             type='primary'
             onClick={() =>
-              navigate({
-                pathname: '/leave/leaveApplicationDetails',
-                search: createSearchParams({
-                  id: record.id.toString()
-                }).toString()
-              })
+              navigate(
+                generatePath(LEAVE_APPLICATION_DETAILS_URL, {
+                  leaveId: record.id.toString()
+                })
+              )
             }
           >
             View Application
