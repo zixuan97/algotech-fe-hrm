@@ -31,7 +31,8 @@ import {
   EDIT_SUBJECT_URL,
   COMPANY_LEAVE_SCHEDULE_URL,
   LEAVE_APPLICATION_DETAILS_URL,
-  ALL_LEAVE_APPLICATIONS_URL
+  ALL_LEAVE_APPLICATIONS_URL,
+  EMPLOYEE_LEAVE_QUOTA_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -46,6 +47,7 @@ import ViewMyAccount from './pages/account/ViewMyAccount';
 import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
 import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
 import AllLeaveApplications from './pages/leave/AllLeaveApplications';
+import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
 
 const { Footer } = Layout;
 
@@ -115,6 +117,10 @@ const App = () => {
                   <Route
                     path={LEAVE_QUOTA_URL}
                     element={<ManageLeaveQuota />}
+                  />
+                  <Route
+                    path={EMPLOYEE_LEAVE_QUOTA_URL}
+                    element={<ManageEmployeeLeaveQuota />}
                   />
                   <Route
                     path={COMPANY_LEAVE_SCHEDULE_URL}

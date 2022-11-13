@@ -25,6 +25,7 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   isVerified: boolean;
+  tier?: string;
   company?: string;
   contactNo?: string;
 }

@@ -27,6 +27,7 @@ export const REPORTS_URL = ROOT_URL + 'reports';
 // leave routes
 export const LEAVE_URL = ROOT_URL + 'leave';
 export const LEAVE_QUOTA_URL = LEAVE_URL + '/leaveQuota';
+export const EMPLOYEE_LEAVE_QUOTA_URL = LEAVE_URL + '/employeeLeaveQuota';
 export const COMPANY_LEAVE_SCHEDULE_URL = LEAVE_URL + '/companyLeaveSchedule';
 export const ALL_LEAVE_APPLICATIONS_URL = LEAVE_URL + '/allLeaveApplications';
 export const MY_LEAVE_APPLICATIONS_URL = LEAVE_URL + '/myLeaveApplications';

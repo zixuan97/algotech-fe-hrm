@@ -11,7 +11,9 @@ const LeaveStatusCell = (record: LeaveApplication) => {
   ) : leaveStatus === 'REJECTED' ? (
     <Tag color='#EA6464'>Rejected</Tag>
   ) : (
-    <Tag color='#D9D9D9'>Cancelled</Tag>
+    <Tag color='#D9D9D9' style={{ color: 'black' }}>
+      Cancelled
+    </Tag>
   );
 };
 
