@@ -30,6 +30,12 @@ export const deleteAndReplaceLeaveQuota = async (
   return axios.post(`${apiRoot}/leave/deletedtier/newtier`, body);
 };
 
+export const getAllLeaveApplications = async (): Promise<
+  LeaveApplication[]
+> => {
+  return axios.get(`${apiRoot}/leave/all`).then((res) => res.data);
+};
+
 export const getLeaveApplicationsByEmployeeId = async (
   id: string | number
 ): Promise<LeaveApplication[]> => {
@@ -50,6 +56,14 @@ export const getLeaveApplicationById = async (
 
 export const editLeaveApplication = async (body: object): Promise<void> => {
   return axios.put(`${apiRoot}/leave`, body);
+};
+
+export const vetLeaveApplication = async (body: object): Promise<void> => {
+  return axios.put(`${apiRoot}/leave/vet`, body, {
+    headers: {
+      'x-access-token': axios.defaults.headers.common['x-access-token']
+    }
+  });
 };
 
 export const cancelLeaveApplication = async (

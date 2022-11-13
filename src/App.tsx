@@ -30,7 +30,8 @@ import {
   ROOT_URL,
   EDIT_SUBJECT_URL,
   COMPANY_LEAVE_SCHEDULE_URL,
-  LEAVE_APPLICATION_DETAILS_URL
+  LEAVE_APPLICATION_DETAILS_URL,
+  ALL_LEAVE_APPLICATIONS_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -44,6 +45,7 @@ import BreadcrumbState from './context/breadcrumbs/BreadcrumbState';
 import ViewMyAccount from './pages/account/ViewMyAccount';
 import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
 import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
+import AllLeaveApplications from './pages/leave/AllLeaveApplications';
 
 const { Footer } = Layout;
 
@@ -117,6 +119,10 @@ const App = () => {
                   <Route
                     path={COMPANY_LEAVE_SCHEDULE_URL}
                     element={<ViewCompanyLeaveSchedule />}
+                  />
+                  <Route
+                    path={ALL_LEAVE_APPLICATIONS_URL}
+                    element={<AllLeaveApplications />}
                   />
                   <Route
                     path={MY_LEAVE_APPLICATIONS_URL}
