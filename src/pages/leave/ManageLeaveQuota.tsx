@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/pages/leaveQuota.scss';
 import { Button, Divider, Form, Popconfirm, Table, Typography } from 'antd';
 import {
@@ -22,9 +22,13 @@ import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import LeaveQuotaEditableCell from 'src/components/leave/LeaveQuotaEditableCell';
 import ConfirmationModal from 'src/components/common/ConfirmationModal';
 import ReplaceTierModal from 'src/components/leave/ReplaceTierModal';
+import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import { LEAVE_QUOTA_URL } from 'src/components/routes/routes';
 
 const ManageLeaveQuota = () => {
   const [form] = Form.useForm();
+  const { updateBreadcrumbItems } = useContext(breadcrumbContext);
+
   const [data, setData] = useState<LeaveQuota[]>([]);
   const [currentRow, setCurrentRow] = useState<Partial<LeaveQuota>>();
   const [editingKey, setEditingKey] = useState<string>('');
@@ -39,7 +43,16 @@ const ManageLeaveQuota = () => {
 
   const isEditing = (record: LeaveQuota) => record.tier === editingKey;
 
-  React.useEffect(() => {
+  useEffect(() => {
+    updateBreadcrumbItems([
+      {
+        label: 'Leave Quota',
+        to: LEAVE_QUOTA_URL
+      }
+    ]);
+  }, [updateBreadcrumbItems]);
+
+  useEffect(() => {
     setLoading(true);
     asyncFetchCallback(
       getAllLeaveQuota(),

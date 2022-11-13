@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, generatePath } from 'react-router-dom';
 import { Button, Table, Typography } from 'antd';
 import authContext from 'src/context/auth/authContext';
@@ -7,18 +7,33 @@ import { getLeaveApplicationsByEmployeeId } from 'src/services/leaveService';
 import { LeaveApplication } from 'src/models/types';
 import moment from 'moment';
 import LeaveStatusCell from 'src/components/leave/LeaveStatusCell';
-import { LEAVE_APPLICATION_DETAILS_URL } from 'src/components/routes/routes';
+import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import {
+  MY_LEAVE_APPLICATIONS_URL,
+  LEAVE_APPLICATION_DETAILS_URL
+} from 'src/components/routes/routes';
 
 const ViewMyLeaveApplications = () => {
   const navigate = useNavigate();
 
   const { user } = React.useContext(authContext);
+  const { updateBreadcrumbItems } = useContext(breadcrumbContext);
+
   const [leaveApplications, setLeaveApplications] = useState<
     LeaveApplication[]
   >([]);
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    updateBreadcrumbItems([
+      {
+        label: 'My Leave Applications',
+        to: MY_LEAVE_APPLICATIONS_URL
+      }
+    ]);
+  }, [updateBreadcrumbItems]);
+
+  useEffect(() => {
     if (user) {
       setLoading(true);
       asyncFetchCallback(
