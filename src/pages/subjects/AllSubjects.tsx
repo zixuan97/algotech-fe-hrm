@@ -26,7 +26,7 @@ import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import { Subject, SubjectType } from 'src/models/types';
 import { getAllSubjects } from 'src/services/subjectService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { READABLE_DDMMYY_TIME } from 'src/utils/dateUtils';
+import { READABLE_DDMMYY_TIME_24H } from 'src/utils/dateUtils';
 import { getUserFullName } from 'src/utils/formatUtils';
 import '../../styles/common/common.scss';
 
@@ -154,7 +154,7 @@ const AllSubjects = () => {
     {
       title: 'Created On',
       dataIndex: 'createdAt',
-      render: (value) => moment(value).format(READABLE_DDMMYY_TIME)
+      render: (value) => moment(value).format(READABLE_DDMMYY_TIME_24H)
     },
     {
       title: 'Actions',

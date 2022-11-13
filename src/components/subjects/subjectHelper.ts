@@ -13,7 +13,7 @@ export enum SubjectSectionType {
   QUIZ = 'QUIZ'
 }
 
-const EMPTY_TOPIC: Topic = {
+const EMPTY_TOPIC: Partial<Topic> = {
   subjectOrder: 0,
   title: EMPTYSTR,
   status: ContentStatus.DRAFT,
@@ -47,7 +47,7 @@ export const getNewTopic = (
   subjectId: number,
   subjectOrder: number,
   title: string
-): Topic => {
+): Partial<Topic> => {
   return { ...EMPTY_TOPIC, subjectId, subjectOrder, title };
 };
 

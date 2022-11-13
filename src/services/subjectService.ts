@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Quiz, Subject, Topic, User } from 'src/models/types';
+import { Quiz, Step, Subject, Topic, User } from 'src/models/types';
 import apiRoot from './apiRoot';
 
 export const getAllSubjects = async (): Promise<Subject[]> => {
@@ -46,10 +46,28 @@ export const unassignUsersFromSubject = async (
     .then((res) => res.data);
 };
 
-export const createTopic = (topic: Topic): Promise<Topic> => {
+export const createTopic = async (topic: Partial<Topic>): Promise<Topic> => {
   return axios.post(`${apiRoot}/topic`, topic).then((res) => res.data);
 };
 
-export const createQuiz = (quiz: Quiz): Promise<Quiz> => {
+export const getTopicById = async (
+  topicId: number | string
+): Promise<Topic> => {
+  return axios.get(`${apiRoot}/topic/${topicId}`).then((res) => res.data);
+};
+
+export const updateTopic = async (topic: Topic): Promise<Topic> => {
+  return axios.put(`${apiRoot}/topic`, topic).then((res) => res.data);
+};
+
+export const createQuiz = async (quiz: Partial<Quiz>): Promise<Quiz> => {
   return axios.post(`${apiRoot}/quiz`, quiz).then((res) => res.data);
+};
+
+export const createStep = async (step: Partial<Step>): Promise<Step> => {
+  return axios.post(`${apiRoot}/step`, step).then((res) => res.data);
+};
+
+export const updateStep = async (step: Step): Promise<Step> => {
+  return axios.put(`${apiRoot}/step`, step).then((res) => res.data);
 };
