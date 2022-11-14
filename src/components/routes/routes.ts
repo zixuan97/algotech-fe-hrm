@@ -10,6 +10,10 @@ export const COMPANY_URL = ROOT_URL + 'company';
 
 // people routes
 export const PEOPLE_URL = ROOT_URL + 'people';
+export const PEOPLE_MANAGE_URL = PEOPLE_URL + '/manage';
+export const PEOPLE_DIRECTORY_URL = PEOPLE_URL + '/directory';
+export const PEOPLE_ORGCHART_URL = PEOPLE_URL + '/orgchart';
+export const PEOPLE_ROLES_URL = PEOPLE_URL + '/roles';
 
 // subjects routes
 export const SUBJECTS_URL = ROOT_URL + 'subjects';

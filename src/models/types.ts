@@ -25,9 +25,13 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   isVerified: boolean;
-  tier?: string;
   company?: string;
   contactNo?: string;
+  tier: string;
+  managerId?: number;
+  manager?: User;
+  jobRoles?: string[];
+  subordinates?: User[];
 }
 
 export interface Step {
