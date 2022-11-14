@@ -1,7 +1,7 @@
 import { Card, Progress, Select, Space, Typography } from 'antd';
 import { startCase } from 'lodash';
 import React from 'react';
-import { User } from 'src/models/types';
+import { EmployeeSubjectRecord } from 'src/models/types';
 import '../../../../styles/common/common.scss';
 import '../../../../styles/subjects/editSubject.scss';
 
@@ -15,7 +15,7 @@ enum CompletionRateView {
 
 type CompletionRateCardProps = {
   completionRate: number | undefined;
-  usersAssigned: User[];
+  usersAssigned: EmployeeSubjectRecord[];
 };
 
 const CompletionRateCard = ({
@@ -24,7 +24,8 @@ const CompletionRateCard = ({
 }: CompletionRateCardProps) => {
   const [completionRateView, setCompletionRateView] =
     React.useState<CompletionRateView>(CompletionRateView.AVERAGE);
-  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
+  const [selectedRecord, setSelectedRecord] =
+    React.useState<EmployeeSubjectRecord | null>(null);
   return (
     <Card className='subject-card'>
       <Title level={5} style={{ marginBottom: '24px' }}>
@@ -38,7 +39,7 @@ const CompletionRateCard = ({
             onChange={(value) => {
               setCompletionRateView(value);
               if (value === CompletionRateView.AVERAGE) {
-                setSelectedUser(null);
+                setSelectedRecord(null);
               }
             }}
           >
@@ -52,27 +53,28 @@ const CompletionRateCard = ({
             <Select
               style={{ width: '100%' }}
               placeholder='Select User'
-              onChange={(value) =>
-                setSelectedUser(
-                  usersAssigned.find((user) => user.id === value) ?? null
-                )
-              }
+              onChange={(value) => {
+                // TODO: check whether EmployeeSubjectRecord will have its own ID (it should have bah)
+                setSelectedRecord(
+                  usersAssigned.find((record) => record.id === value) ?? null
+                );
+              }}
             >
-              {usersAssigned.map((user) => (
+              {usersAssigned.map((record) => (
                 <Option
-                  key={user.id}
-                  value={user.id}
-                >{`${user.firstName} ${user.lastName}`}</Option>
+                  key={record.id}
+                  value={record.id}
+                >{`${record.user.firstName} ${record.user.lastName}`}</Option>
               ))}
             </Select>
           )}
           <div style={{ marginTop: '16px' }}>
             {(completionRateView === CompletionRateView.AVERAGE ||
-              selectedUser) && (
+              selectedRecord) && (
               <Text>{`${
                 completionRateView === CompletionRateView.AVERAGE
                   ? 'Average'
-                  : `${selectedUser?.firstName}'s`
+                  : `${selectedRecord?.user.firstName}'s`
               } Completion Rate`}</Text>
             )}
             <Progress percent={completionRate} />

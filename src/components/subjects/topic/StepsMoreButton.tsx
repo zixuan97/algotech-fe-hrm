@@ -7,14 +7,25 @@ import {
   MoreOutlined
 } from '@ant-design/icons';
 import { Button, Dropdown, Menu, MenuProps, Modal } from 'antd';
-import { omit } from 'lodash';
-import { MenuInfo } from 'rc-menu/lib/interface';
 import { Step } from 'src/models/types';
+import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import {
+  duplicateStepInStepsArr,
+  reorderStepsArr,
+  swapStepsinStepsArr
+} from './topicHelper';
+import { omit } from 'lodash';
+import {
+  createStep,
+  deleteStep,
+  updateStepsOrder
+} from 'src/services/topicService';
 
 type StepsMoreButtonProps = {
-  index: number;
+  currStep: Step;
   steps: Step[];
-  updateSteps: (steps: Step[]) => void;
+  updateSelectedStep: React.Dispatch<React.SetStateAction<Step | null>>;
+  refreshTopic: () => void;
 };
 
 enum StepMoreKeys {
@@ -25,93 +36,117 @@ enum StepMoreKeys {
 }
 
 const StepsMoreButton = ({
-  index,
+  currStep,
   steps,
-  updateSteps
+  updateSelectedStep,
+  refreshTopic
 }: StepsMoreButtonProps) => {
   const [deleteModalOpen, setDeleteModalOpen] = React.useState<boolean>(false);
-  const duplicateStep = () => {
-    const newSteps = [...steps];
-    const duplicatedStep = omit(newSteps[index], 'id');
-    newSteps.splice(index + 1, 0, duplicatedStep);
-    updateSteps(newSteps);
+  const [deleteStepLoading, setDeleteStepLoading] =
+    React.useState<boolean>(false);
+
+  const currIdx = steps.findIndex((step) => step.id === currStep.id);
+
+  const duplicateStepApiCall = (idxToInsert: number) => {
+    asyncFetchCallback(createStep(omit(currStep, 'id')), (res) => {
+      updateSelectedStep(res);
+      updateStepsOrderApiCall(duplicateStepInStepsArr(res, idxToInsert, steps));
+    });
   };
 
-  const deleteStep = () => {
-    const newSteps = [...steps];
-    newSteps.splice(index, 1);
-    updateSteps(newSteps);
+  const deleteStepApiCall = (idxToDelete: number, newSteps: Step[]) => {
+    setDeleteStepLoading(true);
+    asyncFetchCallback(
+      deleteStep(currStep.id),
+      () => {
+        updateStepsOrderApiCall(newSteps, () =>
+          updateSelectedStep((currSelectedStep) => {
+            if (
+              currSelectedStep === null ||
+              currSelectedStep.id !== currStep.id
+            ) {
+              return currSelectedStep;
+            }
+            const updatedIdx =
+              idxToDelete === steps.length - 1
+                ? idxToDelete - 1
+                : idxToDelete + 1;
+            return steps[updatedIdx];
+          })
+        );
+      },
+      () => void 0,
+      { updateLoading: setDeleteStepLoading }
+    );
   };
 
-  const moveStepUp = () => {
-    if (index === 0) return;
-    const newSteps = [...steps];
-    const newIndex = index - 1;
-    const temp = newSteps[index];
-    newSteps[index] = newSteps[newIndex];
-    newSteps[newIndex] = temp;
-    updateSteps(newSteps);
+  const updateStepsOrderApiCall = (newSteps: Step[], callback?: () => void) => {
+    asyncFetchCallback(updateStepsOrder(newSteps), (res) => {
+      refreshTopic();
+      callback?.();
+    });
   };
 
-  const moveStepDown = () => {
-    if (index === steps.length - 1) return;
+  const duplicateCurrStep = () => {
     const newSteps = [...steps];
-    const newIndex = index + 1;
-    const temp = newSteps[index];
-    newSteps[index] = newSteps[newIndex];
-    newSteps[newIndex] = temp;
-    updateSteps(newSteps);
+    const idxToInsert =
+      newSteps.findIndex((newStep) => newStep.id === currStep.id) + 1;
+    duplicateStepApiCall(idxToInsert);
+  };
+
+  const deleteCurrStep = () => {
+    const newSteps = [...steps];
+    const idxToDelete = newSteps.findIndex(
+      (newStep) => newStep.id === currStep.id
+    );
+    newSteps.splice(idxToDelete, 1);
+    deleteStepApiCall(idxToDelete, reorderStepsArr(newSteps));
+  };
+
+  const moveCurrStepUp = () => {
+    if (currIdx === 0) return;
+    updateStepsOrderApiCall(swapStepsinStepsArr(currIdx, currIdx - 1, steps));
+  };
+
+  const moveCurrStepDown = () => {
+    if (currIdx === steps.length - 1) return;
+    updateStepsOrderApiCall(swapStepsinStepsArr(currIdx, currIdx + 1, steps));
   };
 
   const stepsMoreMenuItems: MenuProps['items'] = [
     {
       label: 'Duplicate',
       key: StepMoreKeys.DUPLICATE,
-      icon: <CopyOutlined />
+      icon: <CopyOutlined />,
+      onClick: () => duplicateCurrStep()
     },
     {
       label: 'Delete',
       key: StepMoreKeys.DELETE,
-      icon: <DeleteOutlined />
+      icon: <DeleteOutlined />,
+      onClick: () => setDeleteModalOpen(true)
     },
-    ...(index !== 0
+    ...(currIdx !== 0
       ? [
           {
             label: 'Move Up',
             key: StepMoreKeys.MOVE_UP,
-            icon: <ArrowUpOutlined />
+            icon: <ArrowUpOutlined />,
+            onClick: () => moveCurrStepUp()
           }
         ]
       : []),
-    ...(index !== steps.length - 1
+    ...(currIdx !== steps.length - 1
       ? [
           {
             label: 'Move Down',
             key: StepMoreKeys.MOVE_DOWN,
-            icon: <ArrowDownOutlined />
+            icon: <ArrowDownOutlined />,
+            onClick: () => moveCurrStepDown()
           }
         ]
       : [])
   ];
-
-  const handleMenuClick = ({ key }: MenuInfo) => {
-    switch (key) {
-      case StepMoreKeys.DUPLICATE:
-        duplicateStep();
-        break;
-      case StepMoreKeys.DELETE:
-        setDeleteModalOpen(true);
-        break;
-      case StepMoreKeys.MOVE_UP:
-        moveStepUp();
-        break;
-      case StepMoreKeys.MOVE_DOWN:
-        moveStepDown();
-        break;
-      default:
-        return;
-    }
-  };
 
   return (
     <>
@@ -119,15 +154,15 @@ const StepsMoreButton = ({
         title='Confirm Delete Step'
         open={deleteModalOpen}
         onCancel={() => setDeleteModalOpen(false)}
-        onOk={() => {
-          setDeleteModalOpen(false);
-          deleteStep();
+        onOk={() => deleteCurrStep()}
+        okButtonProps={{
+          loading: deleteStepLoading
         }}
       >
         Are you sure you want to delete this step?
       </Modal>
       <Dropdown
-        overlay={<Menu onClick={handleMenuClick} items={stepsMoreMenuItems} />}
+        overlay={<Menu items={stepsMoreMenuItems} />}
         trigger={['click']}
       >
         <Button icon={<MoreOutlined />} type='text' />

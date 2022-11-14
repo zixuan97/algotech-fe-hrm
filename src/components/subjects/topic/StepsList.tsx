@@ -4,25 +4,26 @@ import { Step } from 'src/models/types';
 import '../../../styles/subjects/editTopic.scss';
 import '../../../styles/common/common.scss';
 import StepsMoreButton from './StepsMoreButton';
+import React from 'react';
 
 type StepsListProps = {
   steps: Step[];
-  updateSteps: (steps: Step[]) => void;
   selectedStep: Step | null;
-  updateSelectedStep: (step: Step) => void;
+  updateSelectedStep: React.Dispatch<React.SetStateAction<Step | null>>;
+  refreshTopic: () => void;
 };
 
 const StepsList = ({
   steps,
-  updateSteps,
   selectedStep,
-  updateSelectedStep
+  updateSelectedStep,
+  refreshTopic
 }: StepsListProps) => {
   const selectedStepsListItemClassName = useThemedClassName('steps-list-item');
 
   return (
     <List>
-      {steps.map((step, index) => (
+      {steps.map((step) => (
         <List.Item
           key={step.id}
           className={
@@ -32,12 +33,13 @@ const StepsList = ({
           }
         >
           <Button type='link' onClick={() => updateSelectedStep(step)}>
-            {step.title}
+            {`${step.topicOrder}. ${step.title}`}
           </Button>
           <StepsMoreButton
-            index={index}
+            currStep={step}
             steps={steps}
-            updateSteps={updateSteps}
+            updateSelectedStep={updateSelectedStep}
+            refreshTopic={refreshTopic}
           />
         </List.Item>
       ))}

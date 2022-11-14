@@ -30,7 +30,7 @@ export interface User {
 }
 
 export interface Step {
-  id?: number;
+  id: number;
   title: string;
   content: string;
   topicId: number;
@@ -45,6 +45,7 @@ export interface Topic {
   subjectId: number;
   subject: Subject;
   steps: Step[];
+  completedRecords: EmployeeSubjectRecord[];
 }
 
 export interface Subject {
@@ -56,15 +57,26 @@ export interface Subject {
   completionRate: number;
   quizzes: Quiz[];
   topics: Topic[];
-  usersAssigned: User[];
+  usersAssigned: EmployeeSubjectRecord[];
   createdAt: Date;
   createdBy: User;
   lastUpdatedAt: Date;
   lastUpdatedBy: User;
 }
 
+export interface EmployeeSubjectRecord {
+  id: number;
+  subjectId: number;
+  userId: number;
+  completionRate: number;
+  completedQuizzes: Quiz[];
+  completedTopics: Topic[];
+  subject: Subject;
+  user: User;
+}
+
 export interface Quiz {
-  id?: number;
+  id: number;
   subjectOrder: number;
   title: string;
   description: string;
@@ -73,6 +85,7 @@ export interface Quiz {
   status: ContentStatus;
   subjectId: number;
   questions: QuizQuestion[];
+  completedRecords: EmployeeSubjectRecord[];
 }
 
 export interface QuizQuestion {

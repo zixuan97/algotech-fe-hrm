@@ -5,7 +5,7 @@ import '../../styles/common/common.scss';
 import '../../styles/subjects/editTopic.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { ContentStatus, Step, Topic } from 'src/models/types';
-import { startCase } from 'lodash';
+import { isEqual, startCase } from 'lodash';
 import StepsList from 'src/components/subjects/topic/StepsList';
 import { stripHtml } from 'src/utils/formatUtils';
 import { generatePath, useParams } from 'react-router-dom';
@@ -15,7 +15,7 @@ import {
   getTopicById,
   updateStep,
   updateTopic
-} from 'src/services/subjectService';
+} from 'src/services/topicService';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import {
   EDIT_SUBJECT_URL,
@@ -88,7 +88,9 @@ const EditTopic = () => {
 
   React.useEffect(() => {
     if (topic?.steps.length && !selectedStep) {
-      setSelectedStep(topic.steps[0]);
+      setSelectedStep(
+        topic.steps.sort((a, b) => a.topicOrder - b.topicOrder)[0]
+      );
     }
   }, [topic?.steps, selectedStep]);
 
@@ -104,7 +106,11 @@ const EditTopic = () => {
       setAddStepLoading(true);
       asyncFetchCallback(
         createStep(
-          getNewStep(`Step ${editTopic.steps.length + 1}`, editTopic.id!)
+          getNewStep(
+            editTopic.id,
+            editTopic.steps.length + 1,
+            `Step ${editTopic.steps.length + 1}`
+          )
         ),
         (res) => {
           fetchTopicById(editTopic.id);
@@ -117,7 +123,7 @@ const EditTopic = () => {
   };
 
   const updateTopicApiCall = (editTopic: Topic | null) => {
-    if (editTopic) {
+    if (editTopic && !isEqual(editTopic, topic)) {
       setUpdateTopicLoading(true);
       asyncFetchCallback(
         updateTopic(editTopic),
@@ -204,10 +210,15 @@ const EditTopic = () => {
         <div className='steps-container'>
           <div className='steps-sidebar'>
             <StepsList
-              steps={editTopic?.steps ?? []}
-              updateSteps={() => {}}
+              steps={
+                editTopic?.steps.sort((a, b) => a.topicOrder - b.topicOrder) ??
+                []
+              }
               selectedStep={selectedStep}
               updateSelectedStep={setSelectedStep}
+              refreshTopic={() => {
+                editTopic && fetchTopicById(editTopic.id);
+              }}
             />
             <Button
               style={{ marginTop: '16px' }}

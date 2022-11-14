@@ -1,11 +1,29 @@
-import { LoadingOutlined, MenuOutlined } from '@ant-design/icons';
-import { Button, Card, Dropdown, Menu, Modal, Space, Typography } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  LoadingOutlined,
+  MenuOutlined
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Dropdown,
+  Menu,
+  Modal,
+  Space,
+  Typography
+} from 'antd';
 import moment from 'moment';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User } from 'src/models/types';
+import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { READABLE_DDMMYY_TIME_12H } from 'src/utils/dateUtils';
 import { getUserFullName } from 'src/utils/formatUtils';
 import '../../styles/common/common.scss';
+import { SUBJECTS_URL } from '../routes/routes';
 
 const { Title, Text } = Typography;
 
@@ -17,11 +35,11 @@ type ViewEditTitleHeaderProps = {
   };
   editFunctions?: {
     onView: () => void;
-    onDelete: () => void;
+    onDelete: () => Promise<void>;
     deleteModalProps: {
       title: string;
       body: string;
-      deleteLoading?: boolean;
+      deleteSuccessContent?: React.ReactNode;
     };
   };
   updateLoading?: boolean;
@@ -39,23 +57,45 @@ const ViewEditTitleHeader = ({
   updateLoading,
   lastUpdatedInfo
 }: ViewEditTitleHeaderProps) => {
+  const navigate = useNavigate();
+
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] =
     React.useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = React.useState<boolean>(false);
+  const [deleteSuccess, setDeleteSuccess] = React.useState<boolean>(false);
+
   return (
     <div className='container-spaced-out' style={{ alignItems: 'center' }}>
       <Modal
         title={editFunctions?.deleteModalProps.title}
         onOk={() => {
-          editFunctions?.onDelete();
-          setConfirmDeleteModalOpen(false);
+          if (editFunctions?.onDelete) {
+            setDeleteLoading(true);
+            asyncFetchCallback(editFunctions?.onDelete(), () => {
+              setDeleteSuccess(true);
+              setDeleteLoading(false);
+              setTimeout(() => navigate(SUBJECTS_URL), 1500);
+            });
+          }
         }}
         onCancel={() => setConfirmDeleteModalOpen(false)}
         open={confirmDeleteModalOpen}
+        okText='Delete'
         okButtonProps={{
-          loading: editFunctions?.deleteModalProps.deleteLoading
+          danger: true,
+          loading: deleteLoading
         }}
       >
-        {editFunctions?.deleteModalProps.body}
+        <Space direction='vertical' size='middle'>
+          {deleteSuccess && (
+            <Alert
+              type='info'
+              showIcon
+              message={editFunctions?.deleteModalProps.deleteSuccessContent}
+            />
+          )}
+          {editFunctions?.deleteModalProps.body}
+        </Space>
       </Modal>
       <Title level={2}>{title}</Title>
       <Space size='large'>
@@ -87,11 +127,13 @@ const ViewEditTitleHeader = ({
                       {
                         label: 'View',
                         key: 'View',
+                        icon: <EyeOutlined />,
                         onClick: () => editFunctions?.onView()
                       },
                       {
                         label: 'Delete',
                         key: 'Delete',
+                        icon: <DeleteOutlined />,
                         onClick: () => setConfirmDeleteModalOpen(true)
                       }
                     ]
@@ -99,6 +141,7 @@ const ViewEditTitleHeader = ({
                       {
                         label: 'Edit',
                         key: 'Edit',
+                        icon: <EditOutlined />,
                         onClick: () => viewFunctions?.onEdit()
                       }
                     ]
@@ -109,12 +152,7 @@ const ViewEditTitleHeader = ({
           placement='bottomRight'
           getPopupContainer={(trigger) => trigger.parentElement ?? trigger}
         >
-          <Button
-            id='header-menu-btn'
-            size='large'
-            icon={<MenuOutlined />}
-            type='text'
-          />
+          <Button size='large' icon={<MenuOutlined />} type='text' />
         </Dropdown>
       </Space>
     </div>

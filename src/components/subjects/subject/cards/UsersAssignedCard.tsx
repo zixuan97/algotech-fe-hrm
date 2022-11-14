@@ -10,7 +10,7 @@ import {
   Typography
 } from 'antd';
 import React from 'react';
-import { User } from 'src/models/types';
+import { EmployeeSubjectRecord, User } from 'src/models/types';
 import { getAllNonB2bUsers } from 'src/services/userService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
@@ -25,7 +25,7 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 type UsersAssignedCardProps = {
-  usersAssigned: User[];
+  usersAssigned: EmployeeSubjectRecord[];
   subjectTitle: string | undefined;
   assignUserToSubject: (user: User) => void;
   unassignUserFromSubject: (user: User) => void;
@@ -38,7 +38,8 @@ const UsersAssignedCard = ({
   unassignUserFromSubject
 }: UsersAssignedCardProps) => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
+  const [selectedRecord, setSelectedRecord] =
+    React.useState<EmployeeSubjectRecord | null>(null);
   const [userDetailsModalOpen, setUserDetailsModalOpen] =
     React.useState<boolean>(false);
   const [addUserModalOpen, setAddUserModalOpen] =
@@ -48,6 +49,9 @@ const UsersAssignedCard = ({
     asyncFetchCallback(getAllNonB2bUsers(), setAllUsers);
   }, []);
 
+  const { user: selectedUser } = selectedRecord || {};
+  const { firstName, lastName } = selectedUser || {};
+
   return (
     <Card className='subject-card'>
       <Title level={5} style={{ marginBottom: '24px' }}>
@@ -55,10 +59,10 @@ const UsersAssignedCard = ({
       </Title>
       <div className='users-assigned-container'>
         {!!usersAssigned.length &&
-          usersAssigned.map((user) => (
+          usersAssigned.map((record) => (
             <Tooltip
-              key={user.id}
-              title={`${user.firstName} ${user.lastName}`}
+              key={record.id}
+              title={`${record.user.firstName} ${record.user.lastName}`}
               placement='bottom'
             >
               <Button
@@ -66,11 +70,14 @@ const UsersAssignedCard = ({
                 shape='circle'
                 type='primary'
                 onClick={() => {
-                  setSelectedUser(user);
+                  setSelectedRecord(record);
                   setUserDetailsModalOpen(true);
                 }}
               >
-                {getFirstLastNameInitials(user.firstName, user.lastName)}
+                {getFirstLastNameInitials(
+                  record.user.firstName,
+                  record.user.lastName
+                )}
               </Button>
             </Tooltip>
           ))}
@@ -82,7 +89,7 @@ const UsersAssignedCard = ({
             size='large'
             onClick={() => {
               setAddUserModalOpen(true);
-              setSelectedUser(null);
+              setSelectedRecord(null);
             }}
           />
         </Tooltip>
@@ -96,7 +103,9 @@ const UsersAssignedCard = ({
         <Space direction='vertical' style={{ width: '100%' }} size='large'>
           <Title level={4}>{getUserFullName(selectedUser)}</Title>
           <Space direction='vertical' style={{ width: '100%' }}>
-            <Text>{`${getUserFullName(selectedUser)}'s Completion Rate`}</Text>
+            <Text>{`${getUserFullName(
+              selectedRecord?.user
+            )}'s Completion Rate`}</Text>
             {/* TODO: add in actual completion rate statistics */}
             <Progress percent={0} />
           </Space>
@@ -105,7 +114,7 @@ const UsersAssignedCard = ({
             <ConfirmationModalButton
               modalProps={{
                 title: 'Confirm Reset Progress',
-                body: `Are you sure you want to reset ${selectedUser?.firstName}'s progress? This action will reset ${selectedUser?.firstName}'s progress back to 0.`,
+                body: `Are you sure you want to reset ${firstName}'s progress? This action will reset ${firstName}'s progress back to 0.`,
                 onConfirm: () => void 0
               }}
               style={{ minWidth: '12em' }}
@@ -115,18 +124,19 @@ const UsersAssignedCard = ({
             <ConfirmationModalButton
               modalProps={{
                 title: 'Confirm Unassign User',
-                body: `Are you sure you want to unassign ${selectedUser?.firstName}?`,
+                body: `Are you sure you want to unassign ${firstName}?`,
                 onConfirm: () => {
-                  if (selectedUser) {
+                  if (selectedRecord) {
                     setUserDetailsModalOpen(false);
-                    unassignUserFromSubject(selectedUser);
+                    // TODO: update accordingly with EmployeeSubjectRecord
+                    // unassignUserFromSubject(selectedRecord);
                   }
                 }
               }}
               style={{ minWidth: '12em' }}
               type='primary'
               danger
-            >{`Unassign ${selectedUser?.firstName}`}</ConfirmationModalButton>
+            >{`Unassign ${selectedRecord?.user.firstName}`}</ConfirmationModalButton>
           </Space>
         </Space>
       </Modal>
@@ -135,8 +145,9 @@ const UsersAssignedCard = ({
         open={addUserModalOpen}
         onCancel={() => setAddUserModalOpen(false)}
         onOk={() => {
-          if (selectedUser) {
-            assignUserToSubject(selectedUser);
+          if (selectedRecord) {
+            // TODO: update accordingly with EmployeeSubjectRecord
+            // assignUserToSubject(selectedRecord);
           }
           setAddUserModalOpen(false);
         }}
@@ -146,11 +157,14 @@ const UsersAssignedCard = ({
             placeholder='Select User'
             style={{ width: '100%' }}
             allowClear
-            value={selectedUser?.id}
-            onChange={(value) =>
-              setSelectedUser(
-                allUsers.find((user) => user.id === value) ?? null
-              )
+            value={selectedRecord?.userId}
+            onChange={
+              (value) => {
+                // TODO: update accordingly with EmployeeSubjectRecord
+              }
+              // setSelectedRecord(
+              //   allUsers.find((user) => user.id === value) ?? null
+              // )
             }
           >
             {allUsers.map((user) => (
@@ -160,7 +174,7 @@ const UsersAssignedCard = ({
             ))}
           </Select>
           <div style={{ padding: '0px 8px' }}>
-            {selectedUser && subjectTitle && (
+            {selectedRecord && subjectTitle && (
               <Text>{`Assign ${getUserFullName(
                 selectedUser
               )} to ${subjectTitle}? The user will be notified.`}</Text>
