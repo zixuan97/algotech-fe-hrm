@@ -54,6 +54,12 @@ export const getLeaveApplicationById = async (
   return axios.get(`${apiRoot}/leave/${id}`).then((res) => res.data);
 };
 
+export const createLeaveApplication = async (
+  body: object
+): Promise<LeaveApplication> => {
+  return axios.post(`${apiRoot}/leave`, body).then((res) => res.data);
+};
+
 export const editLeaveApplication = async (body: object): Promise<void> => {
   return axios.put(`${apiRoot}/leave`, body);
 };

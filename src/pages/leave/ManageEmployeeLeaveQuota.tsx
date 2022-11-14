@@ -18,12 +18,12 @@ import { getAllLeaveQuota } from 'src/services/leaveService';
 
 export interface EmployeeLeaveQuota {
   employee: User;
-  annualQuota: number;
-  childcareQuota: number;
-  compassionateQuota: number;
-  parentalQuota: number;
-  sickQuota: number;
-  unpaidQuota: number;
+  annual: number;
+  childcare: number;
+  compassionate: number;
+  parental: number;
+  sick: number;
+  unpaid: number;
 }
 
 const data = [
@@ -39,12 +39,12 @@ const data = [
       isVerified: false,
       tier: 'Tier 1'
     },
-    annualQuota: 10,
-    childcareQuota: 10,
-    compassionateQuota: 15,
-    parentalQuota: 10,
-    sickQuota: 10,
-    unpaidQuota: 10
+    annual: 10,
+    childcare: 10,
+    compassionate: 10,
+    parental: 10,
+    sick: 10,
+    unpaid: 10
   }
 ];
 
@@ -52,12 +52,21 @@ const ManageEmployeeLeaveQuota = () => {
   const [form] = Form.useForm();
   const { updateBreadcrumbItems } = useContext(breadcrumbContext);
 
-  //   const [data, setData] = useState<EmployeeLeaveQuota[]>([]);
+  // Todo: Call API to set leaveQuotas
+  const [leaveQuotas, setLeaveQuotas] = useState<EmployeeLeaveQuota[]>();
   const [currentRow, setCurrentRow] = useState<Partial<EmployeeLeaveQuota>>();
   const [tiers, setTiers] = useState<LeaveQuota[]>([]);
   const [editingKey, setEditingKey] = useState<number | undefined>();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [alert, setAlert] = React.useState<AlertType | null>(null);
+
+  const tiersObj: { [key: string]: LeaveQuota } = tiers.reduce(
+    (object, item) => {
+      object[item.tier] = item;
+      return object;
+    },
+    {} as { [key: string]: LeaveQuota }
+  );
 
   const isEditing = (record: EmployeeLeaveQuota) =>
     record.employee.id === editingKey;
@@ -98,14 +107,17 @@ const ManageEmployeeLeaveQuota = () => {
   };
 
   const onInputChange = (value: string, name: string) => {
-    console.log(currentRow);
-    console.log(value);
     if (name === 'tier') {
-      setCurrentRow((old) => ({ ...old, [name]: value }));
+      const newRow = { ...currentRow, ...tiersObj[value], tier: value };
+      console.log('old row', currentRow);
+      console.log('new row', newRow);
+      setCurrentRow((old) => ({ ...old, ...newRow, [name]: value }));
     } else {
       setCurrentRow((old) => ({ ...old, [name]: Number(value) }));
     }
   };
+
+  console.log(currentRow);
 
   const columns = [
     {
@@ -121,38 +133,38 @@ const ManageEmployeeLeaveQuota = () => {
     },
     {
       title: 'Annual Leave',
-      name: 'annualQuota',
-      dataIndex: 'annualQuota',
+      name: 'annual',
+      render: (record: EmployeeLeaveQuota) => record.annual,
       editable: true
     },
     {
       title: 'Childcare Leave',
-      name: 'childcareQuota',
-      dataIndex: 'childcareQuota',
+      name: 'childcare',
+      render: (record: EmployeeLeaveQuota) => record.childcare,
       editable: true
     },
     {
       title: 'Compassionate Leave',
-      name: 'compassionateQuota',
-      dataIndex: 'compassionateQuota',
+      name: 'compassionate',
+      render: (record: EmployeeLeaveQuota) => record.compassionate,
       editable: true
     },
     {
       title: 'Parental Leave',
-      name: 'parentalQuota',
-      dataIndex: 'parentalQuota',
+      name: 'parental',
+      render: (record: EmployeeLeaveQuota) => record.parental,
       editable: true
     },
     {
       title: 'Sick Leave',
-      name: 'sickQuota',
-      dataIndex: 'sickQuota',
+      name: 'sick',
+      render: (record: EmployeeLeaveQuota) => record.sick,
       editable: true
     },
     {
       title: 'Unpaid Leave',
-      name: 'unpaidQuota',
-      dataIndex: 'unpaidQuota',
+      name: 'unpaid',
+      render: (record: EmployeeLeaveQuota) => record.unpaid,
       editable: true
     },
     {
