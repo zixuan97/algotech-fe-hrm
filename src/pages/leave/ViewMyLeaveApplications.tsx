@@ -12,6 +12,8 @@ import {
   MY_LEAVE_APPLICATIONS_URL,
   LEAVE_APPLICATION_DETAILS_URL
 } from 'src/components/routes/routes';
+import { PlusOutlined } from '@ant-design/icons';
+import CreateLeaveApplicationModalButton from 'src/components/leave/CreateLeaveApplicationModalButton';
 
 const ViewMyLeaveApplications = () => {
   const navigate = useNavigate();
@@ -122,6 +124,15 @@ const ViewMyLeaveApplications = () => {
         dataSource={leaveApplications}
         columns={columns}
         loading={loading}
+        summary={() => (
+          <Table.Summary>
+            <Table.Summary.Row>
+              <Table.Summary.Cell index={0} colSpan={6}>
+                <CreateLeaveApplicationModalButton employeeId={user?.id} />
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+          </Table.Summary>
+        )}
       />
     </span>
   );
