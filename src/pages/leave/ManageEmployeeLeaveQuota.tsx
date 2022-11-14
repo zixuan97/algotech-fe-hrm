@@ -37,8 +37,7 @@ const data = [
       role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       isVerified: false,
-      tier: 'Tier 1',
-      managerId: null
+      tier: 'Tier 1'
     },
     annualQuota: 10,
     childcareQuota: 10,
@@ -100,7 +99,7 @@ const ManageEmployeeLeaveQuota = () => {
 
   const onInputChange = (value: string, name: string) => {
     console.log(currentRow);
-    console.log(value)
+    console.log(value);
     if (name === 'tier') {
       setCurrentRow((old) => ({ ...old, [name]: value }));
     } else {
