@@ -218,6 +218,7 @@ const AllLeaveApplications = () => {
           dataSource={sortedAndFilteredLeaveApplications}
           columns={columns}
           loading={loading}
+          pagination={{ pageSize: 10 }}
         />
       </Space>
     </div>

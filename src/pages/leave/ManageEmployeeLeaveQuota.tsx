@@ -324,7 +324,8 @@ const ManageEmployeeLeaveQuota = () => {
           columns={mergedColumns}
           rowClassName='editable-row'
           pagination={{
-            onChange: cancel
+            onChange: cancel,
+            pageSize: 10
           }}
           loading={loading}
         />

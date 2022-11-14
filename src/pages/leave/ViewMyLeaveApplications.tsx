@@ -213,6 +213,7 @@ const ViewMyLeaveApplications = () => {
           dataSource={sortedAndFilteredLeaveApplications}
           columns={columns}
           loading={loading}
+          pagination={{ pageSize: 10 }}
           summary={() => (
             <Table.Summary>
               <Table.Summary.Row>
