@@ -25,7 +25,7 @@ export const getFirstLastNameInitials = (
   return firstName.charAt(0) + lastName.charAt(0);
 };
 
-export const getUserFullName = (user: User | null): string => {
+export const getUserFullName = (user: User | null | undefined): string => {
   if (!user) return '';
   return `${user.firstName} ${user.lastName}`;
 };

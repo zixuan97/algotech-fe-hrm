@@ -16,7 +16,7 @@ const calculatePoint = (
 };
 
 const interpolateColors = (
-  dataLength: number,
+  dataObject: number[],
   colorScale: (t: number) => string,
   colorRangeInfo: ColorRangeInfo = {
     colorStart: 0,
@@ -26,16 +26,16 @@ const interpolateColors = (
 ) => {
   const { colorStart, colorEnd } = colorRangeInfo;
   const colorRange = colorEnd - colorStart;
-  const intervalSize = colorRange / dataLength;
+  const intervalSize = colorRange / dataObject.length;
   let i, colorPoint;
-  const colorArray = [];
+  let colorMap = new Map<number, string>();
 
-  for (i = 0; i < dataLength; i++) {
+  for (i = 0; i < dataObject.length; i++) {
     colorPoint = calculatePoint(i, intervalSize, colorRangeInfo);
-    colorArray.push(colorScale(colorPoint));
+    colorMap.set(dataObject[i], colorScale(colorPoint));
   }
 
-  return colorArray;
+  return colorMap;
 };
 
 export default interpolateColors;

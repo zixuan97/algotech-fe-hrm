@@ -25,6 +25,7 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   isVerified: boolean;
+  tier?: string;
   company?: string;
   contactNo?: string;
 }
@@ -121,6 +122,11 @@ export interface CalendarObject {
   employeeId: number;
   employeeName: string;
   color: string;
+}
+
+export interface TreeNode {
+  id: number;
+  subordinates: TreeNode[];
 }
 
 export enum ContentStatus {

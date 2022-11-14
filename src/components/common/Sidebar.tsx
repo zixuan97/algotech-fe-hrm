@@ -17,7 +17,9 @@ import {
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
-  COMPANY_LEAVE_SCHEDULE_URL
+  COMPANY_LEAVE_SCHEDULE_URL,
+  ALL_LEAVE_APPLICATIONS_URL,
+  EMPLOYEE_LEAVE_QUOTA_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 
@@ -65,10 +67,20 @@ const menuItems: MenuProps['items'] = [
         key: 'leave-quota'
       },
       {
+        label: <Link to={EMPLOYEE_LEAVE_QUOTA_URL}>Employee Leave Quota</Link>,
+        key: 'employee-leave-quota'
+      },
+      {
         label: (
           <Link to={COMPANY_LEAVE_SCHEDULE_URL}>Company Leave Schedule</Link>
         ),
         key: 'company-leave-schedule'
+      },
+      {
+        label: (
+          <Link to={ALL_LEAVE_APPLICATIONS_URL}>All Leave Applications</Link>
+        ),
+        key: 'all-leave-applications'
       },
       {
         label: (

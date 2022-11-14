@@ -2,13 +2,14 @@ import React, { useState, useEffect, ChangeEvent, useContext } from 'react';
 import '../../styles/common/common.scss';
 import '../../styles/pages/leaveApplicationDetails.scss';
 import { useNavigate, useParams, generatePath } from 'react-router';
-import { LeftOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, LeftOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
   Collapse,
   Input,
   Select,
+  Space,
   Spin,
   Tag,
   Tooltip,
@@ -19,17 +20,20 @@ import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
   cancelLeaveApplication,
   editLeaveApplication,
-  getLeaveApplicationById
+  getLeaveApplicationById,
+  vetLeaveApplication
 } from 'src/services/leaveService';
 import { DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import ConfirmationModalButton from 'src/components/common/ConfirmationModalButton';
+import authContext from 'src/context/auth/authContext';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import {
   LEAVE_APPLICATION_DETAILS_URL,
   MY_LEAVE_APPLICATIONS_URL
 } from 'src/components/routes/routes';
+import { getUserFullName } from 'src/utils/formatUtils';
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -61,6 +65,8 @@ const leaveOptions = [
 
 const LeaveApplicationDetails = () => {
   const navigate = useNavigate();
+
+  const { user } = React.useContext(authContext);
   const { updateBreadcrumbItems } = useContext(breadcrumbContext);
 
   const { leaveId } = useParams();
@@ -70,7 +76,9 @@ const LeaveApplicationDetails = () => {
   const [updatedLeaveApplication, setUpdatedLeaveApplication] =
     useState<LeaveApplication>();
   const [selectedDate, setSelectedDate] = useState<[Moment, Moment]>();
+  const [isLoggedInUser, setIsLoggedInUser] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
+  const [vet, setVet] = useState<boolean>(false);
   const [alert, setAlert] = React.useState<AlertType | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -96,12 +104,15 @@ const LeaveApplicationDetails = () => {
           setOriginalLeaveApplication(res);
           setUpdatedLeaveApplication(res);
           setSelectedDate([moment(res.startDate), moment(res.endDate)]);
+          if (res.employee.id === user?.id) {
+            setIsLoggedInUser(true);
+          }
         },
         () => void 0,
         { updateLoading: setLoading }
       );
     }
-  }, [leaveId]);
+  }, [leaveId, user?.id]);
 
   const toLowerCase = (string: string | undefined) => {
     if (string) {
@@ -130,6 +141,24 @@ const LeaveApplicationDetails = () => {
     setUpdatedLeaveApplication((prev) => {
       if (prev) {
         return { ...prev, description: e.target.value };
+      } else {
+        return prev;
+      }
+    });
+  };
+
+  const onLeaveStatusChange = (newLeaveStatus: LeaveStatus) => {
+    setVet(true);
+    setUpdatedLeaveApplication({
+      ...originalLeaveApplication,
+      status: newLeaveStatus
+    } as LeaveApplication);
+  };
+
+  const onCommentsChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setUpdatedLeaveApplication((prev) => {
+      if (prev) {
+        return { ...prev, commentsByVetter: e.target.value };
       } else {
         return prev;
       }
@@ -204,14 +233,14 @@ const LeaveApplicationDetails = () => {
     await asyncFetchCallback(
       cancelLeaveApplication(originalLeaveApplication!.id),
       (res) => {
-        setOriginalLeaveApplication((originalLeaveApplication) => {
-          if (originalLeaveApplication) {
+        setUpdatedLeaveApplication((updatedLeaveApplication) => {
+          if (updatedLeaveApplication) {
             return {
-              ...originalLeaveApplication,
+              ...updatedLeaveApplication,
               status: LeaveStatus.CANCELLED
             };
           } else {
-            return originalLeaveApplication;
+            return updatedLeaveApplication;
           }
         });
         setAlert({
@@ -231,6 +260,56 @@ const LeaveApplicationDetails = () => {
     );
   };
 
+  const handleVetLeave = async () => {
+    setLoading(true);
+
+    let vetReqBody = {
+      id: originalLeaveApplication?.id,
+      commentsByVetter: updatedLeaveApplication?.commentsByVetter
+    };
+
+    let editReqBody = {
+      id: updatedLeaveApplication?.id,
+      status: updatedLeaveApplication?.status
+    };
+
+    await asyncFetchCallback(editLeaveApplication(editReqBody), (res) => {});
+
+    await asyncFetchCallback(
+      vetLeaveApplication(vetReqBody),
+      (res) => {
+        setOriginalLeaveApplication((originalLeaveApplication) => {
+          if (originalLeaveApplication) {
+            return {
+              ...originalLeaveApplication,
+              status: updatedLeaveApplication!.status,
+              commentsByVetter: updatedLeaveApplication!.commentsByVetter,
+              lastUpdated: new Date(),
+              vettedBy: user!
+            };
+          } else {
+            return originalLeaveApplication;
+          }
+        });
+        setAlert({
+          type: 'success',
+          message: 'Leave Application vetted successfully'
+        });
+        setVet(false);
+        setLoading(false);
+      },
+      (err) => {
+        setAlert({
+          type: 'error',
+          message:
+            'Leave Application was not vetted successfully, please try again later.'
+        });
+        setVet(false);
+        setLoading(false);
+      }
+    );
+  };
+
   return (
     <div className='leave-application-details'>
       <div className='leave-application-details-top-section'>
@@ -245,34 +324,36 @@ const LeaveApplicationDetails = () => {
             View Leave Application
           </Typography.Title>
         </div>
-        <div className='leave-application-details-button-container'>
-          {originalLeaveApplication?.status === 'PENDING' && (
-            <Button
-              type='primary'
-              onClick={() => {
-                if (!edit) {
-                  setEdit(true);
-                } else {
-                  handleLeaveApplicationUpdate();
-                }
-              }}
-            >
-              {edit ? 'Save Changes' : 'Edit'}
-            </Button>
-          )}
-          {edit && <Button onClick={handleCancelUpdate}>Cancel</Button>}
-          {!edit && (
-            <ConfirmationModalButton
-              modalProps={{
-                title: 'Cancel Leave Application',
-                body: 'Are you sure you want to cancel this leave application?',
-                onConfirm: handleLeaveApplicationCancel
-              }}
-            >
-              Cancel Leave
-            </ConfirmationModalButton>
-          )}
-        </div>
+        {isLoggedInUser && (
+          <div className='leave-application-details-button-container'>
+            {originalLeaveApplication?.status === 'PENDING' && (
+              <Button
+                type='primary'
+                onClick={() => {
+                  if (!edit) {
+                    setEdit(true);
+                  } else {
+                    handleLeaveApplicationUpdate();
+                  }
+                }}
+              >
+                {edit ? 'Save Changes' : 'Edit'}
+              </Button>
+            )}
+            {edit && <Button onClick={handleCancelUpdate}>Cancel</Button>}
+            {!edit && originalLeaveApplication?.status !== 'CANCELLED' && (
+              <ConfirmationModalButton
+                modalProps={{
+                  title: 'Cancel Leave Application',
+                  body: 'Are you sure you want to cancel this leave application?',
+                  onConfirm: handleLeaveApplicationCancel
+                }}
+              >
+                Cancel Leave
+              </ConfirmationModalButton>
+            )}
+          </div>
+        )}
       </div>
       {alert && (
         <div className='alert'>
@@ -281,6 +362,14 @@ const LeaveApplicationDetails = () => {
       )}
       <Card className='leave-application-card'>
         <Spin size='large' spinning={loading} className='spin'>
+          <div className='leave-application-displayed-field'>
+            <Typography.Title level={4} className='leave-application-title'>
+              Applicant:
+            </Typography.Title>
+            <Typography>
+              {getUserFullName(originalLeaveApplication?.employee)}
+            </Typography>
+          </div>
           <div className='leave-application-displayed-field'>
             <Typography.Title level={4} className='leave-application-title'>
               Leave Duration:
@@ -337,67 +426,136 @@ const LeaveApplicationDetails = () => {
               />
             )}
           </div>
-          <div className='leave-application-details-row-display'>
-            <Typography.Title level={4} className='leave-application-title'>
-              Status:
-            </Typography.Title>
-            {(originalLeaveApplication?.status === 'APPROVED' ||
-              originalLeaveApplication?.status === 'REJECTED') && (
-              <Collapse
-                collapsible='header'
-                style={{
-                  backgroundColor:
-                    originalLeaveApplication?.status === 'APPROVED'
-                      ? '#6EB978'
-                      : '#EA6464'
-                }}
-              >
-                <Panel
-                  header={toLowerCase(originalLeaveApplication?.status)}
-                  key='1'
+          <Card>
+            <div className='leave-application-details-row-display'>
+              <Typography.Title level={4} className='leave-application-title'>
+                Status:
+              </Typography.Title>
+              {(updatedLeaveApplication?.status === 'APPROVED' ||
+                updatedLeaveApplication?.status === 'REJECTED') && (
+                <Collapse
+                  style={{
+                    backgroundColor:
+                      updatedLeaveApplication?.status === 'APPROVED'
+                        ? '#6EB978'
+                        : '#EA6464'
+                  }}
+                  defaultActiveKey={['1']}
                 >
-                  <div className='leave-application-displayed-field'>
-                    <Typography className='leave-application-status-title'>
-                      Approved By:
-                    </Typography>
-                    <Typography>
-                      {originalLeaveApplication?.vettedBy?.firstName}
-                    </Typography>
-                  </div>
-                  <div className='leave-application-displayed-field'>
-                    <Typography className='leave-application-status-title'>
-                      Comments By Vetter:
-                    </Typography>
-                    <Typography>
-                      {originalLeaveApplication?.commentsByVetter
-                        ? originalLeaveApplication?.commentsByVetter
-                        : '-'}
-                    </Typography>
-                  </div>
-                  <div className='leave-application-displayed-field'>
-                    <Typography className='leave-application-status-title'>
-                      Last Updated:
-                    </Typography>
-                    <Typography>
-                      {moment(originalLeaveApplication?.lastUpdated).format(
-                        'DD MMM YYYY'
-                      )}
-                    </Typography>
-                  </div>
-                </Panel>
-              </Collapse>
-            )}
-            {originalLeaveApplication?.status === 'PENDING' && (
-              <Tag color='#F6943D' className='leave-application-status-tag'>
-                Pending
-              </Tag>
-            )}
-            {originalLeaveApplication?.status === 'CANCELLED' && (
-              <Tag color='#D9D9D9' className='leave-application-status-tag'>
-                Cancelled
-              </Tag>
-            )}
-          </div>
+                  <Panel
+                    header={toLowerCase(updatedLeaveApplication?.status)}
+                    key='1'
+                  >
+                    {!vet && (
+                      <>
+                        <div className='leave-application-displayed-field'>
+                          <Typography className='leave-application-status-title'>
+                            Vetted By:
+                          </Typography>
+                          <Typography>
+                            {getUserFullName(
+                              originalLeaveApplication?.vettedBy
+                            )}
+                          </Typography>
+                        </div>
+                        <div className='leave-application-displayed-field'>
+                          <Typography className='leave-application-status-title'>
+                            Comments By Vetter:
+                          </Typography>
+                          <Typography>
+                            {originalLeaveApplication?.commentsByVetter
+                              ? originalLeaveApplication?.commentsByVetter
+                              : '-'}
+                          </Typography>
+                        </div>
+                        <div className='leave-application-displayed-field'>
+                          <Typography className='leave-application-status-title'>
+                            Last Updated:
+                          </Typography>
+                          <Typography>
+                            {moment(
+                              originalLeaveApplication?.lastUpdated
+                            ).format('DD MMM YYYY')}
+                          </Typography>
+                        </div>
+                      </>
+                    )}
+                    {vet && (
+                      <>
+                        <div className='leave-application-displayed-field'>
+                          <Typography className='leave-application-status-title'>
+                            Comments:
+                          </Typography>
+                          <TextArea
+                            style={{ width: 500 }}
+                            rows={2}
+                            placeholder='Enter comments.'
+                            onChange={onCommentsChange}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </Panel>
+                </Collapse>
+              )}
+              {updatedLeaveApplication?.status === 'PENDING' && (
+                <Tag color='#F6943D' className='leave-application-status-tag'>
+                  Pending
+                </Tag>
+              )}
+              {updatedLeaveApplication?.status === 'CANCELLED' && (
+                <Tag color='#D9D9D9' className='leave-application-status-tag'>
+                  Cancelled
+                </Tag>
+              )}
+              {!isLoggedInUser && (
+                <div className='leave-application-vet-button-container'>
+                  <Space>
+                    {!vet && originalLeaveApplication?.status === 'PENDING' && (
+                      <>
+                        <Button
+                          type='primary'
+                          icon={<CheckOutlined />}
+                          onClick={() => {
+                            setVet(true);
+                            onLeaveStatusChange(LeaveStatus.APPROVED);
+                          }}
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          icon={<CloseOutlined />}
+                          onClick={() => {
+                            setVet(true);
+                            onLeaveStatusChange(LeaveStatus.REJECTED);
+                          }}
+                        >
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                    {vet && (
+                      <>
+                        <Button type='primary' onClick={handleVetLeave}>
+                          Save Changes
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setVet(false);
+                            setUpdatedLeaveApplication(
+                              originalLeaveApplication
+                            );
+                          }}
+                        >
+                          Discard
+                        </Button>
+                      </>
+                    )}
+                  </Space>
+                </div>
+              )}
+            </div>
+          </Card>
         </Spin>
       </Card>
     </div>

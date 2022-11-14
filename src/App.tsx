@@ -30,7 +30,9 @@ import {
   ROOT_URL,
   EDIT_SUBJECT_URL,
   COMPANY_LEAVE_SCHEDULE_URL,
-  LEAVE_APPLICATION_DETAILS_URL
+  LEAVE_APPLICATION_DETAILS_URL,
+  ALL_LEAVE_APPLICATIONS_URL,
+  EMPLOYEE_LEAVE_QUOTA_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -44,6 +46,9 @@ import BreadcrumbState from './context/breadcrumbs/BreadcrumbState';
 import ViewMyAccount from './pages/account/ViewMyAccount';
 import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
 import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
+import AllLeaveApplications from './pages/leave/AllLeaveApplications';
+import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
+import OrganisationChart from './pages/people/OrganisationInfo';
 
 const { Footer } = Layout;
 
@@ -94,7 +99,7 @@ const App = () => {
                   {/* company routes */}
                   <Route path={COMPANY_URL} element={<></>} />
                   {/* people routes */}
-                  <Route path={PEOPLE_URL} element={<></>} />
+                  <Route path={PEOPLE_URL} element={<OrganisationChart />} />
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
                   <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
@@ -115,8 +120,16 @@ const App = () => {
                     element={<ManageLeaveQuota />}
                   />
                   <Route
+                    path={EMPLOYEE_LEAVE_QUOTA_URL}
+                    element={<ManageEmployeeLeaveQuota />}
+                  />
+                  <Route
                     path={COMPANY_LEAVE_SCHEDULE_URL}
                     element={<ViewCompanyLeaveSchedule />}
+                  />
+                  <Route
+                    path={ALL_LEAVE_APPLICATIONS_URL}
+                    element={<AllLeaveApplications />}
                   />
                   <Route
                     path={MY_LEAVE_APPLICATIONS_URL}

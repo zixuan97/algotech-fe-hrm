@@ -8,7 +8,7 @@ interface LeaveCalendarProps {
   leaveDates: CalendarObject[];
   handleSelect: (value: Moment) => void;
   onPanelChange: (value: Moment, mode: string) => void;
-  colours: string[];
+  colours: Map<number, string>;
 }
 
 const LeaveCalendar = ({
@@ -30,7 +30,7 @@ const LeaveCalendar = ({
         <ul className='events'>
           {listData.map((item) => (
             <Badge
-              color={colours[item.id - 1]}
+              color={colours.get(item.employeeId)}
               text={`${item.employeeName} on leave`}
             />
           ))}
