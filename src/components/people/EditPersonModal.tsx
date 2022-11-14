@@ -14,6 +14,7 @@ import { User } from 'src/models/types';
 import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
 import { useNavigate } from 'react-router-dom';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
+import '../../styles/people/editPeople.scss';
 
 const { Text } = Typography;
 
@@ -74,20 +75,24 @@ const EditPersonModal = (props: EditPersonModalProps) => {
               <Input disabled={true} placeholder={fullName} />
             </Form.Item>
           </Space>
-          <Space direction='horizontal' style={{ width: '100%' }}>
-            <Space direction='vertical' style={{ width: '100%' }}>
-              <Text>Email</Text>
-              <Form.Item name='email'>
-                <Input disabled={true} placeholder={user?.email} />
-              </Form.Item>
-            </Space>
-            <Space direction='vertical' style={{ width: '100%' }}>
-              <Text>Permissions</Text>
-              <Form.Item name='role'>
-                <Input disabled={true} placeholder={user?.role} />
-              </Form.Item>
-            </Space>
-          </Space>
+          <div className='people-two-columns-container'>
+            <div className='people-email-column'>
+              <Space direction='vertical' style={{ width: '100%' }}>
+                <Text>Email</Text>
+                <Form.Item name='email'>
+                  <Input disabled={true} placeholder={user?.email} />
+                </Form.Item>
+              </Space>
+            </div>{' '}
+            <div className='people-permission-column'>
+              <Space direction='vertical' style={{ width: '100%' }}>
+                <Text>Permissions</Text>
+                <Form.Item name='role'>
+                  <Input disabled={true} placeholder={user?.role} />
+                </Form.Item>
+              </Space>
+            </div>
+          </div>
           <Space direction='vertical' style={{ width: '100%' }}>
             <Text>Role(s) (Optional)</Text>
             <Form.Item name='jobRoles'>

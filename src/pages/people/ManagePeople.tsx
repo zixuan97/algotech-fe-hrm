@@ -105,9 +105,7 @@ const ManagePeople = () => {
 
   const handleEditPersonModal = (userId: number) => {
     const user = users.find((user) => user.id === userId);
-    console.log('user: ', user);
     setUserToEdit(user);
-    console.log('user to edit: ', userToEdit);
     setEditPersonModalOpen(true);
   };
 
