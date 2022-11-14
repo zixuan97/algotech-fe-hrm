@@ -48,6 +48,7 @@ import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
 import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
 import AllLeaveApplications from './pages/leave/AllLeaveApplications';
 import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
+import OrganisationChart from './pages/people/OrganisationInfo';
 
 const { Footer } = Layout;
 
@@ -98,7 +99,7 @@ const App = () => {
                   {/* company routes */}
                   <Route path={COMPANY_URL} element={<></>} />
                   {/* people routes */}
-                  <Route path={PEOPLE_URL} element={<></>} />
+                  <Route path={PEOPLE_URL} element={<OrganisationChart />} />
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
                   <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />

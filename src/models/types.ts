@@ -124,6 +124,11 @@ export interface CalendarObject {
   color: string;
 }
 
+export interface TreeNode {
+  id: number;
+  subordinates: TreeNode[];
+}
+
 export enum ContentStatus {
   DRAFT = 'DRAFT',
   PENDING = 'PENDING',

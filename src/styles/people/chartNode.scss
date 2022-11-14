@@ -1,0 +1,25 @@
+.chart-node  li {
+  float: left;
+  text-align: center;
+  list-style-type: none; 
+}
+
+.chart-node {
+
+}
+
+// .chart-node li::before,
+// .chart-node li::after {
+//   content: "";
+//   position: absolute;
+//   top: 0;
+//   right: 50%;
+//   border-top: 1px solid #ccc;
+//   width: 50%;
+//   height: 20px;
+// }
+// .chart-node li::after {
+//   right: auto;
+//   left: 50%;
+//   border-left: 1px solid #ccc;
+// }
