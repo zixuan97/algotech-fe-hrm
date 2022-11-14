@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Select } from 'antd';
-import { LeaveQuota } from 'src/models/types';
-import { EmployeeLeaveQuota } from 'src/pages/leave/ManageEmployeeLeaveQuota';
+import { EmployeeLeaveQuota, LeaveQuota } from 'src/models/types';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   name: string;
   title: any;
   inputType: 'number' | 'string' | 'select';
-  record?: EmployeeLeaveQuota;
-  index: number;
-  handleInputChange: (value: string, dataIndex: string) => void;
+  handleInputChange: (value: string, name: string) => void;
   selectedTier: string;
   tiers: LeaveQuota[];
   children: React.ReactNode;
@@ -21,8 +18,6 @@ const LeaveQuotaEditableCell: React.FC<EditableCellProps> = ({
   name,
   title,
   inputType,
-  record,
-  index,
   handleInputChange,
   selectedTier,
   tiers,
@@ -55,6 +50,7 @@ const LeaveQuotaEditableCell: React.FC<EditableCellProps> = ({
                 onChange={(value) => {
                   handleInputChange(value!.toString(), name);
                 }}
+                min={0}
               />
             ) : inputType === 'string' ? (
               <Input

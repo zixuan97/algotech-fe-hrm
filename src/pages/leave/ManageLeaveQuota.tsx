@@ -370,10 +370,10 @@ const ManageLeaveQuota = () => {
     return {
       ...col,
       onCell: (record: LeaveQuota) => ({
-        inputType: col.dataIndex === 'tier' ? 'string' : 'number',
         name: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        inputType: col.dataIndex === 'tier' ? 'string' : 'number',
         handleInputChange: onInputChange
       })
     };
