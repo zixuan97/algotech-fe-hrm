@@ -1,36 +1,14 @@
-import { isEqual, omit } from 'lodash';
-import {
-  ContentStatus,
-  Quiz,
-  Subject,
-  SubjectType,
-  Topic
-} from 'src/models/types';
+import { Quiz, Subject, SubjectType, Topic } from 'src/models/types';
+import { updateQuizzesOrder } from 'src/services/quizService';
+import { updateTopicsOrder } from 'src/services/topicService';
 import { EMPTYSTR } from 'src/utils/constants';
+import { instanceOfQuiz } from './subject/quiz/quizHelper';
+import { instanceOfTopic } from './topic/topicHelper';
 
 export enum SubjectSectionType {
   TOPIC = 'TOPIC',
   QUIZ = 'QUIZ'
 }
-
-const EMPTY_TOPIC: Partial<Topic> = {
-  subjectOrder: 0,
-  title: EMPTYSTR,
-  status: ContentStatus.DRAFT,
-  subjectId: 0,
-  steps: []
-};
-
-const EMPTY_QUIZ: Quiz = {
-  subjectOrder: 0,
-  title: EMPTYSTR,
-  description: EMPTYSTR,
-  status: ContentStatus.DRAFT,
-  passingScore: 0,
-  completionRate: 0,
-  subjectId: 0,
-  questions: []
-};
 
 const EMPTY_SUBJECT: Partial<Subject> = {
   title: EMPTYSTR,
@@ -43,51 +21,18 @@ const EMPTY_SUBJECT: Partial<Subject> = {
   usersAssigned: []
 };
 
-export const getNewTopic = (
-  subjectId: number,
-  subjectOrder: number,
-  title: string
-): Partial<Topic> => {
-  return { ...EMPTY_TOPIC, subjectId, subjectOrder, title };
-};
-
-export const getNewQuiz = (
-  subjectId: number,
-  subjectOrder: number,
-  title: string
-): Quiz => {
-  return { ...EMPTY_QUIZ, subjectId, subjectOrder, title };
-};
-
 export const getNewSubject = (
   type: SubjectType,
   title: string,
   description?: string
 ): Partial<Subject> => {
-  return { ...EMPTY_SUBJECT, title, ...(description && { description }) };
+  return { ...EMPTY_SUBJECT, title, type, ...(description && { description }) };
 };
 
-export const isTopicEmpty = (topic: Topic): boolean => {
-  return isEqual(
-    omit(topic, ['id', 'subjectId', 'subjectOrder']),
-    omit(EMPTY_TOPIC, ['subjectId', 'subjectOrder'])
-  );
-};
-
-export const isQuizEmpty = (quiz: Quiz): boolean => {
-  return isEqual(
-    omit(quiz, ['id', 'subjectId', 'subjectOrder']),
-    omit(EMPTY_QUIZ, ['subjectId', 'subjectOrder'])
-  );
-};
-
-// TODO: test if this function works
-export const orderTopicsAndQuizzes = (
-  topics: Topic[],
-  quizzes: Quiz[]
+export const sortTopicsAndQuizzesArr = (
+  topicsAndQuizzesArr: (Topic | Quiz)[]
 ): (Topic | Quiz)[] => {
-  const topicsAndQuizzesArr = [...topics, ...quizzes];
-  topicsAndQuizzesArr.sort((a, b) => {
+  return topicsAndQuizzesArr.sort((a, b) => {
     if (a.subjectOrder === b.subjectOrder) {
       return instanceOfTopic(a) && instanceOfQuiz(b)
         ? -1
@@ -95,14 +40,84 @@ export const orderTopicsAndQuizzes = (
     }
     return a.subjectOrder - b.subjectOrder;
   });
+};
 
+const zipTopicsAndQuizzesArr = (
+  topics: Topic[],
+  quizzes: Quiz[]
+): (Topic | Quiz)[] => [...topics, ...quizzes];
+
+const unzipTopicsAndQuizzesArr = (
+  topicsAndQuizzesArr: (Topic | Quiz)[]
+): {
+  topics: Topic[];
+  quizzes: Quiz[];
+} => {
+  const topics: Topic[] = [];
+  const quizzes: Quiz[] = [];
+
+  topicsAndQuizzesArr.forEach((topicOrQuiz) => {
+    if (instanceOfQuiz(topicOrQuiz)) {
+      quizzes.push(topicOrQuiz as Quiz);
+    } else {
+      topics.push(topicOrQuiz as Topic);
+    }
+  });
+
+  return {
+    topics,
+    quizzes
+  };
+};
+
+export const reorderTopicsAndQuizzes = (
+  topics: Topic[],
+  quizzes: Quiz[],
+  sort: boolean = true
+): (Topic | Quiz)[] => {
+  const topicsAndQuizzesArr = zipTopicsAndQuizzesArr(topics, quizzes);
+  if (sort) {
+    sortTopicsAndQuizzesArr(topicsAndQuizzesArr);
+  }
+  for (let i = 0; i < topicsAndQuizzesArr.length; i++) {
+    topicsAndQuizzesArr[i] = { ...topicsAndQuizzesArr[i], subjectOrder: i + 1 };
+  }
   return topicsAndQuizzesArr;
 };
 
-export const instanceOfTopic = (obj: any): boolean => {
-  return 'subjectOrder' in obj && 'subjectId' in obj && 'steps' in obj;
+export const reorderTopicsAndQuizzesArr = (
+  topicsAndQuizzesArr: (Topic | Quiz)[]
+) => {
+  const orderedTopicsAndQuizzesArr = [...topicsAndQuizzesArr];
+  for (let i = 0; i < orderedTopicsAndQuizzesArr.length; i++) {
+    orderedTopicsAndQuizzesArr[i] = {
+      ...orderedTopicsAndQuizzesArr[i],
+      subjectOrder: i + 1
+    };
+  }
+  console.log(orderedTopicsAndQuizzesArr);
+  return orderedTopicsAndQuizzesArr;
 };
 
-export const instanceOfQuiz = (obj: any): boolean => {
-  return 'subjectOrder' in obj && 'subjectId' in obj && 'questions' in obj;
+export const updateTopicsAndQuizzesOrderApiCall = (
+  newTopicsAndQuizzesArr: (Topic | Quiz)[],
+  callback?: () => void
+) => {
+  const { topics, quizzes } = unzipTopicsAndQuizzesArr(newTopicsAndQuizzesArr);
+  Promise.allSettled([
+    updateTopicsOrder(topics),
+    updateQuizzesOrder(quizzes)
+  ]).then(() => callback?.());
+};
+
+export const swapQuizOrTopicInArr = (
+  idxA: number,
+  idxB: number,
+  quizzesAndTopics: (Quiz | Topic)[]
+) => {
+  const newQuizzesAndTopics = [...quizzesAndTopics];
+  const temp = newQuizzesAndTopics[idxA];
+  newQuizzesAndTopics[idxA] = newQuizzesAndTopics[idxB];
+  newQuizzesAndTopics[idxB] = temp;
+  return reorderTopicsAndQuizzesArr(newQuizzesAndTopics);
 };

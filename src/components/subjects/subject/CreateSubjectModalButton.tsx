@@ -71,7 +71,7 @@ const CreateSubjectModalButton = ({
                       subjectId: res.id.toString()
                     })
                   );
-                }, 2000);
+                }, 500);
               },
               () => void 0,
               { updateLoading: setCreateLoading }

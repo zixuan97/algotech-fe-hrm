@@ -7,19 +7,13 @@ import { Subject, User } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
   assignUsersToSubject,
-  createQuiz,
-  createTopic,
+  deleteSubject,
   getSubjectById,
   unassignUsersFromSubject,
   updateSubject
 } from 'src/services/subjectService';
-import { startCase } from 'lodash';
-import {
-  getNewQuiz,
-  getNewTopic,
-  orderTopicsAndQuizzes,
-  SubjectSectionType
-} from 'src/components/subjects/subjectHelper';
+import { isEqual, startCase } from 'lodash';
+import { sortTopicsAndQuizzesArr } from 'src/components/subjects/subjectHelper';
 import UsersAssignedCard from 'src/components/subjects/subject/cards/UsersAssignedCard';
 import SubjectDetailsCard from 'src/components/subjects/subject/cards/SubjectDetailsCard';
 import CompletionRateCard from 'src/components/subjects/subject/cards/CompletionRateCard';
@@ -29,6 +23,7 @@ import { EDIT_SUBJECT_URL, SUBJECTS_URL } from 'src/components/routes/routes';
 import { getSubjectTypeIcon } from './AllSubjects';
 import QuizTopicPanel from 'src/components/subjects/subject/panels/QuizTopicPanel';
 import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const { Text, Title } = Typography;
 
@@ -46,7 +41,10 @@ const EditSubject = () => {
   const orderedTopicsAndQuizzes = React.useMemo(
     () =>
       editSubject
-        ? orderTopicsAndQuizzes(editSubject.topics, editSubject.quizzes)
+        ? sortTopicsAndQuizzesArr([
+            ...editSubject.topics,
+            ...editSubject.quizzes
+          ])
         : [],
     [editSubject]
   );
@@ -99,7 +97,7 @@ const EditSubject = () => {
     );
 
   const updateSubjectApiCall = (editSubject: Subject | null) => {
-    if (editSubject) {
+    if (editSubject && !isEqual(editSubject, subject)) {
       // TODO: handle error case, especially when not found
       setUpdateSubjectLoading(true);
       asyncFetchCallback(
@@ -141,39 +139,6 @@ const EditSubject = () => {
     }
   };
 
-  const addQuizOrTopic = (addQuizOrTopicProps: {
-    title: string;
-    addSectionType: SubjectSectionType;
-  }) => {
-    const { title, addSectionType } = addQuizOrTopicProps;
-    if (editSubject) {
-      setUpdateSubjectLoading(true);
-      if (addSectionType === SubjectSectionType.TOPIC) {
-        asyncFetchCallback(
-          createTopic(
-            getNewTopic(editSubject.id, orderedTopicsAndQuizzes.length, title)
-          ),
-          (res) => {
-            fetchSubjectById(editSubject.id);
-          },
-          () => void 0,
-          { updateLoading: setUpdateSubjectLoading }
-        );
-      } else {
-        asyncFetchCallback(
-          createQuiz(
-            getNewQuiz(editSubject.id, orderedTopicsAndQuizzes.length, title)
-          ),
-          (res) => {
-            fetchSubjectById(editSubject.id);
-          },
-          () => void 0,
-          { updateLoading: setUpdateSubjectLoading }
-        );
-      }
-    }
-  };
-
   return (
     <Spin size='large' spinning={getSubjectLoading}>
       <div className='container-left-full'>
@@ -185,10 +150,20 @@ const EditSubject = () => {
             deleteModalProps: {
               title: 'Confirm Delete Subject',
               body: `Are you sure you want to delete ${editSubject?.title}?`,
-              deleteLoading: updateSubjectLoading
+              deleteSuccessContent: (
+                <Space>
+                  <Text>
+                    Subject successfully deleted! Redirecting you back to all
+                    subjects page...
+                  </Text>
+                  <LoadingOutlined />
+                </Space>
+              )
             },
             onView: () => void 0,
-            onDelete: () => void 0
+            onDelete: async () => {
+              editSubject && deleteSubject(editSubject?.id);
+            }
           }}
           lastUpdatedInfo={
             editSubject
@@ -277,11 +252,21 @@ const EditSubject = () => {
           <Space direction='vertical' style={{ width: '100%' }}>
             {!!orderedTopicsAndQuizzes.length &&
               orderedTopicsAndQuizzes.map((item, index) => (
-                <QuizTopicPanel key={index} quizOrTopic={item} />
+                <QuizTopicPanel
+                  key={index}
+                  quizOrTopic={item}
+                  quizzesAndTopics={orderedTopicsAndQuizzes}
+                  refreshSubject={() =>
+                    editSubject && fetchSubjectById(editSubject.id)
+                  }
+                />
               ))}
             <AddTopicOrQuizButton
-              addQuizOrTopic={addQuizOrTopic}
-              updateSubjectLoading={updateSubjectLoading}
+              orderedTopicsAndQuizzes={orderedTopicsAndQuizzes}
+              subject={editSubject}
+              refreshSubject={() =>
+                editSubject && fetchSubjectById(editSubject.id)
+              }
             />
           </Space>
         </Space>

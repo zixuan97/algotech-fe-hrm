@@ -1,8 +1,8 @@
 import {
   BookOutlined,
-  FileDoneOutlined,
-  FileSearchOutlined,
+  FieldTimeOutlined,
   FolderOpenOutlined,
+  ReconciliationOutlined,
   RightOutlined
 } from '@ant-design/icons';
 import { Collapse, Space, Typography } from 'antd';
@@ -10,7 +10,9 @@ import { generatePath, Link, useParams } from 'react-router-dom';
 import { EDIT_TOPIC_URL } from 'src/components/routes/routes';
 import { Quiz, Topic } from 'src/models/types';
 import '../../../../styles/subjects/editSubject.scss';
-import { instanceOfQuiz, instanceOfTopic } from '../../subjectHelper';
+
+import { instanceOfTopic } from '../../topic/topicHelper';
+import { instanceOfQuiz } from '../quiz/quizHelper';
 import QuizTopicMoreButton from './QuizTopicMoreButton';
 
 const { Title, Text } = Typography;
@@ -18,16 +20,22 @@ const { Panel } = Collapse;
 
 type QuizTopicPanelProps = {
   quizOrTopic: Quiz | Topic;
+  quizzesAndTopics: (Quiz | Topic)[];
+  refreshSubject: () => void;
 };
 
-const QuizTopicPanel = ({ quizOrTopic }: QuizTopicPanelProps) => {
+const QuizTopicPanel = ({
+  quizOrTopic,
+  quizzesAndTopics,
+  refreshSubject
+}: QuizTopicPanelProps) => {
   const { subjectId } = useParams();
   const quiz = instanceOfQuiz(quizOrTopic) ? (quizOrTopic as Quiz) : null;
   const topic = instanceOfTopic(quizOrTopic) ? (quizOrTopic as Topic) : null;
 
   const getExpandIcon = (isActive?: boolean) => {
     if (quiz) {
-      return isActive ? <FileSearchOutlined /> : <FileDoneOutlined />;
+      return isActive ? <FieldTimeOutlined /> : <ReconciliationOutlined />;
     } else {
       return isActive ? <FolderOpenOutlined /> : <BookOutlined />;
     }
@@ -39,18 +47,25 @@ const QuizTopicPanel = ({ quizOrTopic }: QuizTopicPanelProps) => {
       expandIcon={({ isActive }) => getExpandIcon(isActive)}
     >
       <Panel
-        header={`${quizOrTopic.subjectOrder + 1}. ${quizOrTopic.title}`}
-        key={1}
+        header={`${quizOrTopic.subjectOrder}. ${quizOrTopic.title}`}
+        key={quizOrTopic.subjectOrder}
         extra={
           <Space align='center'>
             <span
               className={`status-dot-${quizOrTopic.status.toLowerCase()}`}
             />
-            <QuizTopicMoreButton quizOrTopic={quizOrTopic} />
+            <QuizTopicMoreButton
+              currQuizOrTopic={quizOrTopic}
+              quizzesAndTopics={quizzesAndTopics}
+              refreshSubject={refreshSubject}
+            />
           </Space>
         }
       >
         <Space direction='vertical'>
+          <Title level={4}>{`${quiz ? 'Quiz' : 'Topic'} title: ${
+            quizOrTopic.title
+          }`}</Title>
           <Title level={5}>{topic ? 'Steps' : 'Questions'}</Title>
           {quiz &&
             (quiz.questions.length ? (
