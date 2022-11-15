@@ -9,7 +9,7 @@ import { Collapse, Space, Typography } from 'antd';
 import { generatePath, Link, useParams } from 'react-router-dom';
 import { EDIT_TOPIC_URL } from 'src/components/routes/routes';
 import { Quiz, Topic } from 'src/models/types';
-import '../../../../styles/subjects/editSubject.scss';
+import '../../../../styles/subjects/subject.scss';
 
 import { instanceOfTopic } from '../../topic/topicHelper';
 import { instanceOfQuiz } from '../quiz/quizHelper';
@@ -21,7 +21,7 @@ const { Panel } = Collapse;
 type QuizTopicPanelProps = {
   quizOrTopic: Quiz | Topic;
   quizzesAndTopics: (Quiz | Topic)[];
-  refreshSubject: () => void;
+  refreshSubject?: () => void;
 };
 
 const QuizTopicPanel = ({

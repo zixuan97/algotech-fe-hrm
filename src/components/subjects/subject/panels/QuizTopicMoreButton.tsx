@@ -3,11 +3,16 @@ import {
   ArrowUpOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   MoreOutlined
 } from '@ant-design/icons';
 import { Button, Dropdown, Menu, MenuProps, Modal } from 'antd';
 import { generatePath, useNavigate, useParams } from 'react-router-dom';
-import { EDIT_QUIZ_URL, EDIT_TOPIC_URL } from 'src/components/routes/routes';
+import {
+  EDIT_QUIZ_URL,
+  EDIT_TOPIC_URL,
+  VIEW_TOPIC_URL
+} from 'src/components/routes/routes';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { Quiz, Topic } from 'src/models/types';
 
@@ -24,6 +29,7 @@ import { deleteQuiz } from 'src/services/quizService';
 import { deleteTopic } from 'src/services/topicService';
 
 enum QuizTopicMoreKeys {
+  VIEW = 'VIEW',
   EDIT = 'EDIT',
   DELETE = 'DELETE',
   MOVE_UP = 'MOVE_UP',
@@ -32,8 +38,8 @@ enum QuizTopicMoreKeys {
 
 type QuizTopicMoreButtonProps = {
   currQuizOrTopic: Quiz | Topic;
-  quizzesAndTopics: (Quiz | Topic)[];
-  refreshSubject: () => void;
+  quizzesAndTopics?: (Quiz | Topic)[];
+  refreshSubject?: () => void;
 };
 
 const QuizTopicMoreButton = ({
@@ -47,16 +53,55 @@ const QuizTopicMoreButton = ({
   const [deleteModalOpen, setDeleteModalOpen] = React.useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = React.useState<boolean>(false);
 
-  const currIdx = quizzesAndTopics.findIndex(
-    (quizOrTopic) => quizOrTopic.id === currQuizOrTopic.id
-  );
-
   const quiz = instanceOfQuiz(currQuizOrTopic)
     ? (currQuizOrTopic as Quiz)
     : null;
   const topic = instanceOfTopic(currQuizOrTopic)
     ? (currQuizOrTopic as Topic)
     : null;
+
+  if (!quizzesAndTopics || !refreshSubject) {
+    return (
+      <Dropdown
+        overlayStyle={{ width: '10em' }}
+        overlay={
+          <Menu
+            items={[
+              {
+                label: 'View',
+                key: QuizTopicMoreKeys.VIEW,
+                icon: <EyeOutlined />,
+                onClick: ({ domEvent }) => {
+                  domEvent.stopPropagation();
+                  quiz
+                    ? navigate('/')
+                    : navigate(
+                        generatePath(VIEW_TOPIC_URL, {
+                          subjectId: currQuizOrTopic.subjectId.toString(),
+                          topicId: topic?.id.toString()
+                        })
+                      );
+                }
+              }
+            ]}
+          />
+        }
+        trigger={['click']}
+        placement='bottomRight'
+      >
+        <Button
+          size='small'
+          type='text'
+          icon={<MoreOutlined />}
+          onClick={(e) => e.stopPropagation()}
+        />
+      </Dropdown>
+    );
+  }
+
+  const currIdx = quizzesAndTopics.findIndex(
+    (quizOrTopic) => quizOrTopic.id === currQuizOrTopic.id
+  );
 
   const dropdownMenuItems: MenuProps['items'] = [
     {
@@ -113,7 +158,7 @@ const QuizTopicMoreButton = ({
       asyncFetchCallback(
         deleteTopic(topic.id),
         () => {
-          refreshSubject();
+          refreshSubject?.();
           updateTopicsAndQuizzesOrderApiCall(
             reorderedQuizzesAndTopicsArr,
             refreshSubject
