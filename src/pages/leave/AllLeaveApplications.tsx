@@ -198,7 +198,7 @@ const AllLeaveApplications = () => {
               placeholder='Sort By'
               size='large'
               style={{ width: '14em' }}
-              value={sortOptions[2].sortType}
+              defaultValue={sortOptions[2].sortType}
               onChange={(value) =>
                 setSortOption(
                   sortOptions.find((opt) => opt.sortType === value) ?? null
