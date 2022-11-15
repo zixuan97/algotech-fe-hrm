@@ -18,7 +18,7 @@ import {
   getUserFullName
 } from 'src/utils/formatUtils';
 import '../../../../styles/common/common.scss';
-import '../../../../styles/subjects/editSubject.scss';
+import '../../../../styles/subjects/subject.scss';
 import ConfirmationModalButton from '../../../common/ConfirmationModalButton';
 
 const { Title, Text } = Typography;
@@ -27,8 +27,8 @@ const { Option } = Select;
 type UsersAssignedCardProps = {
   usersAssigned: EmployeeSubjectRecord[];
   subjectTitle: string | undefined;
-  assignUserToSubject: (user: User) => void;
-  unassignUserFromSubject: (user: User) => void;
+  assignUserToSubject?: (user: User) => void;
+  unassignUserFromSubject?: (user: User) => void;
 };
 
 const UsersAssignedCard = ({
@@ -81,18 +81,20 @@ const UsersAssignedCard = ({
               </Button>
             </Tooltip>
           ))}
-        <Tooltip title='Assign User' placement='bottom' mouseEnterDelay={0.5}>
-          <Button
-            type='dashed'
-            shape='circle'
-            icon={<PlusOutlined />}
-            size='large'
-            onClick={() => {
-              setAddUserModalOpen(true);
-              setSelectedRecord(null);
-            }}
-          />
-        </Tooltip>
+        {assignUserToSubject && (
+          <Tooltip title='Assign User' placement='bottom' mouseEnterDelay={0.5}>
+            <Button
+              type='dashed'
+              shape='circle'
+              icon={<PlusOutlined />}
+              size='large'
+              onClick={() => {
+                setAddUserModalOpen(true);
+                setSelectedRecord(null);
+              }}
+            />
+          </Tooltip>
+        )}
       </div>
       <Modal
         title='Manage User'

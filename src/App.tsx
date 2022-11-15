@@ -30,7 +30,9 @@ import {
   ROOT_URL,
   EDIT_SUBJECT_URL,
   COMPANY_LEAVE_SCHEDULE_URL,
-  LEAVE_APPLICATION_DETAILS_URL
+  LEAVE_APPLICATION_DETAILS_URL,
+  VIEW_SUBJECT_URL,
+  VIEW_TOPIC_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -44,6 +46,8 @@ import BreadcrumbState from './context/breadcrumbs/BreadcrumbState';
 import ViewMyAccount from './pages/account/ViewMyAccount';
 import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
 import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
+import ViewSubject from './pages/subjects/ViewSubject';
+import ViewTopic from './pages/subjects/ViewTopic';
 
 const { Footer } = Layout;
 
@@ -97,7 +101,9 @@ const App = () => {
                   <Route path={PEOPLE_URL} element={<></>} />
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
+                  <Route path={VIEW_SUBJECT_URL} element={<ViewSubject />} />
                   <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
+                  <Route path={VIEW_TOPIC_URL} element={<ViewTopic />} />
                   <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
                   {/* processes routes */}
                   <Route path={PROCESSES_URL} element={<></>} />
@@ -126,8 +132,6 @@ const App = () => {
                     path={LEAVE_APPLICATION_DETAILS_URL}
                     element={<LeaveApplicationDetails />}
                   />
-                  {/* EDITOR, FOR TESTING; TODO: remove once testing is done */}
-                  <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
                 </Route>
                 <Route
                   path='*'

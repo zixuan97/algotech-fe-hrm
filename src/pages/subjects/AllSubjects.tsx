@@ -20,7 +20,11 @@ import {
 import moment from 'moment';
 import React from 'react';
 import { generatePath, Link, useNavigate } from 'react-router-dom';
-import { EDIT_SUBJECT_URL, SUBJECTS_URL } from 'src/components/routes/routes';
+import {
+  EDIT_SUBJECT_URL,
+  SUBJECTS_URL,
+  VIEW_SUBJECT_URL
+} from 'src/components/routes/routes';
 import CreateSubjectModalButton from 'src/components/subjects/subject/CreateSubjectModalButton';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import { Subject, SubjectType } from 'src/models/types';
@@ -135,10 +139,9 @@ const AllSubjects = () => {
       title: 'Title',
       dataIndex: 'title',
       width: '60%',
-      // TODO: change to view page first
       render: (value, record) => (
         <Link
-          to={generatePath(EDIT_SUBJECT_URL, {
+          to={generatePath(VIEW_SUBJECT_URL, {
             subjectId: record.id.toString()
           })}
         >

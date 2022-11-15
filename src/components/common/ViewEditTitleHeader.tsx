@@ -23,7 +23,6 @@ import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { READABLE_DDMMYY_TIME_12H } from 'src/utils/dateUtils';
 import { getUserFullName } from 'src/utils/formatUtils';
 import '../../styles/common/common.scss';
-import { SUBJECTS_URL } from '../routes/routes';
 
 const { Title, Text } = Typography;
 
@@ -40,6 +39,7 @@ type ViewEditTitleHeaderProps = {
       title: string;
       body: string;
       deleteSuccessContent?: React.ReactNode;
+      deleteRedirectUrl?: string;
     };
   };
   updateLoading?: boolean;
@@ -64,6 +64,8 @@ const ViewEditTitleHeader = ({
   const [deleteLoading, setDeleteLoading] = React.useState<boolean>(false);
   const [deleteSuccess, setDeleteSuccess] = React.useState<boolean>(false);
 
+  const { deleteRedirectUrl } = editFunctions?.deleteModalProps || {};
+
   return (
     <div className='container-spaced-out' style={{ alignItems: 'center' }}>
       <Modal
@@ -74,7 +76,9 @@ const ViewEditTitleHeader = ({
             asyncFetchCallback(editFunctions?.onDelete(), () => {
               setDeleteSuccess(true);
               setDeleteLoading(false);
-              setTimeout(() => navigate(SUBJECTS_URL), 1500);
+              if (deleteRedirectUrl) {
+                setTimeout(() => navigate(deleteRedirectUrl), 1500);
+              }
             });
           }
         }}

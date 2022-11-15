@@ -14,7 +14,9 @@ export const PEOPLE_URL = ROOT_URL + 'people';
 // subjects routes
 export const SUBJECTS_URL = ROOT_URL + 'subjects';
 export const SUBJECT_ID_URL = SUBJECTS_URL + '/:subjectId';
+export const VIEW_SUBJECT_URL = SUBJECT_ID_URL + '/view';
 export const EDIT_SUBJECT_URL = SUBJECT_ID_URL + '/edit';
+export const VIEW_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/view';
 export const EDIT_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/edit';
 export const EDIT_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/edit';
 

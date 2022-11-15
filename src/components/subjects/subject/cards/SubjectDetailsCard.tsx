@@ -3,7 +3,7 @@ import moment from 'moment';
 import { User } from 'src/models/types';
 import { READABLE_DDMMYY_TIME_12H } from 'src/utils/dateUtils';
 import '../../../../styles/common/common.scss';
-import '../../../../styles/subjects/editSubject.scss';
+import '../../../../styles/subjects/subject.scss';
 
 const { Title } = Typography;
 
@@ -13,7 +13,7 @@ type SubjectDetailsCardProps = {
   lastUpdatedBy: User | undefined;
   lastUpdatedAt: Date | undefined;
   isPublished: boolean | undefined;
-  updateIsPublished: (checked: boolean) => void;
+  updateIsPublished?: (checked: boolean) => void;
 };
 
 const SubjectDetailsCard = ({
@@ -46,7 +46,11 @@ const SubjectDetailsCard = ({
               ).format(READABLE_DDMMYY_TIME_12H)}`}
           </Descriptions.Item>
           <Descriptions.Item label='Published'>
-            <Switch checked={isPublished} onChange={updateIsPublished} />
+            <Switch
+              checked={isPublished}
+              onChange={updateIsPublished}
+              disabled={!updateIsPublished}
+            />
           </Descriptions.Item>
         </Descriptions>
       </Space>
