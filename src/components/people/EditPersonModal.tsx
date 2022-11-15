@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import {
-  AutoComplete,
-  Divider,
   Form,
   Input,
   Modal,
@@ -10,7 +8,7 @@ import {
   Space,
   Typography
 } from 'antd';
-import { User } from 'src/models/types';
+import { User, JobRole } from 'src/models/types';
 import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
 import { useNavigate } from 'react-router-dom';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
@@ -21,13 +19,14 @@ const { Text } = Typography;
 type EditPersonModalProps = {
   open: boolean;
   allUsers?: User[];
+  allJobRoles?: JobRole[];
   user?: User;
   onConfirm: () => void;
   onClose: () => void;
 };
 
 const EditPersonModal = (props: EditPersonModalProps) => {
-  const { open, allUsers, user, onConfirm, onClose } = props;
+  const { open, allUsers, allJobRoles, user, onConfirm, onClose } = props;
   const navigate = useNavigate();
   const [createLoading, setCreateLoading] = React.useState<boolean>(false);
   const [createSuccess, setCreateSuccess] = React.useState<boolean>(false);
@@ -101,10 +100,14 @@ const EditPersonModal = (props: EditPersonModalProps) => {
                 allowClear
                 showArrow
                 placeholder='Select Roles'
-                defaultValue={['a10', 'c12']}
                 style={{ width: '100%' }}
-                options={options}
-              />
+              >
+                {allJobRoles?.map((option) => (
+                  <Option key={option.id} value={option.id}>
+                    {option.jobRole}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
           </Space>
           <Space direction='vertical' style={{ width: '100%' }}>

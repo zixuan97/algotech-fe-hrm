@@ -24,9 +24,9 @@ import {
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import ConfirmationModalButton from 'src/components/common/ConfirmationModalButton';
-import { getAllNonB2bUsers } from 'src/services/userService';
+import { getAllEmployees, getAllJobRoles } from 'src/services/userService';
 import { generatePath, Link, useNavigate } from 'react-router-dom';
-import { User } from 'src/models/types';
+import { User, JobRole } from 'src/models/types';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import EditPersonModal from 'src/components/people/EditPersonModal';
 import { PEOPLE_MANAGE_URL, PEOPLE_URL } from 'src/components/routes/routes';
@@ -81,8 +81,9 @@ const ManagePeople = () => {
   const [sortOption, setSortOption] = React.useState<SortOption | null>(null);
 
   const [editPersonModalOpen, setEditPersonModalOpen] =
-    useState<boolean>(false);
-  const [userToEdit, setUserToEdit] = useState<User>();
+    React.useState<boolean>(false);
+  const [userToEdit, setUserToEdit] = React.useState<User>();
+  const [jobRoles, setJobRoles] = React.useState<JobRole[]>([]);
 
   useEffect(() => {
     updateBreadcrumbItems([
@@ -125,7 +126,10 @@ const ManagePeople = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    asyncFetchCallback(getAllNonB2bUsers(), setUsers, () => void 0, {
+    asyncFetchCallback(getAllEmployees(), setUsers, () => void 0, {
+      updateLoading: setLoading
+    });
+    asyncFetchCallback(getAllJobRoles(), setJobRoles, () => void 0, {
       updateLoading: setLoading
     });
   }, []);
@@ -208,6 +212,7 @@ const ManagePeople = () => {
         <EditPersonModal
           open={editPersonModalOpen}
           allUsers={users}
+          allJobRoles={jobRoles}
           user={userToEdit}
           onConfirm={handleEditPerson}
           onClose={() => setEditPersonModalOpen(false)}
