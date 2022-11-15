@@ -1,9 +1,19 @@
 import axios from 'axios';
-import { LeaveApplication, LeaveQuota } from 'src/models/types';
+import {
+  EmployeeLeaveQuota,
+  LeaveApplication,
+  LeaveQuota
+} from 'src/models/types';
 import apiRoot from './apiRoot';
 
 export const getAllLeaveQuota = async (): Promise<LeaveQuota[]> => {
   return axios.get(`${apiRoot}/leave/allquota`).then((res) => res.data);
+};
+
+export const getAllEmployeeLeaveQuota = async (): Promise<
+  EmployeeLeaveQuota[]
+> => {
+  return axios.get(`${apiRoot}/leave/records/all`).then((res) => res.data);
 };
 
 export const getTierSize = async (tierName: string): Promise<number> => {
@@ -28,6 +38,10 @@ export const deleteAndReplaceLeaveQuota = async (
   body: object
 ): Promise<void> => {
   return axios.post(`${apiRoot}/leave/deletedtier/newtier`, body);
+};
+
+export const editEmployeeLeaveQuota = async (body: object): Promise<void> => {
+  return axios.put(`${apiRoot}/leave/employee/quota`, body);
 };
 
 export const getAllLeaveApplications = async (): Promise<

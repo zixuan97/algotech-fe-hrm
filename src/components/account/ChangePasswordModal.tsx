@@ -110,7 +110,9 @@ const ChangePasswordModal = ({
             />
           )}
           {alert && (
-            <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+            <div style={{ paddingTop: '1rem' }}>
+              <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+            </div>
           )}
         </div>
         <Form

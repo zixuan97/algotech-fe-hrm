@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { Button, Table, Typography } from 'antd';
+import { Button, Input, Select, Space, Table, Typography } from 'antd';
 import authContext from 'src/context/auth/authContext';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import { getLeaveApplicationsByEmployeeId } from 'src/services/leaveService';
@@ -12,8 +12,47 @@ import {
   MY_LEAVE_APPLICATIONS_URL,
   LEAVE_APPLICATION_DETAILS_URL
 } from 'src/components/routes/routes';
-import { PlusOutlined } from '@ant-design/icons';
 import CreateLeaveApplicationModalButton from 'src/components/leave/CreateLeaveApplicationModalButton';
+import { SearchOutlined } from '@ant-design/icons';
+
+interface SortOption {
+  sortType: string;
+  label: string;
+  comparator: (a: LeaveApplication, b: LeaveApplication) => number;
+}
+
+const sortOptions: SortOption[] = [
+  {
+    sortType: 'ApplicationDateAsc',
+    label: 'Application Date - Earliest',
+    comparator: (a, b) => moment(a.applicationDate).diff(b.applicationDate)
+  },
+  {
+    sortType: 'ApplicationDateDesc',
+    label: 'Application Date - Latest',
+    comparator: (a, b) => moment(b.applicationDate).diff(a.applicationDate)
+  },
+  {
+    sortType: 'StartDateAsc',
+    label: 'Start Date - Earliest',
+    comparator: (a, b) => moment(a.startDate).diff(b.startDate)
+  },
+  {
+    sortType: 'StartDateDesc',
+    label: 'Start Date - Latest',
+    comparator: (a, b) => moment(b.startDate).diff(a.startDate)
+  },
+  {
+    sortType: 'EndDateAsc',
+    label: 'End Date - Earliest',
+    comparator: (a, b) => moment(a.endDate).diff(b.endDate)
+  },
+  {
+    sortType: 'EndDateDesc',
+    label: 'End Date - Latest',
+    comparator: (a, b) => moment(b.endDate).diff(a.endDate)
+  }
+];
 
 const ViewMyLeaveApplications = () => {
   const navigate = useNavigate();
@@ -25,6 +64,24 @@ const ViewMyLeaveApplications = () => {
     LeaveApplication[]
   >([]);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [searchField, setSearchField] = React.useState<string>('');
+  const [sortOption, setSortOption] = React.useState<SortOption | null>();
+
+  const sortedAndFilteredLeaveApplications = React.useMemo(() => {
+    const filteredLeaveApplications = leaveApplications.filter(
+      (leaveApplication) => {
+        const { leaveType, status } = leaveApplication;
+        const searchFieldLower = searchField.toLowerCase();
+        return (
+          leaveType.toLowerCase().includes(searchFieldLower) ||
+          status.toLowerCase().includes(searchFieldLower)
+        );
+      }
+    );
+    return sortOption
+      ? filteredLeaveApplications.sort(sortOption.comparator)
+      : filteredLeaveApplications;
+  }, [leaveApplications, searchField, sortOption]);
 
   useEffect(() => {
     updateBreadcrumbItems([
@@ -41,10 +98,8 @@ const ViewMyLeaveApplications = () => {
       asyncFetchCallback(
         getLeaveApplicationsByEmployeeId(user.id),
         (res) => {
-          const sortedData = res.sort((a, b) =>
-            moment(a.startDate).diff(b.startDate)
-          );
-          setLeaveApplications(sortedData);
+          setSortOption(sortOptions[2]);
+          setLeaveApplications(res);
         },
         () => void 0,
         { updateLoading: setLoading }
@@ -119,21 +174,57 @@ const ViewMyLeaveApplications = () => {
   return (
     <span>
       <Typography.Title level={2}>My Leave Applications</Typography.Title>
-      <Table
-        bordered
-        dataSource={leaveApplications}
-        columns={columns}
-        loading={loading}
-        summary={() => (
-          <Table.Summary>
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0} colSpan={6}>
-                <CreateLeaveApplicationModalButton employeeId={user?.id} />
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          </Table.Summary>
-        )}
-      />
+      <Space direction='vertical' style={{ width: '100%' }} size='middle'>
+        <Space size='middle'>
+          <Space direction='vertical' style={{ width: '100%' }}>
+            <Typography.Text>Search</Typography.Text>
+            <Input
+              style={{ width: '22em' }}
+              name='title'
+              size='large'
+              placeholder='Search Type of Leave, Status'
+              prefix={<SearchOutlined />}
+              onChange={(e) => setSearchField(e.target.value)}
+            />
+          </Space>
+          <Space direction='vertical' style={{ width: '100%' }}>
+            <Typography.Text>Sort By</Typography.Text>
+            <Select
+              placeholder='Sort By'
+              size='large'
+              style={{ width: '14em' }}
+              value={sortOptions[2].sortType}
+              onChange={(value) =>
+                setSortOption(
+                  sortOptions.find((opt) => opt.sortType === value) ?? null
+                )
+              }
+            >
+              {sortOptions.map((option) => (
+                <Select.Option key={option.sortType}>
+                  {option.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Space>
+        </Space>
+        <Table
+          bordered
+          dataSource={sortedAndFilteredLeaveApplications}
+          columns={columns}
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+          summary={() => (
+            <Table.Summary>
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} colSpan={6}>
+                  <CreateLeaveApplicationModalButton employeeId={user?.id} />
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            </Table.Summary>
+          )}
+        />
+      </Space>
     </span>
   );
 };
