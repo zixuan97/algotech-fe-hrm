@@ -36,17 +36,23 @@
   padding-top: 1rem;
 }
 
-.leave-application-status-title {
-  padding-top: 0.5rem;
-  padding-right: 2rem;
-}
-
 .leave-application-displayed-field {
   display: flex;
   width: 100%;
   flex-direction: row;
   align-items: center;
   padding-bottom: 2rem;
+  white-space: nowrap;
+}
+
+.leave-application-title {
+  padding-top: 0.5rem;
+  padding-right: 2rem;
+}
+
+.leave-application-status-title {
+  font-weight: bold;
+  padding-right: 1rem;
 }
 
 .leave-application-select {
@@ -61,4 +67,11 @@
   height: 35px !important;
   font-size: 14px !important;
   color: black !important;
+}
+
+.leave-application-vet-button-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-end;
 }

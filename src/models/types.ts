@@ -27,6 +27,11 @@ export interface User {
   isVerified: boolean;
   company?: string;
   contactNo?: string;
+  tier: string;
+  managerId?: number;
+  manager?: User;
+  jobRoles?: string[];
+  subordinates?: User[];
 }
 
 export interface Step {
@@ -111,6 +116,18 @@ export interface LeaveQuota {
   unpaid: number;
 }
 
+export interface EmployeeLeaveQuota {
+  id: number;
+  tier: string;
+  employee: User;
+  annualQuota: number;
+  childcareQuota: number;
+  compassionateQuota: number;
+  parentalQuota: number;
+  sickQuota: number;
+  unpaidQuota: number;
+}
+
 export interface LeaveApplication {
   id: number;
   applicationDate: Date;
@@ -134,6 +151,11 @@ export interface CalendarObject {
   employeeId: number;
   employeeName: string;
   color: string;
+}
+
+export interface TreeNode {
+  id: number;
+  subordinates: TreeNode[];
 }
 
 export enum ContentStatus {

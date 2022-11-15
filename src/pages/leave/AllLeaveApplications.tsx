@@ -3,17 +3,17 @@ import { useNavigate, generatePath } from 'react-router-dom';
 import { Button, Input, Select, Space, Table, Typography } from 'antd';
 import authContext from 'src/context/auth/authContext';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { getLeaveApplicationsByEmployeeId } from 'src/services/leaveService';
+import { getAllLeaveApplications } from 'src/services/leaveService';
 import { LeaveApplication } from 'src/models/types';
 import moment from 'moment';
 import LeaveStatusCell from 'src/components/leave/LeaveStatusCell';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import {
-  MY_LEAVE_APPLICATIONS_URL,
+  ALL_LEAVE_APPLICATIONS_URL,
   LEAVE_APPLICATION_DETAILS_URL
 } from 'src/components/routes/routes';
-import CreateLeaveApplicationModalButton from 'src/components/leave/CreateLeaveApplicationModalButton';
 import { SearchOutlined } from '@ant-design/icons';
+import { getUserFullName } from 'src/utils/formatUtils';
 
 interface SortOption {
   sortType: string;
@@ -54,7 +54,7 @@ const sortOptions: SortOption[] = [
   }
 ];
 
-const ViewMyLeaveApplications = () => {
+const AllLeaveApplications = () => {
   const navigate = useNavigate();
 
   const { user } = React.useContext(authContext);
@@ -65,7 +65,7 @@ const ViewMyLeaveApplications = () => {
   >([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [searchField, setSearchField] = React.useState<string>('');
-  const [sortOption, setSortOption] = React.useState<SortOption | null>();
+  const [sortOption, setSortOption] = React.useState<SortOption | null>(null);
 
   const sortedAndFilteredLeaveApplications = React.useMemo(() => {
     const filteredLeaveApplications = leaveApplications.filter(
@@ -86,26 +86,27 @@ const ViewMyLeaveApplications = () => {
   useEffect(() => {
     updateBreadcrumbItems([
       {
-        label: 'My Leave Applications',
-        to: MY_LEAVE_APPLICATIONS_URL
+        label: 'All Leave Applications',
+        to: ALL_LEAVE_APPLICATIONS_URL
       }
     ]);
   }, [updateBreadcrumbItems]);
 
   useEffect(() => {
-    if (user) {
-      setLoading(true);
-      asyncFetchCallback(
-        getLeaveApplicationsByEmployeeId(user.id),
-        (res) => {
-          setSortOption(sortOptions[2]);
-          setLeaveApplications(res);
-        },
-        () => void 0,
-        { updateLoading: setLoading }
-      );
-    }
-  }, [user]);
+    setLoading(true);
+    asyncFetchCallback(
+      getAllLeaveApplications(),
+      (res) => {
+        const filteredData = res.filter(
+          (leaveApplication) => leaveApplication.employeeId !== user?.id
+        );
+        setSortOption(sortOptions[2]);
+        setLeaveApplications(filteredData);
+      },
+      () => void 0,
+      { updateLoading: setLoading }
+    );
+  }, [user?.id]);
 
   const columns = [
     {
@@ -113,6 +114,10 @@ const ViewMyLeaveApplications = () => {
       render: (record: LeaveApplication) => {
         return <>{moment(record.applicationDate).format('DD MMM YYYY')}</>;
       }
+    },
+    {
+      title: 'Applicant',
+      render: (record: LeaveApplication) => getUserFullName(record.employee)
     },
     {
       title: 'Leave Duration',
@@ -172,8 +177,8 @@ const ViewMyLeaveApplications = () => {
   ];
 
   return (
-    <span>
-      <Typography.Title level={2}>My Leave Applications</Typography.Title>
+    <div>
+      <Typography.Title level={2}>All Leave Applications</Typography.Title>
       <Space direction='vertical' style={{ width: '100%' }} size='middle'>
         <Space size='middle'>
           <Space direction='vertical' style={{ width: '100%' }}>
@@ -201,7 +206,7 @@ const ViewMyLeaveApplications = () => {
               }
             >
               {sortOptions.map((option) => (
-                <Select.Option key={option.sortType}>
+                <Select.Option key={option.sortType} value={option.sortType}>
                   {option.label}
                 </Select.Option>
               ))}
@@ -214,19 +219,10 @@ const ViewMyLeaveApplications = () => {
           columns={columns}
           loading={loading}
           pagination={{ pageSize: 10 }}
-          summary={() => (
-            <Table.Summary>
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0} colSpan={6}>
-                  <CreateLeaveApplicationModalButton employeeId={user?.id} />
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            </Table.Summary>
-          )}
         />
       </Space>
-    </span>
+    </div>
   );
 };
 
-export default ViewMyLeaveApplications;
+export default AllLeaveApplications;

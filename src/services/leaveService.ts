@@ -1,9 +1,25 @@
 import axios from 'axios';
-import { LeaveApplication, LeaveQuota } from 'src/models/types';
+import {
+  EmployeeLeaveQuota,
+  LeaveApplication,
+  LeaveQuota
+} from 'src/models/types';
 import apiRoot from './apiRoot';
 
 export const getAllLeaveQuota = async (): Promise<LeaveQuota[]> => {
   return axios.get(`${apiRoot}/leave/allquota`).then((res) => res.data);
+};
+
+export const getAllEmployeeLeaveQuota = async (): Promise<
+  EmployeeLeaveQuota[]
+> => {
+  return axios.get(`${apiRoot}/leave/records/all`).then((res) => res.data);
+};
+
+export const getTierSize = async (tierName: string): Promise<number> => {
+  return axios
+    .get(`${apiRoot}/leave/size/tier/${tierName}`)
+    .then((res) => res.data);
 };
 
 export const createLeaveQuota = async (body: object): Promise<void> => {
@@ -16,6 +32,22 @@ export const editLeaveQuota = async (body: object): Promise<void> => {
 
 export const deleteLeaveQuota = async (id: string | number): Promise<void> => {
   return axios.delete(`${apiRoot}/leave/quota/${id}`);
+};
+
+export const deleteAndReplaceLeaveQuota = async (
+  body: object
+): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/deletedtier/newtier`, body);
+};
+
+export const editEmployeeLeaveQuota = async (body: object): Promise<void> => {
+  return axios.put(`${apiRoot}/leave/employee/quota`, body);
+};
+
+export const getAllLeaveApplications = async (): Promise<
+  LeaveApplication[]
+> => {
+  return axios.get(`${apiRoot}/leave/all`).then((res) => res.data);
 };
 
 export const getLeaveApplicationsByEmployeeId = async (
@@ -36,8 +68,22 @@ export const getLeaveApplicationById = async (
   return axios.get(`${apiRoot}/leave/${id}`).then((res) => res.data);
 };
 
+export const createLeaveApplication = async (
+  body: object
+): Promise<LeaveApplication> => {
+  return axios.post(`${apiRoot}/leave`, body).then((res) => res.data);
+};
+
 export const editLeaveApplication = async (body: object): Promise<void> => {
   return axios.put(`${apiRoot}/leave`, body);
+};
+
+export const vetLeaveApplication = async (body: object): Promise<void> => {
+  return axios.put(`${apiRoot}/leave/vet`, body, {
+    headers: {
+      'x-access-token': axios.defaults.headers.common['x-access-token']
+    }
+  });
 };
 
 export const cancelLeaveApplication = async (

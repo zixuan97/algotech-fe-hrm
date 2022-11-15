@@ -24,6 +24,8 @@ import {
   MY_ACCOUNT_URL,
   MY_LEAVE_APPLICATIONS_URL,
   PEOPLE_URL,
+  PEOPLE_MANAGE_URL,
+  PEOPLE_ROLES_URL,
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
@@ -32,7 +34,9 @@ import {
   COMPANY_LEAVE_SCHEDULE_URL,
   LEAVE_APPLICATION_DETAILS_URL,
   VIEW_SUBJECT_URL,
-  VIEW_TOPIC_URL
+  VIEW_TOPIC_URL,
+  ALL_LEAVE_APPLICATIONS_URL,
+  EMPLOYEE_LEAVE_QUOTA_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -48,6 +52,11 @@ import ViewCompanyLeaveSchedule from './pages/leave/ViewCompanyLeaveSchedule';
 import LeaveApplicationDetails from './pages/leave/LeaveApplicationDetails';
 import ViewSubject from './pages/subjects/ViewSubject';
 import ViewTopic from './pages/subjects/ViewTopic';
+import AllLeaveApplications from './pages/leave/AllLeaveApplications';
+import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
+import OrganisationChart from './pages/people/OrganisationInfo';
+import ManagePeople from './pages/people/ManagePeople';
+import ManageRoles from './pages/people/ManageRoles';
 
 const { Footer } = Layout;
 
@@ -98,7 +107,9 @@ const App = () => {
                   {/* company routes */}
                   <Route path={COMPANY_URL} element={<></>} />
                   {/* people routes */}
-                  <Route path={PEOPLE_URL} element={<></>} />
+                  <Route path={PEOPLE_URL} element={<OrganisationChart />} />
+                  <Route path={PEOPLE_MANAGE_URL} element={<ManagePeople />} />
+                  <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
                   <Route path={VIEW_SUBJECT_URL} element={<ViewSubject />} />
@@ -121,8 +132,16 @@ const App = () => {
                     element={<ManageLeaveQuota />}
                   />
                   <Route
+                    path={EMPLOYEE_LEAVE_QUOTA_URL}
+                    element={<ManageEmployeeLeaveQuota />}
+                  />
+                  <Route
                     path={COMPANY_LEAVE_SCHEDULE_URL}
                     element={<ViewCompanyLeaveSchedule />}
+                  />
+                  <Route
+                    path={ALL_LEAVE_APPLICATIONS_URL}
+                    element={<AllLeaveApplications />}
                   />
                   <Route
                     path={MY_LEAVE_APPLICATIONS_URL}

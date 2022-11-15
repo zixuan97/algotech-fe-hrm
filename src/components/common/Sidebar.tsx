@@ -17,7 +17,11 @@ import {
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
-  COMPANY_LEAVE_SCHEDULE_URL
+  COMPANY_LEAVE_SCHEDULE_URL,
+  ALL_LEAVE_APPLICATIONS_URL,
+  EMPLOYEE_LEAVE_QUOTA_URL,
+  PEOPLE_MANAGE_URL,
+  PEOPLE_ROLES_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 
@@ -36,9 +40,23 @@ const menuItems: MenuProps['items'] = [
   //   icon: <ShopOutlined />
   // },
   {
-    label: <Link to={PEOPLE_URL}>People</Link>,
-    key: PEOPLE_URL,
-    icon: <TeamOutlined />
+    label: 'People',
+    key: 'people',
+    icon: <TeamOutlined />,
+    children: [
+      {
+        label: <Link to={PEOPLE_URL}>Org Chart</Link>,
+        key: 'orgchart'
+      },
+      {
+        label: <Link to={PEOPLE_MANAGE_URL}>Manage People</Link>,
+        key: 'manage-people'
+      },
+      {
+        label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
+        key: 'roles'
+      }
+    ]
   },
   {
     label: <Link to={SUBJECTS_URL}>Subjects</Link>,
@@ -65,10 +83,20 @@ const menuItems: MenuProps['items'] = [
         key: 'leave-quota'
       },
       {
+        label: <Link to={EMPLOYEE_LEAVE_QUOTA_URL}>Employee Leave Quota</Link>,
+        key: 'employee-leave-quota'
+      },
+      {
         label: (
           <Link to={COMPANY_LEAVE_SCHEDULE_URL}>Company Leave Schedule</Link>
         ),
         key: 'company-leave-schedule'
+      },
+      {
+        label: (
+          <Link to={ALL_LEAVE_APPLICATIONS_URL}>All Leave Applications</Link>
+        ),
+        key: 'all-leave-applications'
       },
       {
         label: (
