@@ -21,3 +21,7 @@ export const editEmployee = async (body: object): Promise<void> => {
 export const getAllJobRoles = async (): Promise<JobRole[]> => {
   return axios.get(`${apiRoot}/user/jobroles/all`).then((res) => res.data);
 };
+
+export const addJobRolesToUser = async (body: object): Promise<User> => {
+  return axios.put(`${apiRoot}/user/jobroles`, body);
+};

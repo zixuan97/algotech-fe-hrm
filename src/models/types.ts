@@ -28,7 +28,7 @@ export interface User {
   company?: string;
   contactNo?: string;
   tier: string;
-  managerId?: number;
+  managerId?: number | null;
   manager?: User;
   jobRoles?: JobRole[];
   subordinates?: User[];
