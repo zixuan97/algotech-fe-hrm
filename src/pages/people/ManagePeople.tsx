@@ -157,14 +157,15 @@ const ManagePeople = () => {
     {
       title: 'Full Name',
       dataIndex: 'firstName',
-      render: (text, record) => (
-        <span>
-          {record.id !== user?.id
-            ? text + ' ' + record.lastName
-            : text + ' ' + record.lastName + ' (Me)'}
-          {/* <Tag color='gold'>Me</Tag> */}
-        </span>
-      )
+      render: (text, record) =>
+        record.id !== user?.id ? (
+          <span>{text + ' ' + record.lastName}</span>
+        ) : (
+          <span>
+            {text + ' ' + record.lastName + ' '}
+            <Tag color='gold'>Me</Tag>
+          </span>
+        )
     },
     {
       title: 'Email',
