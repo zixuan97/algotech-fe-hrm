@@ -1,7 +1,6 @@
 import ReactQuill from 'react-quill';
 import 'quill-divider';
-// import 'react-quill/dist/quill.snow.css';
-import '../styles/editor/editor.scss';
+import '../../styles/editor/editor.scss';
 
 const toolbarOptions = [
   //   [{ font: ['sans-serif', 'serif'] }],
@@ -36,7 +35,6 @@ const TextEditor = ({
   className = '',
   style = {}
 }: TextEditorProps) => {
-  //   const [content, setContent] = React.useState<string>('');
   return (
     <div className={className} style={style}>
       <ReactQuill

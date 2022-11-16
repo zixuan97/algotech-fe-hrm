@@ -1,63 +1,72 @@
 import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/pages/leaveQuota.scss';
-import { Button, Divider, Form, Popconfirm, Table, Typography } from 'antd';
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Popconfirm,
+  Space,
+  Table,
+  Typography
+} from 'antd';
 import {
   CloseOutlined,
   EditOutlined,
-  PlusOutlined,
-  SaveOutlined
+  SaveOutlined,
+  SearchOutlined
 } from '@ant-design/icons';
-import { LeaveQuota, User, UserRole, UserStatus } from 'src/models/types';
+import { EmployeeLeaveQuota, LeaveQuota } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import LeaveQuotaEditableCell from 'src/components/leave/LeaveQuotaEditableCell';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import { EMPLOYEE_LEAVE_QUOTA_URL } from 'src/components/routes/routes';
 import { getUserFullName } from 'src/utils/formatUtils';
-import { getAllLeaveQuota } from 'src/services/leaveService';
-
-export interface EmployeeLeaveQuota {
-  employee: User;
-  annualQuota: number;
-  childcareQuota: number;
-  compassionateQuota: number;
-  parentalQuota: number;
-  sickQuota: number;
-  unpaidQuota: number;
-}
-
-const data = [
-  {
-    employee: {
-      id: 5,
-      firstName: 'Zi Kun',
-      lastName: 'Teng',
-      email: 'meleenoob971+b2b@gmail.com',
-      password: '',
-      role: UserRole.ADMIN,
-      status: UserStatus.ACTIVE,
-      isVerified: false,
-      tier: 'Tier 1'
-    },
-    annualQuota: 10,
-    childcareQuota: 10,
-    compassionateQuota: 15,
-    parentalQuota: 10,
-    sickQuota: 10,
-    unpaidQuota: 10
-  }
-];
+import {
+  getAllEmployeeLeaveQuota,
+  getAllLeaveQuota,
+  editEmployeeLeaveQuota
+} from 'src/services/leaveService';
+import authContext from 'src/context/auth/authContext';
 
 const ManageEmployeeLeaveQuota = () => {
   const [form] = Form.useForm();
+  const { user } = React.useContext(authContext);
   const { updateBreadcrumbItems } = useContext(breadcrumbContext);
 
-  //   const [data, setData] = useState<EmployeeLeaveQuota[]>([]);
-  const [currentRow, setCurrentRow] = useState<Partial<EmployeeLeaveQuota>>();
+  const [leaveQuotas, setLeaveQuotas] = useState<EmployeeLeaveQuota[]>([]);
   const [tiers, setTiers] = useState<LeaveQuota[]>([]);
-  const [editingKey, setEditingKey] = useState<number | undefined>();
+  const [editingKey, setEditingKey] = useState<number>(-1);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [searchField, setSearchField] = React.useState<string>('');
   const [alert, setAlert] = React.useState<AlertType | null>(null);
+
+  const tiersObj: { [key: string]: any } = tiers.reduce((object, item) => {
+    object[item.tier] = {
+      ...item,
+      annualQuota: item.annual,
+      childcareQuota: item.childcare,
+      compassionateQuota: item.compassionate,
+      parentalQuota: item.parental,
+      sickQuota: item.sick,
+      unpaidQuota: item.unpaid
+    };
+    return object;
+  }, {} as { [key: string]: any });
+
+  const filteredLeaveQuotas = React.useMemo(() => {
+    const finalLeaveQuotas = leaveQuotas.filter((leaveQuota) => {
+      const { employee, tier } = leaveQuota;
+      const fullName = getUserFullName(employee);
+      const searchFieldLower = searchField.toLowerCase();
+      return (
+        tier.toLowerCase().includes(searchFieldLower) ||
+        fullName.toLowerCase().includes(searchFieldLower)
+      );
+    });
+    return finalLeaveQuotas;
+  }, [leaveQuotas, searchField]);
 
   const isEditing = (record: EmployeeLeaveQuota) =>
     record.employee.id === editingKey;
@@ -74,6 +83,28 @@ const ManageEmployeeLeaveQuota = () => {
   useEffect(() => {
     setLoading(true);
     asyncFetchCallback(
+      getAllEmployeeLeaveQuota(),
+      (res) => {
+        const filteredData = res.filter(
+          (leaveQuota) => leaveQuota.employee.id !== user?.id
+        );
+        const mappedData = filteredData.map((item) => ({
+          ...item,
+          tier: item.employee.tier
+        }));
+        const sortedData = mappedData.sort((a, b) =>
+          a.tier.localeCompare(b.tier)
+        );
+        setLeaveQuotas(sortedData);
+      },
+      () => void 0,
+      { updateLoading: setLoading }
+    );
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    asyncFetchCallback(
       getAllLeaveQuota(),
       (res) => {
         setTiers(res);
@@ -84,8 +115,6 @@ const ManageEmployeeLeaveQuota = () => {
   }, []);
 
   const edit = (record: EmployeeLeaveQuota) => {
-    const row = data.find((item) => item.employee.id === record.employee.id);
-    setCurrentRow(row);
     form.setFieldsValue({
       ...record
     });
@@ -93,17 +122,70 @@ const ManageEmployeeLeaveQuota = () => {
   };
 
   const cancel = () => {
-    setEditingKey(undefined);
-    setCurrentRow({});
+    setEditingKey(-1);
+  };
+
+  const save = async (employeeId: number) => {
+    try {
+      setLoading(true);
+      const row = (await form.validateFields()) as EmployeeLeaveQuota;
+      const newLeaveQuotas = [...(leaveQuotas as EmployeeLeaveQuota[])];
+      const index = newLeaveQuotas.findIndex(
+        (item) => employeeId === item.employee.id
+      );
+      const item = newLeaveQuotas[index];
+      newLeaveQuotas.splice(index, 1, {
+        ...item,
+        ...row
+      });
+      const sortedData = newLeaveQuotas.sort((a, b) =>
+        a.tier.localeCompare(b.tier)
+      );
+
+      setLeaveQuotas(sortedData);
+      setEditingKey(-1);
+
+      const reqBody = {
+        employeeId: item.employee.id,
+        annualQuota: row.annualQuota,
+        childcareQuota: row.childcareQuota,
+        parentalQuota: row.parentalQuota,
+        compassionateQuota: row.compassionateQuota,
+        sickQuota: row.sickQuota,
+        unpaidQuota: row.unpaidQuota,
+        tier: row.tier
+      };
+
+      await asyncFetchCallback(
+        editEmployeeLeaveQuota(reqBody),
+        (res) => {
+          setAlert({
+            type: 'success',
+            message: 'Employee leave quota edited successfully!'
+          });
+          setLoading(false);
+        },
+        (err) => {
+          setAlert({
+            type: 'error',
+            message:
+              'Employee leave quota was not created successfully, please try again!'
+          });
+          setLoading(false);
+        }
+      );
+    } catch (err) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onInputChange = (value: string, name: string) => {
-    console.log(currentRow);
-    console.log(value);
     if (name === 'tier') {
-      setCurrentRow((old) => ({ ...old, [name]: value }));
-    } else {
-      setCurrentRow((old) => ({ ...old, [name]: Number(value) }));
+      form.setFieldsValue({
+        ...tiersObj[value]
+      });
     }
   };
 
@@ -116,7 +198,7 @@ const ManageEmployeeLeaveQuota = () => {
     {
       title: 'Tier',
       name: 'tier',
-      render: (record: EmployeeLeaveQuota) => record.employee.tier,
+      dataIndex: 'tier',
       editable: true
     },
     {
@@ -163,7 +245,11 @@ const ManageEmployeeLeaveQuota = () => {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Button type='primary' icon={<SaveOutlined />} onClick={() => {}} />
+            <Button
+              type='primary'
+              icon={<SaveOutlined />}
+              onClick={() => save(editingKey)}
+            />
             <Divider type='vertical' />
             <Popconfirm
               title='Are you sure you want to cancel?'
@@ -194,11 +280,10 @@ const ManageEmployeeLeaveQuota = () => {
     return {
       ...col,
       onCell: (record: EmployeeLeaveQuota) => ({
-        record,
-        inputType: col.name === 'tier' ? 'select' : 'number',
+        editing: isEditing(record),
         name: col.name,
         title: col.title,
-        editing: isEditing(record),
+        inputType: col.name === 'tier' ? 'select' : 'number',
         handleInputChange: onInputChange,
         selectedTier: record.employee.tier,
         tiers: tiers
@@ -211,26 +296,40 @@ const ManageEmployeeLeaveQuota = () => {
       <Typography.Title level={2}>
         Manage Individual Employee Leave Quota
       </Typography.Title>
-      {alert && (
-        <div className='leave-quota-alert'>
-          <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
-        </div>
-      )}
-      <Table
-        components={{
-          body: {
-            cell: LeaveQuotaEditableCell
-          }
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName='editable-row'
-        pagination={{
-          onChange: cancel
-        }}
-        loading={loading}
-      />
+      <Space direction='vertical' style={{ width: '100%' }} size='middle'>
+        <Space direction='vertical' style={{ width: '100%' }}>
+          <Typography.Text>Search</Typography.Text>
+          <Input
+            style={{ width: '22em' }}
+            name='title'
+            size='large'
+            placeholder='Search Employee Name, Tier'
+            prefix={<SearchOutlined />}
+            onChange={(e) => setSearchField(e.target.value)}
+          />
+        </Space>
+        {alert && (
+          <div style={{ width: 'max-content' }}>
+            <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+          </div>
+        )}
+        <Table
+          components={{
+            body: {
+              cell: LeaveQuotaEditableCell
+            }
+          }}
+          bordered
+          dataSource={filteredLeaveQuotas}
+          columns={mergedColumns}
+          rowClassName='editable-row'
+          pagination={{
+            onChange: cancel,
+            pageSize: 10
+          }}
+          loading={loading}
+        />
+      </Space>
     </Form>
   );
 };

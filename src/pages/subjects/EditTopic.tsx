@@ -1,17 +1,18 @@
 import { Button, Input, Select, Space, Spin, Typography } from 'antd';
 import React from 'react';
-import TextEditor from '../TextEditor';
+import TextEditor from '../../components/common/TextEditor';
 import '../../styles/common/common.scss';
-import '../../styles/subjects/editTopic.scss';
-import { PlusOutlined } from '@ant-design/icons';
+import '../../styles/subjects/topic.scss';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { ContentStatus, Step, Topic } from 'src/models/types';
 import { isEqual, startCase } from 'lodash';
 import StepsList from 'src/components/subjects/topic/StepsList';
 import { stripHtml } from 'src/utils/formatUtils';
-import { generatePath, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
   createStep,
+  deleteTopic,
   getTopicById,
   updateStep,
   updateTopic
@@ -20,7 +21,9 @@ import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import {
   EDIT_SUBJECT_URL,
   EDIT_TOPIC_URL,
-  SUBJECTS_URL
+  SUBJECTS_URL,
+  VIEW_SUBJECT_URL,
+  VIEW_TOPIC_URL
 } from 'src/components/routes/routes';
 import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
 import { getNewStep } from 'src/components/subjects/topic/topicHelper';
@@ -30,6 +33,7 @@ const { Option } = Select;
 
 const EditTopic = () => {
   const { subjectId, topicId } = useParams();
+  const navigate = useNavigate();
   const { updateBreadcrumbItems } = React.useContext(breadcrumbContext);
 
   const [selectedStep, setSelectedStep] = React.useState<Step | null>(null);
@@ -93,6 +97,26 @@ const EditTopic = () => {
       );
     }
   }, [topic?.steps, selectedStep]);
+
+  const currStepIdx = topic?.steps.findIndex(
+    (step) => step.id === selectedStep?.id
+  );
+
+  const moveToNextStep = () => {
+    if (
+      currStepIdx !== undefined &&
+      topic?.steps &&
+      currStepIdx < topic.steps.length - 1
+    ) {
+      setSelectedStep(topic.steps[currStepIdx + 1]);
+    }
+  };
+
+  const moveToPreviousStep = () => {
+    if (currStepIdx !== undefined && topic?.steps && currStepIdx > 0) {
+      setSelectedStep(topic.steps[currStepIdx - 1]);
+    }
+  };
 
   const editNamedField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -158,6 +182,26 @@ const EditTopic = () => {
           title='Edit Topic'
           inEditMode={true}
           updateLoading={updateTopicLoading}
+          editFunctions={{
+            deleteModalProps: {
+              title: 'Confirm Delete Topic',
+              body: `Are you sure you want to delete ${editTopic?.title}?`,
+              deleteSuccessContent: (
+                <Space>
+                  <Text>
+                    {`Topic successfully deleted! Redirecting you back to ${editTopic?.subject.title} subject page...`}
+                  </Text>
+                  <LoadingOutlined />
+                </Space>
+              ),
+              deleteRedirectUrl: generatePath(VIEW_SUBJECT_URL, { subjectId })
+            },
+            onView: () =>
+              navigate(generatePath(VIEW_TOPIC_URL, { subjectId, topicId })),
+            onDelete: async () => {
+              editTopic && deleteTopic(editTopic.id);
+            }
+          }}
           lastUpdatedInfo={
             topic
               ? {
@@ -258,8 +302,21 @@ const EditTopic = () => {
               stripHtml(selectedStep?.content).length
             }`}</Text>
             <Space style={{ alignSelf: 'flex-end' }}>
-              <Button style={{ width: '10em' }}>Previous Step</Button>
-              <Button style={{ width: '10em' }} type='primary'>
+              <Button
+                style={{ width: '10em' }}
+                onClick={() => moveToPreviousStep()}
+                disabled={currStepIdx === 0}
+              >
+                Previous Step
+              </Button>
+              <Button
+                style={{ width: '10em' }}
+                type='primary'
+                onClick={() => moveToNextStep()}
+                disabled={
+                  topic?.steps && currStepIdx === topic.steps.length - 1
+                }
+              >
                 Next Step
               </Button>
             </Space>

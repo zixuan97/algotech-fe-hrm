@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Input, Space, Spin, Typography } from 'antd';
 import '../../styles/common/common.scss';
-import '../../styles/subjects/editSubject.scss';
-import { generatePath, useParams } from 'react-router-dom';
+import '../../styles/subjects/subject.scss';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { Subject, User } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
@@ -19,7 +19,11 @@ import SubjectDetailsCard from 'src/components/subjects/subject/cards/SubjectDet
 import CompletionRateCard from 'src/components/subjects/subject/cards/CompletionRateCard';
 import AddTopicOrQuizButton from 'src/components/subjects/subject/edit/AddTopicOrQuizButton';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
-import { EDIT_SUBJECT_URL, SUBJECTS_URL } from 'src/components/routes/routes';
+import {
+  EDIT_SUBJECT_URL,
+  SUBJECTS_URL,
+  VIEW_SUBJECT_URL
+} from 'src/components/routes/routes';
 import { getSubjectTypeIcon } from './AllSubjects';
 import QuizTopicPanel from 'src/components/subjects/subject/panels/QuizTopicPanel';
 import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
@@ -29,6 +33,7 @@ const { Text, Title } = Typography;
 
 const EditSubject = () => {
   const { subjectId } = useParams();
+  const navigate = useNavigate();
   const { updateBreadcrumbItems } = React.useContext(breadcrumbContext);
 
   const [subject, setSubject] = React.useState<Subject | null>(null);
@@ -158,11 +163,13 @@ const EditSubject = () => {
                   </Text>
                   <LoadingOutlined />
                 </Space>
-              )
+              ),
+              deleteRedirectUrl: SUBJECTS_URL
             },
-            onView: () => void 0,
+            onView: () =>
+              navigate(generatePath(VIEW_SUBJECT_URL, { subjectId })),
             onDelete: async () => {
-              editSubject && deleteSubject(editSubject?.id);
+              editSubject && deleteSubject(editSubject.id);
             }
           }}
           lastUpdatedInfo={

@@ -68,17 +68,19 @@ const AllLeaveApplications = () => {
   const [sortOption, setSortOption] = React.useState<SortOption | null>(null);
 
   const sortedAndFilteredLeaveApplications = React.useMemo(() => {
-    const filteredSubjects = leaveApplications.filter((leaveApplication) => {
-      const { leaveType, status } = leaveApplication;
-      const searchFieldLower = searchField.toLowerCase();
-      return (
-        leaveType.toLowerCase().includes(searchFieldLower) ||
-        status.toLowerCase().includes(searchFieldLower)
-      );
-    });
+    const filteredLeaveApplications = leaveApplications.filter(
+      (leaveApplication) => {
+        const { leaveType, status } = leaveApplication;
+        const searchFieldLower = searchField.toLowerCase();
+        return (
+          leaveType.toLowerCase().includes(searchFieldLower) ||
+          status.toLowerCase().includes(searchFieldLower)
+        );
+      }
+    );
     return sortOption
-      ? filteredSubjects.sort(sortOption.comparator)
-      : filteredSubjects;
+      ? filteredLeaveApplications.sort(sortOption.comparator)
+      : filteredLeaveApplications;
   }, [leaveApplications, searchField, sortOption]);
 
   useEffect(() => {
@@ -98,6 +100,7 @@ const AllLeaveApplications = () => {
         const filteredData = res.filter(
           (leaveApplication) => leaveApplication.employeeId !== user?.id
         );
+        setSortOption(sortOptions[2]);
         setLeaveApplications(filteredData);
       },
       () => void 0,
@@ -195,6 +198,7 @@ const AllLeaveApplications = () => {
               placeholder='Sort By'
               size='large'
               style={{ width: '14em' }}
+              defaultValue={sortOptions[2].sortType}
               onChange={(value) =>
                 setSortOption(
                   sortOptions.find((opt) => opt.sortType === value) ?? null
@@ -202,7 +206,7 @@ const AllLeaveApplications = () => {
               }
             >
               {sortOptions.map((option) => (
-                <Select.Option key={option.sortType}>
+                <Select.Option key={option.sortType} value={option.sortType}>
                   {option.label}
                 </Select.Option>
               ))}
@@ -214,6 +218,7 @@ const AllLeaveApplications = () => {
           dataSource={sortedAndFilteredLeaveApplications}
           columns={columns}
           loading={loading}
+          pagination={{ pageSize: 10 }}
         />
       </Space>
     </div>

@@ -3,7 +3,7 @@ import { startCase } from 'lodash';
 import React from 'react';
 import { EmployeeSubjectRecord } from 'src/models/types';
 import '../../../../styles/common/common.scss';
-import '../../../../styles/subjects/editSubject.scss';
+import '../../../../styles/subjects/subject.scss';
 
 const { Title, Text } = Typography;
 const { Option } = Select;

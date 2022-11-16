@@ -1,7 +1,7 @@
 import { Button, List } from 'antd';
 import { useThemedClassName } from 'src/hooks/useThemedClassName';
 import { Step } from 'src/models/types';
-import '../../../styles/subjects/editTopic.scss';
+import '../../../styles/subjects/topic.scss';
 import '../../../styles/common/common.scss';
 import StepsMoreButton from './StepsMoreButton';
 import React from 'react';
@@ -10,7 +10,7 @@ type StepsListProps = {
   steps: Step[];
   selectedStep: Step | null;
   updateSelectedStep: React.Dispatch<React.SetStateAction<Step | null>>;
-  refreshTopic: () => void;
+  refreshTopic?: () => void;
 };
 
 const StepsList = ({
@@ -35,12 +35,14 @@ const StepsList = ({
           <Button type='link' onClick={() => updateSelectedStep(step)}>
             {`${step.topicOrder}. ${step.title}`}
           </Button>
-          <StepsMoreButton
-            currStep={step}
-            steps={steps}
-            updateSelectedStep={updateSelectedStep}
-            refreshTopic={refreshTopic}
-          />
+          {refreshTopic && (
+            <StepsMoreButton
+              currStep={step}
+              steps={steps}
+              updateSelectedStep={updateSelectedStep}
+              refreshTopic={refreshTopic}
+            />
+          )}
         </List.Item>
       ))}
     </List>

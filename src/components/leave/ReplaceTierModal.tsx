@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Divider, Modal, Select, Space, Typography } from 'antd';
+import { Card, Divider, Modal, Select, Space, Typography } from 'antd';
 import { LeaveQuota } from 'src/models/types';
 import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
+import { WarningOutlined } from '@ant-design/icons';
 
 type ReplaceTierModalProps = {
   open: boolean;
@@ -46,10 +47,15 @@ const ReplaceTierModal = (props: ReplaceTierModalProps) => {
             <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
           </div>
         )}
-        <Typography>
-          {tierToDelete} cannot be deleted yet as there are still employees
-          assigned to this tier.
-        </Typography>
+        <Card style={{ marginBottom: '16px', backgroundColor: '#FCE2CA' }}>
+          <Space>
+            <WarningOutlined style={{ color: 'black' }} />
+            <Typography style={{ color: 'black' }}>
+              {tierToDelete} cannot be deleted yet as there are still employees
+              assigned to this tier.
+            </Typography>
+          </Space>
+        </Card>
         <Divider />
         <Space direction='vertical'>
           <Typography>
