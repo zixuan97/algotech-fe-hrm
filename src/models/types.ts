@@ -146,6 +146,12 @@ export interface TreeNode {
   subordinates: TreeNode[];
 }
 
+export interface JobRole {
+  id: number;
+  jobRole: string;
+  usersInJobRole?: User[];
+}
+
 export enum ContentStatus {
   DRAFT = 'DRAFT',
   PENDING = 'PENDING',

@@ -14,6 +14,7 @@ export const PEOPLE_MANAGE_URL = PEOPLE_URL + '/manage';
 export const PEOPLE_DIRECTORY_URL = PEOPLE_URL + '/directory';
 export const PEOPLE_ORGCHART_URL = PEOPLE_URL + '/orgchart';
 export const PEOPLE_ROLES_URL = PEOPLE_URL + '/roles';
+export const PEOPLE_ROLES_ID_URL = PEOPLE_ROLES_URL + '/:roleId'
 
 // subjects routes
 export const SUBJECTS_URL = ROOT_URL + 'subjects';
