@@ -1,11 +1,10 @@
 import React from 'react';
 import { Input, Space, Spin, Typography } from 'antd';
 import '../../../styles/common/common.scss';
-import '../../../styles/subjects/editSubject.scss';
+import '../../styles/subjects/editSubject.scss';
 import { generatePath, useParams } from 'react-router-dom';
 import { JobRole } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { isEqual } from 'lodash';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import {
   PEOPLE_ROLES_ID_URL,
@@ -158,7 +157,8 @@ const ViewRole = () => {
                   </Text>
                   <LoadingOutlined />
                 </Space>
-              )
+              ),
+              deleteRedirectUrl: PEOPLE_ROLES_URL
             },
             onView: () => {
               setEditJobRole(jobRole);
