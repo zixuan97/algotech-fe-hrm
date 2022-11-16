@@ -30,8 +30,14 @@ export interface User {
   tier: string;
   managerId?: number;
   manager?: User;
-  jobRoles?: string[];
+  jobRoles?: JobRole[];
   subordinates?: User[];
+}
+
+export interface JobRole {
+  id: number;
+  jobRole: string;
+  usersInJobRole: User[];
 }
 
 export interface Step {
