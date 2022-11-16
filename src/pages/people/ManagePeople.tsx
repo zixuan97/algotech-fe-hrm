@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Badge,
   Button,
   Divider,
   Form,
@@ -9,6 +10,7 @@ import {
   Space,
   Table,
   TableColumnsType,
+  Tag,
   Tooltip,
   Typography
 } from 'antd';
@@ -24,12 +26,13 @@ import {
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import ConfirmationModalButton from 'src/components/common/ConfirmationModalButton';
-import { getAllEmployees, getAllJobRoles } from 'src/services/userService';
+import { getAllEmployees, getAllJobRoles } from 'src/services/peopleService';
 import { generatePath, Link, useNavigate } from 'react-router-dom';
 import { User, JobRole } from 'src/models/types';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import EditPersonModal from 'src/components/people/EditPersonModal';
 import { PEOPLE_MANAGE_URL, PEOPLE_URL } from 'src/components/routes/routes';
+import authContext from 'src/context/auth/authContext';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -74,6 +77,7 @@ const ManagePeople = () => {
   const navigate = useNavigate();
   const { updateBreadcrumbItems } = React.useContext(breadcrumbContext);
 
+  const { user } = React.useContext(authContext);
   const [users, setUsers] = React.useState<User[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
 
@@ -126,9 +130,19 @@ const ManagePeople = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    asyncFetchCallback(getAllEmployees(), setUsers, () => void 0, {
-      updateLoading: setLoading
-    });
+    asyncFetchCallback(
+      getAllEmployees(),
+      (res) => {
+        setSortOption(sortOptions[0]);
+        setUsers(res.sort(sortOption?.comparator));
+        console.log(users);
+        //why is this not sorting?
+      },
+      () => void 0,
+      {
+        updateLoading: setLoading
+      }
+    );
     asyncFetchCallback(getAllJobRoles(), setJobRoles, () => void 0, {
       updateLoading: setLoading
     });
@@ -138,7 +152,14 @@ const ManagePeople = () => {
     {
       title: 'Full Name',
       dataIndex: 'firstName',
-      render: (text, record) => <span>{text + ' ' + record.lastName}</span>
+      render: (text, record) => (
+        <span>
+          {record.id !== user?.id
+            ? text + ' ' + record.lastName
+            : text + ' ' + record.lastName + ' (Me)'}
+          {/* <Tag color='gold'>Me</Tag> */}
+        </span>
+      )
     },
     {
       title: 'Email',
@@ -147,6 +168,30 @@ const ManagePeople = () => {
     {
       title: 'Permissions',
       dataIndex: 'role'
+    },
+    {
+      title: 'Roles',
+      dataIndex: 'jobRole',
+      render: (text, record) => (
+        <span>
+          {record.jobRoles?.length === 0
+            ? '-'
+            : record.jobRoles?.length === 1
+            ? record.jobRoles?.at(0)?.jobRole
+            : record.jobRoles?.length + ' roles'}
+        </span>
+      )
+    },
+    {
+      title: 'Manager',
+      dataIndex: 'manager',
+      render: (text, record) => (
+        <span>
+          {record.manager
+            ? record.manager?.firstName + ' ' + record.manager?.lastName
+            : '-'}
+        </span>
+      )
     },
     {
       title: 'Actions',
@@ -189,6 +234,7 @@ const ManagePeople = () => {
                 placeholder='Sort By'
                 size='large'
                 style={{ width: '14em' }}
+                defaultValue={sortOptions[0].sortType}
                 onChange={(value) =>
                   setSortOption(
                     sortOptions.find((opt) => opt.sortType === value) ?? null

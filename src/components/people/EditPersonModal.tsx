@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
-import {
-  Form,
-  Input,
-  Modal,
-  Select,
-  SelectProps,
-  Space,
-  Typography
-} from 'antd';
+import { Input, Modal, Select, SelectProps, Space, Typography } from 'antd';
 import { User, JobRole } from 'src/models/types';
 import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
 import { useNavigate } from 'react-router-dom';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import '../../styles/people/editPeople.scss';
+import { map } from 'lodash';
+import { editEmployee } from 'src/services/peopleService';
 
 const { Text } = Typography;
 
@@ -31,7 +25,6 @@ const EditPersonModal = (props: EditPersonModalProps) => {
   const [createLoading, setCreateLoading] = React.useState<boolean>(false);
   const [createSuccess, setCreateSuccess] = React.useState<boolean>(false);
 
-  const [form] = Form.useForm();
   const { Option } = Select;
 
   const firstName = user?.firstName;
@@ -61,74 +54,69 @@ const EditPersonModal = (props: EditPersonModalProps) => {
 
   return (
     <>
-      <Modal title={title} open={open} onOk={onOk} onCancel={onClose}>
-        <Form
-          form={form}
-          onFinish={(values) => {
-            console.log('form');
-          }}
-        >
+      <Modal
+        title={title}
+        open={open}
+        onOk={onOk}
+        onCancel={onClose}
+        okText='Save Changes'
+        okButtonProps={{ loading: createLoading, disabled: createSuccess }}
+      >
+        <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
           <Space direction='vertical' style={{ width: '100%' }}>
             <Text>Full Name</Text>
-            <Form.Item name='fullName'>
-              <Input disabled={true} placeholder={fullName} />
-            </Form.Item>
+            <Input disabled={true} placeholder={fullName} />
           </Space>
           <div className='people-two-columns-container'>
             <div className='people-email-column'>
               <Space direction='vertical' style={{ width: '100%' }}>
                 <Text>Email</Text>
-                <Form.Item name='email'>
-                  <Input disabled={true} placeholder={user?.email} />
-                </Form.Item>
+                <Input disabled={true} placeholder={user?.email} />
               </Space>
-            </div>{' '}
+            </div>
             <div className='people-permission-column'>
               <Space direction='vertical' style={{ width: '100%' }}>
                 <Text>Permissions</Text>
-                <Form.Item name='role'>
-                  <Input disabled={true} placeholder={user?.role} />
-                </Form.Item>
+                <Input disabled={true} placeholder={user?.role} />
               </Space>
             </div>
           </div>
           <Space direction='vertical' style={{ width: '100%' }}>
             <Text>Role(s) (Optional)</Text>
-            <Form.Item name='jobRoles'>
-              <Select
-                mode='tags'
-                allowClear
-                showArrow
-                placeholder='Select Roles'
-                style={{ width: '100%' }}
-              >
-                {allJobRoles?.map((option) => (
-                  <Option key={option.id} value={option.id}>
-                    {option.jobRole}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+            <Select
+              mode='multiple'
+              allowClear
+              showArrow
+              placeholder='Select Roles'
+              style={{ width: '100%' }}
+              value={user?.jobRoles?.map((role) => role.id)}
+            >
+              {allJobRoles?.map((option) => (
+                <Option key={option.id} value={option.id}>
+                  {option.jobRole}
+                </Option>
+              ))}
+            </Select>
           </Space>
           <Space direction='vertical' style={{ width: '100%' }}>
-            <Text>Manager (Optional)</Text>
-            <Form.Item name='manager'>
-              <Select
-                showSearch
-                allowClear
-                style={{ width: '100%' }}
-                placeholder='Select a person'
-                optionFilterProp='children'
-              >
-                {managerDataSource?.map((option) => (
-                  <Option key={option.id} value={option.id}>
-                    {getUserFullName(option)}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+            <Text>Reports to (Optional)</Text>
+            <Select
+              showSearch
+              allowClear
+              style={{ width: '100%' }}
+              placeholder='Select a person'
+              optionFilterProp='children'
+              value={user?.manager?.id}
+            >
+              {managerDataSource?.map((option) => (
+                <Option key={option.id} value={option.id}>
+                  {getUserFullName(option)}
+                </Option>
+              ))}
+            </Select>
           </Space>
-        </Form>
+        </Space>
+        {/* </div> */}
       </Modal>
     </>
   );
