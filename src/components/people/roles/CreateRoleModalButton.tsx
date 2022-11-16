@@ -7,23 +7,50 @@ import {
   Form,
   Input,
   Modal,
+  Select,
   Space,
   Typography
 } from 'antd';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { generatePath, useNavigate } from 'react-router-dom';
-import {  PEOPLE_ROLES_ID_URL } from 'src/components/routes/routes';
 import { createJobRole } from 'src/services/jobRoleService';
+import { JobRole, User } from 'src/models/types';
+import { getUserFullName } from 'src/utils/formatUtils';
 
 const { Text } = Typography;
 
-const CreateRoleModalButton = () => {
-  const navigate = useNavigate();
+type CreateRoleModalProps = {
+  setShouldFetchData: (bool: boolean) => void;
+  users: User[];
+};
+
+const CreateRoleModalButton = ({
+  setShouldFetchData,
+  users
+}: CreateRoleModalProps) => {
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [createLoading, setCreateLoading] = React.useState<boolean>(false);
   const [createSuccess, setCreateSuccess] = React.useState<boolean>(false);
   const [createFailure, setCreateFailure] = React.useState<boolean>(false);
+  const [newJobRole, setNewJobRole] = React.useState<Partial<JobRole>>({
+    usersInJobRole: []
+  });
   const [form] = Form.useForm();
+  const { Option } = Select;
+
+  const handleSelectChange = (value: number[]) => {
+    setNewJobRole(
+      (prev: any) =>
+        prev && {
+          ...prev,
+          usersInJobRole: users.filter((user) => value.includes(user.id))
+        }
+    );
+  };
+
+  const editNamedField = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setNewJobRole(
+      (prev: any) => prev && { ...prev, [e.target.name]: e.target.value }
+    );
 
   return (
     <>
@@ -50,20 +77,17 @@ const CreateRoleModalButton = () => {
       >
         <Form
           form={form}
-          onFinish={(values) => {
-            const { jobRole } = values;
+          onFinish={() => {
             setCreateLoading(true);
             asyncFetchCallback(
-               createJobRole(jobRole),
-              (res) => {
+              createJobRole(newJobRole),
+              () => {
                 setCreateLoading(false);
                 setCreateSuccess(true);
                 setTimeout(() => {
-                  navigate(
-                    generatePath(PEOPLE_ROLES_ID_URL, {
-                      roleId: res.id.toString()
-                    })
-                  );
+                  setCreateSuccess(false);
+                  setModalOpen(false);
+                  setShouldFetchData(true);
                 }, 500);
               },
               () => {
@@ -103,9 +127,7 @@ const CreateRoleModalButton = () => {
           )}
           <Card style={{ marginBottom: '16px' }}>
             <Space>
-              <Text>
-                You're creating a new role.
-              </Text>
+              <Text>You're creating a new role.</Text>
             </Space>
           </Card>
           <Space direction='vertical' style={{ width: '100%' }}>
@@ -120,7 +142,45 @@ const CreateRoleModalButton = () => {
                 }
               ]}
             >
-              <Input name='name' size='large' />
+              <Input name='jobRole' size='large' onChange={editNamedField} />
+            </Form.Item>
+
+            <Text>Description *</Text>
+            <Form.Item
+              name='description'
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter a description!',
+                  validateTrigger: 'onSubmit'
+                }
+              ]}
+            >
+              <Input name='description' size='large' onChange={editNamedField} />
+            </Form.Item>
+            <Form.Item name='usersInJobRole'>
+              <Space direction='vertical' style={{ width: '100%' }}>
+                <Text>Add Users (Optional)</Text>
+                <Select
+                  mode='multiple'
+                  allowClear
+                  showArrow
+                  showSearch
+                  placeholder='Select Users'
+                  optionFilterProp='children'
+                  style={{ width: '100%' }}
+                  defaultValue={
+                    newJobRole?.usersInJobRole!.map((user) => user.id) ?? []
+                  }
+                  onChange={handleSelectChange}
+                >
+                  {users.map((option) => (
+                    <Option key={option.id} value={option.id}>
+                      {getUserFullName(option)}
+                    </Option>
+                  ))}
+                </Select>
+              </Space>
             </Form.Item>
           </Space>
         </Form>

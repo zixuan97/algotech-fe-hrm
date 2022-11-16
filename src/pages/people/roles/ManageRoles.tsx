@@ -9,17 +9,30 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import { DeleteOutlined, EditOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined
+} from '@ant-design/icons';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { JobRole } from 'src/models/types';
-import { getAllJobRoles } from 'src/services/jobRoleService';
+import { JobRole, User } from 'src/models/types';
+import { deleteJobRole, getAllJobRoles } from 'src/services/jobRoleService';
 import CreateRoleModalButton from 'src/components/people/roles/CreateRoleModalButton';
-import { Link, generatePath, useNavigate } from 'react-router-dom';
+import { Link, generatePath } from 'react-router-dom';
 import { PEOPLE_ROLES_ID_URL } from 'src/components/routes/routes';
+import ConfirmationModal from 'src/components/common/ConfirmationModal';
+import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
+import EditJobRoleModal from 'src/components/people/roles/EditJobRoleModal';
+import {
+  sortJobRoleAsc,
+  sortJobRoleDesc,
+  sortNameAsc
+} from 'src/components/people/roles/comparators';
+import authContext from 'src/context/auth/authContext';
+import { getAllEmployees } from 'src/services/peopleService';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
-
 interface SortOption {
   sortType: string;
   label: string;
@@ -30,21 +43,29 @@ const sortOptions: SortOption[] = [
   {
     sortType: 'JobRoleAsc',
     label: 'Job Role A - Z',
-    comparator: (a, b) => a.jobRole.localeCompare(b.jobRole)
+    comparator: sortJobRoleAsc
   },
   {
     sortType: 'JobRoleDsc',
     label: 'Job Role Z - A',
-    comparator: (a, b) => b.jobRole.localeCompare(a.jobRole)
+    comparator: sortJobRoleDesc
   }
 ];
 
 const ManageRoles = () => {
-  const navigate = useNavigate();
   const [jobRoles, setJobRoles] = React.useState<JobRole[]>([]);
+  const [focusedJobRole, setFocusedJobRole] = React.useState<JobRole>();
+  const [editJobRoleModalOpen, setEditJobRoleModalOpen] =
+    React.useState<boolean>(false);
+  const [deleteJobRoleModalOpen, setDeleteJobRoleModalOpen] =
+    React.useState<boolean>(false);
+  const [shouldFetchData, setShouldFetchData] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [searchField, setSearchField] = React.useState<string>('');
   const [sortOption, setSortOption] = React.useState<SortOption | null>(null);
+  const [alert, setAlert] = React.useState<AlertType | null>(null);
+  const { user } = React.useContext(authContext);
+  const [users, setUsers] = React.useState<User[]>([]);
 
   const sortedAndFilteredJobRoles = React.useMemo(() => {
     const filteredJobRoles = jobRoles.filter((role) => {
@@ -56,6 +77,18 @@ const ManageRoles = () => {
       ? filteredJobRoles.sort(sortOption.comparator)
       : filteredJobRoles;
   }, [jobRoles, searchField, sortOption]);
+
+  const handleEditJobRoleModal = (jobRoleId: number) => {
+    const jobRole = jobRoles.find((role) => role.id === jobRoleId);
+    setFocusedJobRole(jobRole);
+    setEditJobRoleModalOpen(true);
+  };
+
+  const handleDeleteJobRoleModal = (jobRoleId: number) => {
+    const jobRole = jobRoles.find((role) => role.id === jobRoleId);
+    setFocusedJobRole(jobRole);
+    setDeleteJobRoleModalOpen(true);
+  };
 
   const columns: TableColumnsType<JobRole> = [
     {
@@ -79,13 +112,18 @@ const ManageRoles = () => {
       width: '10%',
       render: (value) => (
         <Space>
-          <Tooltip title='View Role' placement='bottom' mouseEnterDelay={0.8}>
+          <Tooltip title='Edit Role' placement='bottom' mouseEnterDelay={0.8}>
             <Button
-              icon={<EyeOutlined />}
+              icon={<EditOutlined />}
               shape='round'
-              onClick={() =>
-                navigate(generatePath(PEOPLE_ROLES_ID_URL, { roleId: value }))
-              }
+              onClick={() => handleEditJobRoleModal(value)}
+            />
+          </Tooltip>
+          <Tooltip title='Edit Role' placement='bottom' mouseEnterDelay={0.8}>
+            <Button
+              icon={<DeleteOutlined />}
+              shape='round'
+              onClick={() => handleDeleteJobRoleModal(value)}
             />
           </Tooltip>
         </Space>
@@ -94,18 +132,65 @@ const ManageRoles = () => {
   ];
 
   React.useEffect(() => {
+    if (shouldFetchData) {
+      fetchJobRoles();
+    }
+  }, [shouldFetchData]);
+
+  const fetchJobRoles = () => {
     setLoading(true);
     asyncFetchCallback(
       getAllJobRoles(),
       (roles) => {
         setJobRoles(roles);
+        setShouldFetchData(false);
       },
       () => void 0,
       {
         updateLoading: setLoading
       }
     );
-  }, []);
+  };
+
+  React.useEffect(() => {
+    setLoading(true);
+    asyncFetchCallback(
+      getAllEmployees(),
+      (res) => {
+        setUsers(
+          res.filter((currUser) => currUser.id !== user?.id).sort(sortNameAsc)
+        );
+      },
+      () => void 0,
+      {
+        updateLoading: setLoading
+      }
+    );
+  }, [user?.id]);
+
+  const deleteFocusedJobRole = (jobRoleId: string | number) => {
+    setLoading(true);
+    asyncFetchCallback(
+      deleteJobRole(focusedJobRole?.id!),
+      () => {
+        setDeleteJobRoleModalOpen(false);
+        setShouldFetchData(true);
+        setAlert({
+          type: 'success',
+          message: 'Job Role deleted.'
+        });
+      },
+      () => {
+        setAlert({
+          type: 'error',
+          message: 'Failed to delete job role. Please try again later.'
+        });
+      },
+      {
+        updateLoading: setLoading
+      }
+    );
+  };
 
   return (
     <div className='container-left-full'>
@@ -142,6 +227,11 @@ const ManageRoles = () => {
               </Select>
             </Space>
           </Space>
+          {alert && (
+            <div className='account-alert'>
+              <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+            </div>
+          )}
         </Space>
         <Table
           dataSource={sortedAndFilteredJobRoles}
@@ -150,11 +240,35 @@ const ManageRoles = () => {
           loading={loading}
           rowKey={(record) => record.id}
         />
+        <EditJobRoleModal
+          title={`Edit ${focusedJobRole?.jobRole}`}
+          open={editJobRoleModalOpen}
+          jobRole={focusedJobRole!}
+          setFocusedJobRole={setFocusedJobRole}
+          onClose={() => {
+            setFocusedJobRole(undefined);
+            setEditJobRoleModalOpen(false);
+          }}
+          setShouldFetchData={setShouldFetchData}
+          users={users!}
+        />
+        <ConfirmationModal
+          open={deleteJobRoleModalOpen}
+          title={'Delete Job Role'}
+          body={`Are you sure you want to delete ${focusedJobRole?.jobRole}?`}
+          onClose={() => setDeleteJobRoleModalOpen(false)}
+          onConfirm={() => {
+            deleteFocusedJobRole(focusedJobRole?.id!);
+          }}
+        />
         <Space
           direction='vertical'
           style={{ display: 'flex', alignSelf: 'flex-end' }}
         >
-          <CreateRoleModalButton />
+          <CreateRoleModalButton
+            setShouldFetchData={setShouldFetchData}
+            users={users}
+          />
         </Space>
       </Space>
     </div>

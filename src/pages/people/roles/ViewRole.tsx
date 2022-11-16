@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input, Space, Spin, Typography } from 'antd';
 import '../../../styles/common/common.scss';
-import '../../styles/subjects/editSubject.scss';
+import '../../../styles/subjects/subject.scss';
 import { generatePath, useParams } from 'react-router-dom';
 import { JobRole } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
