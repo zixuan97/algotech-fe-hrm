@@ -17,15 +17,16 @@ import { JobRole, User } from 'src/models/types';
 import { getUserFullName } from 'src/utils/formatUtils';
 
 const { Text } = Typography;
+const { Option } = Select;
 
 type CreateRoleModalProps = {
-  setShouldFetchData: (bool: boolean) => void;
   users: User[];
+  fetchJobRoles: () => void;
 };
 
 const CreateRoleModalButton = ({
-  setShouldFetchData,
-  users
+  users,
+  fetchJobRoles
 }: CreateRoleModalProps) => {
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [createLoading, setCreateLoading] = React.useState<boolean>(false);
@@ -35,7 +36,6 @@ const CreateRoleModalButton = ({
     usersInJobRole: []
   });
   const [form] = Form.useForm();
-  const { Option } = Select;
 
   const handleSelectChange = (value: number[]) => {
     setNewJobRole(
@@ -87,7 +87,7 @@ const CreateRoleModalButton = ({
                 setTimeout(() => {
                   setCreateSuccess(false);
                   setModalOpen(false);
-                  setShouldFetchData(true);
+                  fetchJobRoles();
                 }, 500);
               },
               () => {
@@ -156,7 +156,11 @@ const CreateRoleModalButton = ({
                 }
               ]}
             >
-              <Input name='description' size='large' onChange={editNamedField} />
+              <Input
+                name='description'
+                size='large'
+                onChange={editNamedField}
+              />
             </Form.Item>
             <Form.Item name='usersInJobRole'>
               <Space direction='vertical' style={{ width: '100%' }}>

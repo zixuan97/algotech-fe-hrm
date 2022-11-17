@@ -8,6 +8,7 @@ import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import { getUserFullName } from 'src/utils/formatUtils';
 
 const { Text } = Typography;
+const { Option } = Select;
 
 type EditPersonModalProps = {
   users: User[];
@@ -15,8 +16,8 @@ type EditPersonModalProps = {
   open: boolean;
   jobRole: JobRole;
   onClose: () => void;
-  setShouldFetchData: (bool: boolean) => void;
-  setFocusedJobRole: (jobRole: any) => void;
+  setFocusedJobRole: (jobRole: JobRole) => void;
+  fetchJobRoles: () => void;
 };
 
 const EditJobRoleModal = (props: EditPersonModalProps) => {
@@ -26,26 +27,24 @@ const EditJobRoleModal = (props: EditPersonModalProps) => {
     jobRole,
     onClose,
     setFocusedJobRole,
-    setShouldFetchData,
+    fetchJobRoles,
     users
   } = props;
   const [alert, setAlert] = React.useState<AlertType | null>(null);
   const [updateJobRoleLoading, setUpdateJobRoleLoading] =
     React.useState<boolean>(false);
-  const { Option } = Select;
 
   const editNamedField = (e: React.ChangeEvent<HTMLInputElement>) =>
     setFocusedJobRole(
-      (prev: any) => prev && { ...prev, [e.target.name]: e.target.value }
+      jobRole && { ...jobRole, [e.target.name]: e.target.value }
     );
 
   const handleChange = (value: number[]) => {
     setFocusedJobRole(
-      (prev: any) =>
-        prev && {
-          ...prev,
-          usersInJobRole: users.filter((user) => value.includes(user.id))
-        }
+      jobRole && {
+        ...jobRole,
+        usersInJobRole: users.filter((user) => value.includes(user.id))
+      }
     );
   };
 
@@ -75,7 +74,7 @@ const EditJobRoleModal = (props: EditPersonModalProps) => {
           message: 'Changes saved.'
         });
         setTimeout(() => {
-          setShouldFetchData(true);
+          fetchJobRoles();
           onClose();
         }, 500);
       },

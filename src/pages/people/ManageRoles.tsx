@@ -58,7 +58,6 @@ const ManageRoles = () => {
     React.useState<boolean>(false);
   const [deleteJobRoleModalOpen, setDeleteJobRoleModalOpen] =
     React.useState<boolean>(false);
-  const [shouldFetchData, setShouldFetchData] = React.useState<boolean>(true);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [searchField, setSearchField] = React.useState<string>('');
   const [sortOption, setSortOption] = React.useState<SortOption | null>(null);
@@ -120,19 +119,12 @@ const ManageRoles = () => {
     }
   ];
 
-  React.useEffect(() => {
-    if (shouldFetchData) {
-      fetchJobRoles();
-    }
-  }, [shouldFetchData]);
-
   const fetchJobRoles = () => {
     setLoading(true);
     asyncFetchCallback(
       getAllJobRoles(),
       (roles) => {
         setJobRoles(roles.sort(sortOptions[0].comparator));
-        setShouldFetchData(false);
       },
       () => void 0,
       {
@@ -163,7 +155,7 @@ const ManageRoles = () => {
       deleteJobRole(focusedJobRole?.id!),
       () => {
         setDeleteJobRoleModalOpen(false);
-        setShouldFetchData(true);
+        fetchJobRoles();
         setAlert({
           type: 'success',
           message: 'Job Role deleted.'
@@ -240,8 +232,8 @@ const ManageRoles = () => {
               setFocusedJobRole(undefined);
               setEditJobRoleModalOpen(false);
             }}
-            setShouldFetchData={setShouldFetchData}
             users={users}
+            fetchJobRoles={fetchJobRoles}
           />
         )}
 
@@ -258,10 +250,7 @@ const ManageRoles = () => {
           direction='vertical'
           style={{ display: 'flex', alignSelf: 'flex-end' }}
         >
-          <CreateRoleModalButton
-            setShouldFetchData={setShouldFetchData}
-            users={users}
-          />
+          <CreateRoleModalButton users={users} fetchJobRoles={fetchJobRoles} />
         </Space>
       </Space>
     </div>

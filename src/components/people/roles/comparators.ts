@@ -1,9 +1,8 @@
 import { JobRole, User } from 'src/models/types';
+import { getUserFullName } from 'src/utils/formatUtils';
 
 export const sortNameAsc = (a: User, b: User) => {
-  let aFullName = a.firstName + ' ' + a.lastName;
-  let bFullName = b.firstName + ' ' + b.lastName;
-  return aFullName.localeCompare(bFullName);
+  return getUserFullName(a).localeCompare(getUserFullName(b));
 };
 
 export const sortJobRoleAsc = (a: JobRole, b: JobRole) => {
