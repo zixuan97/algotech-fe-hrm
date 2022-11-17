@@ -4,6 +4,7 @@ import { Breadcrumb, Divider, Grid, Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
 import Sidebar from 'src/components/common/Sidebar';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import useAuthVerify from 'src/hooks/useAuthVerify';
 
 const { Content } = Layout;
 const { useBreakpoint } = Grid;
@@ -11,6 +12,8 @@ const { useBreakpoint } = Grid;
 const Home = ({ children }: React.PropsWithChildren) => {
   const screens = useBreakpoint();
   const { getBreadcrumbItems } = React.useContext(breadcrumbContext);
+
+  useAuthVerify();
 
   return (
     <Layout>
