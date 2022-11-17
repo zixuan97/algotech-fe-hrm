@@ -40,7 +40,8 @@ import {
   EMPLOYEE_LEAVE_QUOTA_URL,
   EDIT_QUIZ_URL,
   VIEW_QUIZ_URL,
-  LEAVE_URL
+  LEAVE_URL,
+  PEOPLE_ORGCHART_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -113,9 +114,20 @@ const App = () => {
                   {/* company routes */}
                   <Route path={COMPANY_URL} element={<></>} />
                   {/* people routes */}
-                  <Route path={PEOPLE_URL} element={<OrganisationChart />} />
-                  <Route path={PEOPLE_MANAGE_URL} element={<ManagePeople />} />
-                  <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
+                  <Route
+                      path={PEOPLE_ORGCHART_URL}
+                      element={<OrganisationChart />}
+                    />
+                  <Route
+                    path={PEOPLE_URL}
+                    element={<RoleRoute allowedRoles={['ADMIN']} />}
+                  >
+                    <Route
+                      path={PEOPLE_MANAGE_URL}
+                      element={<ManagePeople />}
+                    />
+                    <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
+                  </Route>
 
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
