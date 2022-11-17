@@ -161,7 +161,7 @@ export interface CalendarObject {
 }
 
 export interface TreeNode {
-  id: number;
+  user: User;
   subordinates: TreeNode[];
 }
 
