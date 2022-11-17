@@ -56,7 +56,7 @@ export interface Topic {
   subjectId: number;
   subject: Subject;
   steps: Step[];
-  completedRecords: EmployeeSubjectRecord[];
+  records: EmployeeSubjectRecord[];
 }
 
 export interface Subject {
@@ -95,19 +95,19 @@ export interface Quiz {
   completionRate: number;
   status: ContentStatus;
   subjectId: number;
+  subject: Subject;
   questions: QuizQuestion[];
-  completedRecords: EmployeeSubjectRecord[];
+  records: EmployeeSubjectRecord[];
 }
 
 export interface QuizQuestion {
   id: number;
   question: string;
   type: AnswerType;
-  options: String[];
-  writtenAnswer?: String;
-  minWordCount?: number;
-  correctAnswer: string;
+  options: string[];
+  correctAnswer: number;
   quizId: number;
+  quiz: Quiz;
   quizOrder: number;
 }
 
@@ -172,7 +172,7 @@ export enum ContentStatus {
 
 export enum AnswerType {
   MCQ = 'MCQ',
-  WRITTEN = 'WRITTEN'
+  TRUEFALSE = 'TRUEFALSE'
 }
 
 export enum LeaveType {

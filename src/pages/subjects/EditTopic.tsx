@@ -180,7 +180,7 @@ const EditTopic = () => {
       <div className='container-left-full'>
         <ViewEditTitleHeader
           title='Edit Topic'
-          inEditMode={true}
+          inEditMode
           updateLoading={updateTopicLoading}
           editFunctions={{
             deleteModalProps: {

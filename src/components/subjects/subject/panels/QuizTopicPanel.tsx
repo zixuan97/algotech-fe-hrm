@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Collapse, Space, Typography } from 'antd';
 import { generatePath, Link, useParams } from 'react-router-dom';
-import { EDIT_TOPIC_URL } from 'src/components/routes/routes';
+import { EDIT_QUIZ_URL, EDIT_TOPIC_URL } from 'src/components/routes/routes';
 import { Quiz, Topic } from 'src/models/types';
 import '../../../../styles/subjects/subject.scss';
 
@@ -35,7 +35,7 @@ const QuizTopicPanel = ({
 
   const getExpandIcon = (isActive?: boolean) => {
     if (quiz) {
-      return isActive ? <FieldTimeOutlined /> : <ReconciliationOutlined />;
+      return isActive ? <ReconciliationOutlined /> : <FieldTimeOutlined />;
     } else {
       return isActive ? <FolderOpenOutlined /> : <BookOutlined />;
     }
@@ -77,7 +77,12 @@ const QuizTopicPanel = ({
             ) : (
               <Space>
                 <Text>No questions have been added yet.</Text>
-                <Link to='/'>
+                <Link
+                  to={generatePath(EDIT_QUIZ_URL, {
+                    subjectId,
+                    quizId: quizOrTopic.id?.toString()
+                  })}
+                >
                   <Space size={4}>
                     Add a question
                     <RightOutlined />

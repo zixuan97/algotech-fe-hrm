@@ -1,0 +1,24 @@
+.questions-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  height: 100%;
+  width: 100%;
+}
+
+.questions-container-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.questions-settings {
+  @extend .questions-container-item;
+  flex: 0 0 calc(100% / 4 - 16px);
+}
+
+.questions-editor {
+  @extend .questions-container-item;
+  flex: 0 0 calc((100% / 4) * 3 - 16px);
+}

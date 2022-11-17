@@ -11,6 +11,7 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import {
   EDIT_QUIZ_URL,
   EDIT_TOPIC_URL,
+  VIEW_QUIZ_URL,
   VIEW_TOPIC_URL
 } from 'src/components/routes/routes';
 import { MenuInfo } from 'rc-menu/lib/interface';
@@ -74,7 +75,12 @@ const QuizTopicMoreButton = ({
                 onClick: ({ domEvent }) => {
                   domEvent.stopPropagation();
                   quiz
-                    ? navigate('/')
+                    ? navigate(
+                        generatePath(VIEW_QUIZ_URL, {
+                          subjectId: currQuizOrTopic.subjectId.toString(),
+                          quizId: quiz?.id.toString()
+                        })
+                      )
                     : navigate(
                         generatePath(VIEW_TOPIC_URL, {
                           subjectId: currQuizOrTopic.subjectId.toString(),
