@@ -35,9 +35,12 @@ const AuthState = (props: PropsWithChildren) => {
 
   // load user - check which user is logged in and get user data
   const loadUser = async () => {
-    const token = localStorage.getItem('token');
+    const token =
+      sessionStorage.getItem('token') ?? localStorage.getItem('token');
     if (token) {
       setAuthToken(token);
+    } else {
+      setAuthToken(null);
     }
 
     asyncFetchCallback(
