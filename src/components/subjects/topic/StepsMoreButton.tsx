@@ -14,12 +14,7 @@ import {
   reorderStepsArr,
   swapStepsinStepsArr
 } from './topicHelper';
-import { omit } from 'lodash';
-import {
-  createStep,
-  deleteStep,
-  updateStepsOrder
-} from 'src/services/topicService';
+import { deleteStep, updateStepsOrder } from 'src/services/topicService';
 
 type StepsMoreButtonProps = {
   currStep: Step;
@@ -48,10 +43,9 @@ const StepsMoreButton = ({
   const currIdx = steps.findIndex((step) => step.id === currStep.id);
 
   const duplicateStepApiCall = (idxToInsert: number) => {
-    asyncFetchCallback(createStep(omit(currStep, 'id')), (res) => {
-      updateSelectedStep(res);
-      updateStepsOrderApiCall(duplicateStepInStepsArr(res, idxToInsert, steps));
-    });
+    updateStepsOrderApiCall(
+      duplicateStepInStepsArr({ ...currStep, id: -1 }, idxToInsert, steps)
+    );
   };
 
   const deleteStepApiCall = (idxToDelete: number, newSteps: Step[]) => {

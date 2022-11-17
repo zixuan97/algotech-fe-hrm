@@ -3,6 +3,7 @@ import { ContentStatus, Step, Topic } from 'src/models/types';
 import { EMPTYSTR } from 'src/utils/constants';
 
 const EMPTY_STEP: Partial<Step> = {
+  id: -1,
   topicOrder: 0,
   title: EMPTYSTR,
   content: EMPTYSTR
@@ -13,7 +14,8 @@ const EMPTY_TOPIC: Partial<Topic> = {
   title: EMPTYSTR,
   status: ContentStatus.DRAFT,
   subjectId: 0,
-  steps: []
+  steps: [],
+  records: []
 };
 
 export const getNewTopic = (

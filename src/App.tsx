@@ -36,7 +36,9 @@ import {
   VIEW_SUBJECT_URL,
   VIEW_TOPIC_URL,
   ALL_LEAVE_APPLICATIONS_URL,
-  EMPLOYEE_LEAVE_QUOTA_URL
+  EMPLOYEE_LEAVE_QUOTA_URL,
+  EDIT_QUIZ_URL,
+  VIEW_QUIZ_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -57,6 +59,8 @@ import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
 import OrganisationChart from './pages/people/OrganisationInfo';
 import ManagePeople from './pages/people/ManagePeople';
 import ManageRoles from './pages/people/ManageRoles';
+import EditQuiz from './pages/subjects/EditQuiz';
+import ViewQuiz from './pages/subjects/ViewQuiz';
 
 const { Footer } = Layout;
 
@@ -116,6 +120,8 @@ const App = () => {
                   <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
                   <Route path={VIEW_TOPIC_URL} element={<ViewTopic />} />
                   <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
+                  <Route path={VIEW_QUIZ_URL} element={<ViewQuiz />} />
+                  <Route path={EDIT_QUIZ_URL} element={<EditQuiz />} />
                   {/* processes routes */}
                   <Route path={PROCESSES_URL} element={<></>} />
                   {/* report routes */}
