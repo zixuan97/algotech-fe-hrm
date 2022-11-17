@@ -22,6 +22,7 @@ export const VIEW_SUBJECT_URL = SUBJECT_ID_URL + '/view';
 export const EDIT_SUBJECT_URL = SUBJECT_ID_URL + '/edit';
 export const VIEW_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/view';
 export const EDIT_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/edit';
+export const VIEW_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/view';
 export const EDIT_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/edit';
 
 // processes routes

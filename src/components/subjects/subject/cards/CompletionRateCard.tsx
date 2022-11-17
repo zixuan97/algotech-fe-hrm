@@ -77,7 +77,11 @@ const CompletionRateCard = ({
                   : `${selectedRecord?.user.firstName}'s`
               } Completion Rate`}</Text>
             )}
-            <Progress percent={completionRate} />
+            <Progress
+              percent={completionRate}
+              format={(percent) => `${percent?.toFixed(0)}%`}
+              style={{ width: '100%' }}
+            />
           </div>
         </Space>
       ) : (

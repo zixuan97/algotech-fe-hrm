@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
-  Badge,
   Button,
-  Divider,
-  Form,
   Input,
-  Popconfirm,
   Select,
   Space,
   Table,
@@ -14,25 +10,16 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SaveOutlined,
-  SearchOutlined
-} from '@ant-design/icons';
+import { EditOutlined, SearchOutlined } from '@ant-design/icons';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
-import ConfirmationModalButton from 'src/components/common/ConfirmationModalButton';
 import { getAllEmployees, getAllJobRoles } from 'src/services/peopleService';
-import { generatePath, Link, useNavigate } from 'react-router-dom';
 import { User, JobRole } from 'src/models/types';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import EditPersonModal from 'src/components/people/EditPersonModal';
 import { PEOPLE_MANAGE_URL, PEOPLE_URL } from 'src/components/routes/routes';
 import authContext from 'src/context/auth/authContext';
+import '../../styles/people/managePeople.scss';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -74,12 +61,12 @@ const sortOptions: SortOption[] = [
 ];
 
 const ManagePeople = () => {
-  const navigate = useNavigate();
   const { updateBreadcrumbItems } = React.useContext(breadcrumbContext);
 
   const { user } = React.useContext(authContext);
   const [users, setUsers] = React.useState<User[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [alert, setAlert] = React.useState<AlertType | null>(null);
 
   const [searchField, setSearchField] = React.useState<string>('');
   const [sortOption, setSortOption] = React.useState<SortOption | null>(null);
@@ -87,6 +74,7 @@ const ManagePeople = () => {
   const [editPersonModalOpen, setEditPersonModalOpen] =
     React.useState<boolean>(false);
   const [userToEdit, setUserToEdit] = React.useState<User>();
+
   const [jobRoles, setJobRoles] = React.useState<JobRole[]>([]);
 
   useEffect(() => {
@@ -102,10 +90,28 @@ const ManagePeople = () => {
     ]);
   }, [updateBreadcrumbItems]);
 
-  const handleEditPerson = async () => {
+  const handleEditPerson = async (userToUpdate: User) => {
+    console.log('userToUpdate', userToUpdate);
     setEditPersonModalOpen(false);
-    setLoading(true);
-    setLoading(false);
+
+    setAlert({
+      type: 'success',
+      message: 'Employee updated successfully!'
+    });
+
+    const newData = [...users];
+    console.log('newdata BEFORE: ', newData);
+    const index = newData.findIndex((item) => userToEdit?.id === item.id);
+    console.log('index: ', index);
+    const item = newData[index];
+    newData.splice(index, 1, {
+      ...item,
+      ...userToUpdate
+    });
+
+    console.log('newdata: ', newData);
+
+    setUsers(newData);
   };
 
   const handleEditPersonModal = (userId: number) => {
@@ -134,9 +140,8 @@ const ManagePeople = () => {
       getAllEmployees(),
       (res) => {
         setSortOption(sortOptions[0]);
-        setUsers(res.sort(sortOption?.comparator));
+        setUsers(res);
         console.log(users);
-        //why is this not sorting?
       },
       () => void 0,
       {
@@ -152,14 +157,15 @@ const ManagePeople = () => {
     {
       title: 'Full Name',
       dataIndex: 'firstName',
-      render: (text, record) => (
-        <span>
-          {record.id !== user?.id
-            ? text + ' ' + record.lastName
-            : text + ' ' + record.lastName + ' (Me)'}
-          {/* <Tag color='gold'>Me</Tag> */}
-        </span>
-      )
+      render: (text, record) =>
+        record.id !== user?.id ? (
+          <span>{text + ' ' + record.lastName}</span>
+        ) : (
+          <span>
+            {text + ' ' + record.lastName + ' '}
+            <Tag color='gold'>Me</Tag>
+          </span>
+        )
     },
     {
       title: 'Email',
@@ -214,6 +220,11 @@ const ManagePeople = () => {
   return (
     <div className='container-left-full'>
       <Title level={2}>Manage People</Title>
+      {alert && (
+        <div className='leave-quota-alert'>
+          <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+        </div>
+      )}
       <Space direction='vertical' style={{ width: '100%' }} size='middle'>
         <Space direction='vertical' style={{ width: '100%' }} size='middle'>
           <Space size='middle'>
@@ -260,7 +271,7 @@ const ManagePeople = () => {
           allUsers={users}
           allJobRoles={jobRoles}
           user={userToEdit}
-          onConfirm={handleEditPerson}
+          onConfirm={(userToUpdate: User) => handleEditPerson(userToUpdate)}
           onClose={() => setEditPersonModalOpen(false)}
         />
       </Space>

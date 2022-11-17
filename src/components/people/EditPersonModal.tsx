@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input, Modal, Select, SelectProps, Space, Typography } from 'antd';
-import { User, JobRole } from 'src/models/types';
-import TimeoutAlert, { AlertType } from '../common/TimeoutAlert';
-import { useNavigate } from 'react-router-dom';
+import { User, JobRole, UserRole } from 'src/models/types';
+import TimeoutAlert, {
+  AlertType,
+  AxiosErrDataBody
+} from '../common/TimeoutAlert';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import '../../styles/people/editPeople.scss';
-import { map } from 'lodash';
+import '../../styles/people/managePeople.scss';
 import { editEmployee } from 'src/services/peopleService';
 
 const { Text } = Typography;
@@ -15,34 +16,48 @@ type EditPersonModalProps = {
   allUsers?: User[];
   allJobRoles?: JobRole[];
   user?: User;
-  onConfirm: () => void;
+  onConfirm: (userToUpdate: User) => void;
   onClose: () => void;
 };
 
 const EditPersonModal = (props: EditPersonModalProps) => {
   const { open, allUsers, allJobRoles, user, onConfirm, onClose } = props;
-  const navigate = useNavigate();
+
   const [createLoading, setCreateLoading] = React.useState<boolean>(false);
-  const [createSuccess, setCreateSuccess] = React.useState<boolean>(false);
+  const [alert, setAlert] = React.useState<AlertType | null>(null);
+
+  const [jobRoles, setJobRoles] = React.useState<JobRole[] | null>();
+  const [managerName, setManagerName] = React.useState<string | null>();
+
+  const [originalEmployee, setOriginalEmployee] = React.useState<User>();
+  const [updatedEmployee, setUpdatedEmployee] = React.useState<User>();
 
   const { Option } = Select;
 
-  const firstName = user?.firstName;
-  const lastName = user?.lastName;
-  let fullName = firstName + ' ' + lastName;
-  let title = 'Edit ' + fullName;
+  const [fullName, setFullName] = React.useState<string>('');
+  const [title, setTitle] = React.useState<string>('');
+
+  const managerDataSource = allUsers?.filter(
+    (filteredUser) =>
+      filteredUser.id !== user?.id && filteredUser.role !== UserRole.INTERN
+  );
 
   const getUserFullName = (user: User) => {
     return user.firstName + ' ' + user.lastName;
   };
 
-  const managerDataSource = allUsers?.filter(
-    (filteredUser) => filteredUser.id !== user?.id
-  );
-
-  const onOk = () => {
-    onConfirm();
-  };
+  React.useEffect(() => {
+    if (user) {
+      setJobRoles(user.jobRoles);
+      setOriginalEmployee(user);
+      setUpdatedEmployee(user);
+      if (user.manager) {
+        setManagerName(getUserFullName(user.manager));
+      }
+      setFullName(getUserFullName(user));
+      setTitle('Edit ' + getUserFullName(user));
+    }
+  }, [user]);
 
   const options: SelectProps['options'] = [];
   for (let i = 10; i < 36; i++) {
@@ -52,16 +67,104 @@ const EditPersonModal = (props: EditPersonModalProps) => {
     });
   }
 
+  const updateJobRoles = (value: string[]) => {
+    setCreateLoading(false);
+    if (value) {
+      const newJobRoles = value.map((val) => {
+        let role = allJobRoles?.find((role) => role.jobRole === val);
+        return role!;
+      });
+      setJobRoles(newJobRoles);
+      setUpdatedEmployee({
+        ...updatedEmployee,
+        jobRoles: newJobRoles!
+      } as User);
+    } else {
+      setJobRoles(null);
+      setUpdatedEmployee({
+        ...updatedEmployee,
+        jobRoles: []
+      } as User);
+    }
+  };
+
+  const updateManager = (value: string) => {
+    setCreateLoading(false);
+    if (value) {
+      let newManager = allUsers?.find((user) => user.id === Number(value));
+      setManagerName(getUserFullName(newManager!));
+      setUpdatedEmployee({
+        ...updatedEmployee,
+        managerId: newManager?.id,
+        manager: newManager
+      } as User);
+    } else {
+      setManagerName(null);
+      setUpdatedEmployee({
+        ...updatedEmployee,
+        managerId: null,
+        manager: undefined
+      } as User);
+    }
+  };
+
+  const onOk = async () => {
+    if (updatedEmployee) {
+      let requestBody = {
+        id: updatedEmployee?.id,
+        jobRoles: updatedEmployee?.jobRoles,
+        managerId: updatedEmployee?.managerId
+      };
+
+      setCreateLoading(true);
+
+      await asyncFetchCallback(
+        editEmployee(requestBody),
+        () => {
+          setCreateLoading(false);
+          // Closes modal
+          onConfirm(updatedEmployee);
+        },
+        (err) => {
+          const resData = err.response?.data as AxiosErrDataBody;
+          setAlert({
+            type: 'error',
+            message: `An error occured: ${resData.message}`
+          });
+          setCreateLoading(false);
+        }
+      );
+    }
+  };
+
+  const onCancel = () => {
+    // Reset fields
+    setUpdatedEmployee(originalEmployee);
+    setJobRoles(originalEmployee?.jobRoles);
+    if (originalEmployee?.manager) {
+      setManagerName(getUserFullName(originalEmployee.manager));
+    } else {
+      setManagerName('');
+    }
+    // This will close the modal
+    onClose();
+  };
+
   return (
     <>
       <Modal
         title={title}
         open={open}
         onOk={onOk}
-        onCancel={onClose}
+        onCancel={onCancel}
         okText='Save Changes'
-        okButtonProps={{ loading: createLoading, disabled: createSuccess }}
+        okButtonProps={{ loading: createLoading }}
       >
+        {alert && (
+          <div className='alert'>
+            <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
+          </div>
+        )}
         <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
           <Space direction='vertical' style={{ width: '100%' }}>
             <Text>Full Name</Text>
@@ -71,13 +174,13 @@ const EditPersonModal = (props: EditPersonModalProps) => {
             <div className='people-email-column'>
               <Space direction='vertical' style={{ width: '100%' }}>
                 <Text>Email</Text>
-                <Input disabled={true} placeholder={user?.email} />
+                <Input disabled={true} placeholder={originalEmployee?.email} />
               </Space>
             </div>
             <div className='people-permission-column'>
               <Space direction='vertical' style={{ width: '100%' }}>
                 <Text>Permissions</Text>
-                <Input disabled={true} placeholder={user?.role} />
+                <Input disabled={true} placeholder={originalEmployee?.role} />
               </Space>
             </div>
           </div>
@@ -87,12 +190,13 @@ const EditPersonModal = (props: EditPersonModalProps) => {
               mode='multiple'
               allowClear
               showArrow
-              placeholder='Select Roles'
+              placeholder='Select Role(s)'
               style={{ width: '100%' }}
-              value={user?.jobRoles?.map((role) => role.id)}
+              value={jobRoles?.map((role) => role.jobRole)}
+              onChange={updateJobRoles}
             >
               {allJobRoles?.map((option) => (
-                <Option key={option.id} value={option.id}>
+                <Option key={option.id} value={option.jobRole}>
                   {option.jobRole}
                 </Option>
               ))}
@@ -104,9 +208,10 @@ const EditPersonModal = (props: EditPersonModalProps) => {
               showSearch
               allowClear
               style={{ width: '100%' }}
-              placeholder='Select a person'
+              placeholder='Select Manager'
               optionFilterProp='children'
-              value={user?.manager?.id}
+              value={managerName?.toString()}
+              onChange={updateManager}
             >
               {managerDataSource?.map((option) => (
                 <Option key={option.id} value={option.id}>

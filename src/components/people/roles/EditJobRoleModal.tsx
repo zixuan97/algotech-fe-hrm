@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Modal, Select, Space, Typography } from 'antd';
 import { User, JobRole } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import '../../../styles/people/editPeople.scss';
+import '../../../styles/people/managePeople.scss';
 import { updateJobRole } from 'src/services/jobRoleService';
 import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import { getUserFullName } from 'src/utils/formatUtils';

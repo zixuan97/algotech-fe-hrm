@@ -170,7 +170,13 @@ const AllSubjects = () => {
             placement='bottom'
             mouseEnterDelay={0.8}
           >
-            <Button icon={<EyeOutlined />} shape='round' />
+            <Button
+              icon={<EyeOutlined />}
+              shape='round'
+              onClick={() =>
+                navigate(generatePath(VIEW_SUBJECT_URL, { subjectId: value }))
+              }
+            />
           </Tooltip>
           <Tooltip
             title='Edit Subject'
