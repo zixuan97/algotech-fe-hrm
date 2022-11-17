@@ -147,6 +147,7 @@ const ManageRoles = () => {
         updateLoading: setLoading
       }
     );
+    fetchJobRoles();
   }, [user?.id]);
 
   const deleteFocusedJobRole = (jobRoleId: string | number) => {
