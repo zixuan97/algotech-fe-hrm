@@ -29,110 +29,101 @@ import authContext from 'src/context/auth/authContext';
 const { Sider } = Layout;
 const { useBreakpoint } = Grid;
 
-const menuItems: MenuProps['items'] = [
-  {
-    label: <Link to={DASHBOARD_URL}>Dashboard</Link>,
-    key: DASHBOARD_URL,
-    icon: <DesktopOutlined />
-  },
-  // {
-  //   label: <Link to={COMPANY_URL}>Company</Link>,
-  //   key: COMPANY_URL,
-  //   icon: <ShopOutlined />
-  // },
-  {
-    label: 'People',
-    key: 'people',
-    icon: <TeamOutlined />,
-    children: [
-      {
-        label: <Link to={PEOPLE_URL}>Org Chart</Link>,
-        key: 'orgchart'
-      },
-      {
-        label: <Link to={PEOPLE_MANAGE_URL}>Manage People</Link>,
-        key: 'manage-people'
-      },
-      {
-        label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
-        key: 'roles'
-      }
-    ]
-  },
-  {
-    label: <Link to={SUBJECTS_URL}>Subjects</Link>,
-    key: SUBJECTS_URL,
-    icon: <FileTextOutlined />
-  },
-  {
-    label: <Link to={PROCESSES_URL}>Processes</Link>,
-    key: PROCESSES_URL,
-    icon: <ToolOutlined />
-  },
-  {
-    label: <Link to={REPORTS_URL}>Reports</Link>,
-    key: REPORTS_URL,
-    icon: <LineChartOutlined />
-  },
-  {
-    label: 'Leave',
-    key: 'leave',
-    icon: <CalendarOutlined />,
-    children: [
-      {
-        label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
-        key: 'leave-quota'
-      },
-      {
-        label: <Link to={EMPLOYEE_LEAVE_QUOTA_URL}>Employee Leave Quota</Link>,
-        key: 'employee-leave-quota'
-      },
-      {
-        label: (
-          <Link to={COMPANY_LEAVE_SCHEDULE_URL}>Company Leave Schedule</Link>
-        ),
-        key: 'company-leave-schedule'
-      },
-      {
-        label: (
-          <Link to={ALL_LEAVE_APPLICATIONS_URL}>All Leave Applications</Link>
-        ),
-        key: 'all-leave-applications'
-      },
-      {
-        label: (
-          <Link to={MY_LEAVE_APPLICATIONS_URL}>My Leave Applications</Link>
-        ),
-        key: 'my-leave-applications'
-      }
-    ]
-  }
-];
-
 const Sidebar = () => {
+  const { user } = useContext(authContext);
+
   const location = useLocation();
   const screens = useBreakpoint();
   const [collapsed, setCollapsed] = React.useState<boolean>(!screens.xxl);
 
-  const { user } = useContext(authContext);
-
-  React.useEffect(() => {
-    setCollapsed(!screens.xxl);
-  }, [screens.xxl]);
-
-  const getNonAdminMenu = (): MenuProps['items'] => {
-    const nonAdminMenuItems: MenuProps['items'] = [...menuItems];
-    nonAdminMenuItems[nonAdminMenuItems.length - 1]! = {
+  const menuItems: MenuProps['items'] = [
+    {
+      label: <Link to={DASHBOARD_URL}>Dashboard</Link>,
+      key: DASHBOARD_URL,
+      icon: <DesktopOutlined />
+    },
+    // {
+    //   label: <Link to={COMPANY_URL}>Company</Link>,
+    //   key: COMPANY_URL,
+    //   icon: <ShopOutlined />
+    // },
+    {
+      label: 'People',
+      key: 'people',
+      icon: <TeamOutlined />,
+      children: [
+        {
+          label: <Link to={PEOPLE_URL}>Org Chart</Link>,
+          key: 'orgchart'
+        },
+        {
+          label: <Link to={PEOPLE_MANAGE_URL}>Manage People</Link>,
+          key: 'manage-people'
+        },
+        {
+          label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
+          key: 'roles'
+        }
+      ]
+    },
+    {
+      label: <Link to={SUBJECTS_URL}>Subjects</Link>,
+      key: SUBJECTS_URL,
+      icon: <FileTextOutlined />
+    },
+    {
+      label: <Link to={PROCESSES_URL}>Processes</Link>,
+      key: PROCESSES_URL,
+      icon: <ToolOutlined />
+    },
+    {
+      label: <Link to={REPORTS_URL}>Reports</Link>,
+      key: REPORTS_URL,
+      icon: <LineChartOutlined />
+    },
+    {
       label: 'Leave',
       key: 'leave',
       icon: <CalendarOutlined />,
       children: [
+        ...(user?.role === 'ADMIN'
+          ? [
+              {
+                label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
+                key: 'leave-quota'
+              }
+            ]
+          : []),
+        ...(user?.role === 'ADMIN'
+          ? [
+              {
+                label: (
+                  <Link to={EMPLOYEE_LEAVE_QUOTA_URL}>
+                    Employee Leave Quota
+                  </Link>
+                ),
+                key: 'employee-leave-quota'
+              }
+            ]
+          : []),
         {
           label: (
             <Link to={COMPANY_LEAVE_SCHEDULE_URL}>Company Leave Schedule</Link>
           ),
           key: 'company-leave-schedule'
         },
+        ...(user?.role === 'ADMIN'
+          ? [
+              {
+                label: (
+                  <Link to={ALL_LEAVE_APPLICATIONS_URL}>
+                    All Leave Applications
+                  </Link>
+                ),
+                key: 'all-leave-applications'
+              }
+            ]
+          : []),
         {
           label: (
             <Link to={MY_LEAVE_APPLICATIONS_URL}>My Leave Applications</Link>
@@ -140,9 +131,12 @@ const Sidebar = () => {
           key: 'my-leave-applications'
         }
       ]
-    };
-    return nonAdminMenuItems;
-  };
+    }
+  ];
+
+  React.useEffect(() => {
+    setCollapsed(!screens.xxl);
+  }, [screens.xxl]);
 
   return (
     <Sider
@@ -156,7 +150,7 @@ const Sidebar = () => {
         mode='inline'
         style={{ height: '100%' }}
         selectedKeys={[location.pathname]}
-        items={user?.role === 'ADMIN' ? menuItems : getNonAdminMenu()}
+        items={menuItems}
       />
     </Sider>
   );
