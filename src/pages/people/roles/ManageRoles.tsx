@@ -67,9 +67,8 @@ const ManageRoles = () => {
 
   const sortedAndFilteredJobRoles = React.useMemo(() => {
     const filteredJobRoles = jobRoles.filter((role) => {
-      const { jobRole } = role;
       const searchFieldLower = searchField.toLowerCase();
-      return jobRole.toLowerCase().includes(searchFieldLower);
+      return role.jobRole.toLowerCase().includes(searchFieldLower);
     });
     return sortOption
       ? filteredJobRoles.sort(sortOption.comparator)
@@ -132,7 +131,7 @@ const ManageRoles = () => {
     asyncFetchCallback(
       getAllJobRoles(),
       (roles) => {
-        setJobRoles(roles);
+        setJobRoles(roles.sort(sortOptions[0].comparator));
         setShouldFetchData(false);
       },
       () => void 0,

@@ -11,5 +11,5 @@ export const sortJobRoleAsc = (a: JobRole, b: JobRole) => {
 };
 
 export const sortJobRoleDesc = (a: JobRole, b: JobRole) => {
-  return a.jobRole.localeCompare(b.jobRole);
+  return b.jobRole.localeCompare(a.jobRole);
 };
