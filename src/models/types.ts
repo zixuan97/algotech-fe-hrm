@@ -28,10 +28,16 @@ export interface User {
   company?: string;
   contactNo?: string;
   tier: string;
-  managerId?: number;
+  managerId?: number | null;
   manager?: User;
-  jobRoles?: string[];
+  jobRoles?: JobRole[];
   subordinates?: User[];
+}
+
+export interface JobRole {
+  id: number;
+  jobRole: string;
+  usersInJobRole: User[];
 }
 
 export interface Step {

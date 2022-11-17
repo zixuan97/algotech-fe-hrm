@@ -1,0 +1,16 @@
+//edit people
+.people-two-columns-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 0 16px;
+}
+
+.people-email-column {
+  width: 100%;
+  flex: 0 0 calc(70% - 8px);
+}
+
+.people-permission-column {
+  width: 100%;
+  flex: 0 0 calc(30% - 8px);
+}
