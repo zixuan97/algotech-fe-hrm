@@ -36,8 +36,7 @@ import {
   VIEW_SUBJECT_URL,
   VIEW_TOPIC_URL,
   ALL_LEAVE_APPLICATIONS_URL,
-  EMPLOYEE_LEAVE_QUOTA_URL,
-  PEOPLE_ROLES_ID_URL
+  EMPLOYEE_LEAVE_QUOTA_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -58,7 +57,6 @@ import ManageEmployeeLeaveQuota from './pages/leave/ManageEmployeeLeaveQuota';
 import OrganisationChart from './pages/people/OrganisationInfo';
 import ManagePeople from './pages/people/ManagePeople';
 import ManageRoles from './pages/people/roles/ManageRoles';
-import ViewRole from './pages/people/roles/ViewRole';
 
 const { Footer } = Layout;
 
@@ -112,7 +110,6 @@ const App = () => {
                   <Route path={PEOPLE_URL} element={<OrganisationChart />} />
                   <Route path={PEOPLE_MANAGE_URL} element={<ManagePeople />} />
                   <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
-                  <Route path={PEOPLE_ROLES_ID_URL} element={<ViewRole/>}/>
 
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
