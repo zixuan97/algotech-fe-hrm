@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   DesktopOutlined,
   FileTextOutlined,
@@ -24,6 +24,7 @@ import {
   PEOPLE_ROLES_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
+import authContext from 'src/context/auth/authContext';
 
 const { Sider } = Layout;
 const { useBreakpoint } = Grid;
@@ -113,9 +114,35 @@ const Sidebar = () => {
   const screens = useBreakpoint();
   const [collapsed, setCollapsed] = React.useState<boolean>(!screens.xxl);
 
+  const { user } = useContext(authContext);
+
   React.useEffect(() => {
     setCollapsed(!screens.xxl);
   }, [screens.xxl]);
+
+  const getNonAdminMenu = (): MenuProps['items'] => {
+    const nonAdminMenuItems: MenuProps['items'] = [...menuItems];
+    nonAdminMenuItems[nonAdminMenuItems.length - 1]! = {
+      label: 'Leave',
+      key: 'leave',
+      icon: <CalendarOutlined />,
+      children: [
+        {
+          label: (
+            <Link to={COMPANY_LEAVE_SCHEDULE_URL}>Company Leave Schedule</Link>
+          ),
+          key: 'company-leave-schedule'
+        },
+        {
+          label: (
+            <Link to={MY_LEAVE_APPLICATIONS_URL}>My Leave Applications</Link>
+          ),
+          key: 'my-leave-applications'
+        }
+      ]
+    };
+    return nonAdminMenuItems;
+  };
 
   return (
     <Sider
@@ -129,7 +156,7 @@ const Sidebar = () => {
         mode='inline'
         style={{ height: '100%' }}
         selectedKeys={[location.pathname]}
-        items={menuItems}
+        items={user?.role === 'ADMIN' ? menuItems : getNonAdminMenu()}
       />
     </Sider>
   );
