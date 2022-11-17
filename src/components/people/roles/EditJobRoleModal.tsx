@@ -50,6 +50,7 @@ const EditJobRoleModal = (props: EditPersonModalProps) => {
   };
 
   const handleSaveButtonClick = () => {
+    setUpdateJobRoleLoading(true);
     if (jobRole?.jobRole === '') {
       setAlert({
         type: 'warning',
@@ -136,9 +137,7 @@ const EditJobRoleModal = (props: EditPersonModalProps) => {
               placeholder='Select Users'
               optionFilterProp='children'
               style={{ width: '100%' }}
-              defaultValue={
-                jobRole?.usersInJobRole.map((user) => user.id) ?? []
-              }
+              value={jobRole?.usersInJobRole.map((user) => user.id) ?? []}
               onChange={handleChange}
             >
               {users.map((option) => (
