@@ -141,13 +141,13 @@ const ManageRoles = () => {
         setUsers(
           res.filter((currUser) => currUser.id !== user?.id).sort(sortNameAsc)
         );
+        fetchJobRoles();
       },
       () => void 0,
       {
         updateLoading: setLoading
       }
     );
-    fetchJobRoles();
   }, [user?.id]);
 
   const deleteFocusedJobRole = (jobRoleId: string | number) => {
