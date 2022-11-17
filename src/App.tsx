@@ -114,6 +114,7 @@ const App = () => {
                   <Route path={PEOPLE_URL} element={<OrganisationChart />} />
                   <Route path={PEOPLE_MANAGE_URL} element={<ManagePeople />} />
                   <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
+
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
                   <Route path={VIEW_SUBJECT_URL} element={<ViewSubject />} />
