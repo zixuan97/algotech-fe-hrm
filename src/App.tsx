@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import { Layout } from 'antd';
 import ThemeState from './context/theme/ThemeState';
 import AppHeader from './components/common/AppHeader';
+import RoleRoute from './components/auth/RoleRoute';
 import './styles/common/app.scss';
 import {
   COMPANY_URL,
@@ -39,7 +40,9 @@ import {
   EDIT_QUIZ_URL,
   VIEW_QUIZ_URL,
   MY_SUBJECTS_URL,
-  ASSIGNED_SUBJECT_URL
+  ASSIGNED_SUBJECT_URL,
+  LEAVE_URL,
+  PEOPLE_ORGCHART_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
@@ -113,9 +116,21 @@ const App = () => {
                   {/* company routes */}
                   <Route path={COMPANY_URL} element={<></>} />
                   {/* people routes */}
-                  <Route path={PEOPLE_URL} element={<OrganisationChart />} />
-                  <Route path={PEOPLE_MANAGE_URL} element={<ManagePeople />} />
-                  <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
+                  <Route
+                    path={PEOPLE_ORGCHART_URL}
+                    element={<OrganisationChart />}
+                  />
+                  <Route
+                    path={PEOPLE_URL}
+                    element={<RoleRoute allowedRoles={['ADMIN']} />}
+                  >
+                    <Route
+                      path={PEOPLE_MANAGE_URL}
+                      element={<ManagePeople />}
+                    />
+                    <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
+                  </Route>
+
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
                   <Route path={MY_SUBJECTS_URL} element={<MySubjects />} />
@@ -137,21 +152,27 @@ const App = () => {
                   <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                   {/* leave routes */}
                   <Route
-                    path={LEAVE_QUOTA_URL}
-                    element={<ManageLeaveQuota />}
-                  />
-                  <Route
-                    path={EMPLOYEE_LEAVE_QUOTA_URL}
-                    element={<ManageEmployeeLeaveQuota />}
-                  />
+                    path={LEAVE_URL}
+                    element={<RoleRoute allowedRoles={['ADMIN']} />}
+                  >
+                    <Route
+                      path={LEAVE_QUOTA_URL}
+                      element={<ManageLeaveQuota />}
+                    />
+                    <Route
+                      path={EMPLOYEE_LEAVE_QUOTA_URL}
+                      element={<ManageEmployeeLeaveQuota />}
+                    />
+                    <Route
+                      path={ALL_LEAVE_APPLICATIONS_URL}
+                      element={<AllLeaveApplications />}
+                    />
+                  </Route>
                   <Route
                     path={COMPANY_LEAVE_SCHEDULE_URL}
                     element={<ViewCompanyLeaveSchedule />}
                   />
-                  <Route
-                    path={ALL_LEAVE_APPLICATIONS_URL}
-                    element={<AllLeaveApplications />}
-                  />
+
                   <Route
                     path={MY_LEAVE_APPLICATIONS_URL}
                     element={<ViewMyLeaveApplications />}

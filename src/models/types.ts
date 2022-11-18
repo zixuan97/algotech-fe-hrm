@@ -37,6 +37,7 @@ export interface User {
 export interface JobRole {
   id: number;
   jobRole: string;
+  description: string;
   usersInJobRole: User[];
 }
 
@@ -173,7 +174,7 @@ export interface CalendarObject {
 }
 
 export interface TreeNode {
-  id: number;
+  user: User;
   subordinates: TreeNode[];
 }
 
