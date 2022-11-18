@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../../styles/pages/account.scss';
-import { Typography, Card, Divider, Input, Spin } from 'antd';
+import { Typography, Card, Divider, Input, Spin, Space, Switch } from 'antd';
 import authContext from '../../context/auth/authContext';
 import themeContext from 'src/context/theme/themeContext';
 import { User } from '../../models/types';
@@ -13,7 +13,7 @@ import EditButtonGroup from 'src/components/account/EditButtonGroup';
 
 const ViewMyAccount = () => {
   const authhenticationContext = React.useContext(authContext);
-  const { isDarkMode } = React.useContext(themeContext);
+  const { isDarkMode, updateDarkMode } = React.useContext(themeContext);
 
   const { user, loadUser } = authhenticationContext;
   const [editUser, setEditUser] = useState<User>();
@@ -127,7 +127,7 @@ const ViewMyAccount = () => {
           <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
         </div>
       )}
-      <Card>
+      <Card style={{ paddingBottom: '12px' }}>
         <Spin
           size='large'
           spinning={loading}
@@ -191,6 +191,20 @@ const ViewMyAccount = () => {
             Role
           </Typography.Title>
           <Typography>{user?.role}</Typography>
+          <Divider type='horizontal' />
+          <Typography.Title
+            level={4}
+            style={{ color: isDarkMode ? '#f3cc62' : '#96694c' }}
+          >
+            Theme
+          </Typography.Title>
+          <Space>
+            <Typography.Text>Dark Mode</Typography.Text>{' '}
+            <Switch
+              onChange={(checked) => updateDarkMode(checked)}
+              checked={isDarkMode}
+            />
+          </Space>
         </Spin>
       </Card>
     </>

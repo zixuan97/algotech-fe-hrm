@@ -9,6 +9,10 @@ export const getUserSvc = async (): Promise<User> => {
   return axios.get(`${apiRoot}/user`).then((res) => res.data);
 };
 
-export const getAllNonB2bUsers = async () => {
+export const getAllNonB2bUsers = async (): Promise<User[]> => {
   return axios.get(`${apiRoot}/user/nonb2b/all`).then((res) => res.data);
+};
+
+export const getAllEmployees = async (): Promise<User[]> => {
+  return axios.get(`${apiRoot}/user/employee/all`).then((res) => res.data);
 };

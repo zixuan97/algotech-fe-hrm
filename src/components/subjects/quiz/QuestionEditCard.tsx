@@ -17,7 +17,7 @@ import QuestionMoreButton from './QuestionMoreButton';
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const getAnswerTypeString = (type: AnswerType) => {
+export const getAnswerTypeString = (type: AnswerType) => {
   switch (type) {
     case AnswerType.MCQ:
       return 'Multiple Choice';
@@ -60,17 +60,8 @@ const QuestionOption = ({
       <Input
         value={editOption}
         disabled={type === AnswerType.TRUEFALSE}
-        // size='large'
         onChange={(e) => {
           setEditOption(e.target.value);
-          // if (
-          //   e.target.value.length === 0 ||
-          //   containsOption(e.target.value, options)
-          // ) {
-          //   setShouldWarn(true);
-          // } else {
-          //   setShouldWarn(false);
-          // }
         }}
         onBlur={() => updateOption(editOption)}
       />
@@ -85,11 +76,6 @@ const QuestionOption = ({
       >
         Correct Answer
       </Button>
-      {/* {shouldWarn && (
-        <Tooltip title={getTooltipMsg()} placement='bottomRight'>
-          <WarningOutlined style={{ color: '#faad14' }} />
-        </Tooltip>
-      )} */}
       {type === AnswerType.MCQ && (
         <Button
           // size='large'
@@ -226,46 +212,44 @@ const QuestionEditCard = ({
             style={{ width: '100%', marginBottom: options.length ? '8px' : 0 }}
             // size='middle'
           >
-            {(type === AnswerType.MCQ ? options : TRUE_FALSE_OPTIONS).map(
-              (option, index) => (
-                <QuestionOption
-                  key={index}
-                  type={type}
-                  option={option}
-                  options={options}
-                  updateOption={(updatedOption) => {
-                    const updatedOptions = [...options];
-                    updatedOptions[index] = updatedOption;
-                    const updatedQuestion = {
-                      ...editQuizQuestion,
-                      options: updatedOptions
-                    };
-                    setEditQuizQuestion(updatedQuestion);
-                    updateQuizQuestionApiCall(updatedQuestion);
-                  }}
-                  index={index}
-                  isCorrect={index === correctAnswer}
-                  updateIsCorrect={(index) => {
-                    const updatedQuestion = {
-                      ...editQuizQuestion,
-                      correctAnswer: index
-                    };
-                    setEditQuizQuestion(updatedQuestion);
-                    updateQuizQuestionApiCall(updatedQuestion);
-                  }}
-                  onDelete={() => {
-                    const updatedOptions = [...options];
-                    updatedOptions.splice(index, 1);
-                    const updatedQuestion = {
-                      ...editQuizQuestion,
-                      options: updatedOptions
-                    };
-                    setEditQuizQuestion(updatedQuestion);
-                    updateQuizQuestionApiCall(updatedQuestion);
-                  }}
-                />
-              )
-            )}
+            {options.map((option, index) => (
+              <QuestionOption
+                key={index}
+                type={type}
+                option={option}
+                options={options}
+                updateOption={(updatedOption) => {
+                  const updatedOptions = [...options];
+                  updatedOptions[index] = updatedOption;
+                  const updatedQuestion = {
+                    ...editQuizQuestion,
+                    options: updatedOptions
+                  };
+                  setEditQuizQuestion(updatedQuestion);
+                  updateQuizQuestionApiCall(updatedQuestion);
+                }}
+                index={index}
+                isCorrect={index === correctAnswer}
+                updateIsCorrect={(index) => {
+                  const updatedQuestion = {
+                    ...editQuizQuestion,
+                    correctAnswer: index
+                  };
+                  setEditQuizQuestion(updatedQuestion);
+                  updateQuizQuestionApiCall(updatedQuestion);
+                }}
+                onDelete={() => {
+                  const updatedOptions = [...options];
+                  updatedOptions.splice(index, 1);
+                  const updatedQuestion = {
+                    ...editQuizQuestion,
+                    options: updatedOptions
+                  };
+                  setEditQuizQuestion(updatedQuestion);
+                  updateQuizQuestionApiCall(updatedQuestion);
+                }}
+              />
+            ))}
           </Space>
           {type === AnswerType.MCQ && (
             <Button

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Typography
 } from 'antd';
+import { differenceWith } from 'lodash';
 import React from 'react';
 import { EmployeeSubjectRecord, User } from 'src/models/types';
 import { getAllNonB2bUsers } from 'src/services/userService';
@@ -38,6 +39,7 @@ const UsersAssignedCard = ({
   unassignUserFromSubject
 }: UsersAssignedCardProps) => {
   const [allUsers, setAllUsers] = React.useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
   const [selectedRecord, setSelectedRecord] =
     React.useState<EmployeeSubjectRecord | null>(null);
   const [userDetailsModalOpen, setUserDetailsModalOpen] =
@@ -46,11 +48,18 @@ const UsersAssignedCard = ({
     React.useState<boolean>(false);
 
   React.useEffect(() => {
-    asyncFetchCallback(getAllNonB2bUsers(), setAllUsers);
-  }, []);
+    asyncFetchCallback(getAllNonB2bUsers(), (res) => {
+      setAllUsers(
+        differenceWith(
+          res,
+          usersAssigned,
+          (user, record) => user.id === record.userId
+        )
+      );
+    });
+  }, [usersAssigned]);
 
-  const { user: selectedUser } = selectedRecord || {};
-  const { firstName, lastName } = selectedUser || {};
+  const { firstName } = selectedUser || {};
 
   return (
     <Card className='subject-card'>
@@ -58,7 +67,7 @@ const UsersAssignedCard = ({
         Users Assigned
       </Title>
       <div className='users-assigned-container'>
-        {!!usersAssigned.length &&
+        {!!usersAssigned.length || assignUserToSubject ? (
           usersAssigned.map((record) => (
             <Tooltip
               key={record.id}
@@ -80,7 +89,10 @@ const UsersAssignedCard = ({
                 )}
               </Button>
             </Tooltip>
-          ))}
+          ))
+        ) : (
+          <Text>No users have been assigned to this subject yet.</Text>
+        )}
         {assignUserToSubject && (
           <Tooltip title='Assign User' placement='bottom' mouseEnterDelay={0.5}>
             <Button
@@ -90,7 +102,7 @@ const UsersAssignedCard = ({
               size='large'
               onClick={() => {
                 setAddUserModalOpen(true);
-                setSelectedRecord(null);
+                setSelectedUser(null);
               }}
             />
           </Tooltip>
@@ -103,35 +115,25 @@ const UsersAssignedCard = ({
         onCancel={() => setUserDetailsModalOpen(false)}
       >
         <Space direction='vertical' style={{ width: '100%' }} size='large'>
-          <Title level={4}>{getUserFullName(selectedUser)}</Title>
+          <Title level={4}>{getUserFullName(selectedRecord?.user)}</Title>
           <Space direction='vertical' style={{ width: '100%' }}>
             <Text>{`${getUserFullName(
               selectedRecord?.user
             )}'s Completion Rate`}</Text>
             {/* TODO: add in actual completion rate statistics */}
-            <Progress percent={0} />
+            <Progress percent={selectedRecord?.completionRate} />
           </Space>
           <Space style={{ float: 'right', marginTop: '8px' }}>
-            {/* TODO: shouldn't have double modal for the sake of UX */}
-            <ConfirmationModalButton
-              modalProps={{
-                title: 'Confirm Reset Progress',
-                body: `Are you sure you want to reset ${firstName}'s progress? This action will reset ${firstName}'s progress back to 0.`,
-                onConfirm: () => void 0
-              }}
-              style={{ minWidth: '12em' }}
-            >
-              Reset Progress
-            </ConfirmationModalButton>
+            {/* TODO: shouldn't have double modal for good UX */}
             <ConfirmationModalButton
               modalProps={{
                 title: 'Confirm Unassign User',
-                body: `Are you sure you want to unassign ${firstName}?`,
+                body: `Are you sure you want to unassign ${selectedRecord?.user.firstName}?`,
                 onConfirm: () => {
-                  if (selectedRecord) {
+                  if (selectedRecord && unassignUserFromSubject) {
                     setUserDetailsModalOpen(false);
                     // TODO: update accordingly with EmployeeSubjectRecord
-                    // unassignUserFromSubject(selectedRecord);
+                    unassignUserFromSubject(selectedRecord?.user);
                   }
                 }
               }}
@@ -147,9 +149,8 @@ const UsersAssignedCard = ({
         open={addUserModalOpen}
         onCancel={() => setAddUserModalOpen(false)}
         onOk={() => {
-          if (selectedRecord) {
-            // TODO: update accordingly with EmployeeSubjectRecord
-            // assignUserToSubject(selectedRecord);
+          if (selectedUser && assignUserToSubject) {
+            assignUserToSubject(selectedUser);
           }
           setAddUserModalOpen(false);
         }}
@@ -159,14 +160,11 @@ const UsersAssignedCard = ({
             placeholder='Select User'
             style={{ width: '100%' }}
             allowClear
-            value={selectedRecord?.userId}
-            onChange={
-              (value) => {
-                // TODO: update accordingly with EmployeeSubjectRecord
-              }
-              // setSelectedRecord(
-              //   allUsers.find((user) => user.id === value) ?? null
-              // )
+            value={selectedUser?.id}
+            onChange={(value) =>
+              setSelectedUser(
+                allUsers.find((user) => user.id === value) ?? null
+              )
             }
           >
             {allUsers.map((user) => (
@@ -176,7 +174,7 @@ const UsersAssignedCard = ({
             ))}
           </Select>
           <div style={{ padding: '0px 8px' }}>
-            {selectedRecord && subjectTitle && (
+            {selectedUser && subjectTitle && (
               <Text>{`Assign ${getUserFullName(
                 selectedUser
               )} to ${subjectTitle}? The user will be notified.`}</Text>

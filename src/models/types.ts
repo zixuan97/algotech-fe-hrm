@@ -81,9 +81,22 @@ export interface EmployeeSubjectRecord {
   subjectId: number;
   userId: number;
   completionRate: number;
+  lastAttemptedAt: Date;
   completedQuizzes: Quiz[];
   completedTopics: Topic[];
   subject: Subject;
+  user: User;
+}
+
+export interface EmployeeQuizQuestionRecord {
+  id: number;
+  questionId: number;
+  userId: number;
+  quizId: number;
+  userAnswer: number;
+  isCorrect: boolean;
+  attemptedAt: Date;
+  question: QuizQuestion;
   user: User;
 }
 

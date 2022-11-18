@@ -131,14 +131,17 @@ const ViewSubject = () => {
             />
           </div>
           <Title level={4}>Topics & Quizzes</Title>
-          {!!orderedTopicsAndQuizzes.length &&
+          {!!orderedTopicsAndQuizzes.length ? (
             orderedTopicsAndQuizzes.map((item, index) => (
               <QuizTopicPanel
                 key={index}
                 quizOrTopic={item}
                 quizzesAndTopics={orderedTopicsAndQuizzes}
               />
-            ))}
+            ))
+          ) : (
+            <Text>No topics or quizzes for this subject yet.</Text>
+          )}
         </Space>
       </div>
     </Spin>

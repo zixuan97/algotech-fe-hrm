@@ -69,11 +69,13 @@ const QuizTopicPanel = ({
           <Title level={5}>{topic ? 'Steps' : 'Questions'}</Title>
           {quiz &&
             (quiz.questions.length ? (
-              quiz.questions.map((question, index) => (
-                <Text
-                  key={index}
-                >{`${question.quizOrder}. ${question.question}`}</Text>
-              ))
+              quiz.questions
+                .sort((a, b) => a.quizOrder - b.quizOrder)
+                .map((question, index) => (
+                  <Text
+                    key={index}
+                  >{`${question.quizOrder}. ${question.question}`}</Text>
+                ))
             ) : (
               <Space>
                 <Text>No questions have been added yet.</Text>
@@ -92,9 +94,11 @@ const QuizTopicPanel = ({
             ))}
           {topic &&
             (topic.steps.length ? (
-              topic.steps.map((step, index) => (
-                <Text key={index}>{`${step.topicOrder}. ${step.title}`}</Text>
-              ))
+              topic.steps
+                .sort((a, b) => a.topicOrder - b.topicOrder)
+                .map((step, index) => (
+                  <Text key={index}>{`${step.topicOrder}. ${step.title}`}</Text>
+                ))
             ) : (
               <Space>
                 <Text>No steps have been added yet.</Text>

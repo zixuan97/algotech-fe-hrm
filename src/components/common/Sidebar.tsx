@@ -13,7 +13,6 @@ import {
   DASHBOARD_URL,
   LEAVE_QUOTA_URL,
   MY_LEAVE_APPLICATIONS_URL,
-  PEOPLE_URL,
   SUBJECTS_URL,
   PROCESSES_URL,
   REPORTS_URL,
@@ -22,6 +21,7 @@ import {
   EMPLOYEE_LEAVE_QUOTA_URL,
   PEOPLE_MANAGE_URL,
   PEOPLE_ROLES_URL,
+  MY_SUBJECTS_URL,
   PEOPLE_ORGCHART_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
@@ -65,7 +65,7 @@ const Sidebar = () => {
               }
             ]
           : []),
-          ...(user?.role === 'ADMIN'
+        ...(user?.role === 'ADMIN'
           ? [
               {
                 label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
@@ -76,9 +76,19 @@ const Sidebar = () => {
       ]
     },
     {
-      label: <Link to={SUBJECTS_URL}>Subjects</Link>,
-      key: SUBJECTS_URL,
-      icon: <FileTextOutlined />
+      label: 'Subjects',
+      key: 'subjects',
+      icon: <FileTextOutlined />,
+      children: [
+        {
+          label: <Link to={SUBJECTS_URL}>All Subjects</Link>,
+          key: SUBJECTS_URL
+        },
+        {
+          label: <Link to={MY_SUBJECTS_URL}>My Assigned Subjects</Link>,
+          key: MY_SUBJECTS_URL
+        }
+      ]
     },
     {
       label: <Link to={PROCESSES_URL}>Processes</Link>,
