@@ -1,3 +1,32 @@
+.org-chart-space {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding-top: 4rem !important;
+}
+
+.org-chart-heading-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.org-chart-column-display {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-chart-layout-content {
+  overflow-y: scroll;
+  overflow-x: scroll;
+}
+
+.org-chart-sider-divider {
+  height: 100vh !important;
+  border-width: 2px !important;
+}
+
 .org-chart-container {
   width: 100%;
   margin: 7% auto;
@@ -49,4 +78,8 @@
   padding-right: 0.5rem;
   padding-left: 0.5rem;
   font-weight: bold;
+}
+
+.reporting-employees-card .ant-card-body {
+  padding-bottom: 0;
 }

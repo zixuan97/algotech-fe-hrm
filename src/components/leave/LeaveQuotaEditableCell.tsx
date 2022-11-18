@@ -38,19 +38,37 @@ const LeaveQuotaEditableCell: React.FC<EditableCellProps> = ({
           <Form.Item
             name={name}
             style={{ margin: 0 }}
-            rules={[
-              {
-                required: true,
-                message: `Please Input ${title}!`
-              }
-            ]}
+            rules={
+              inputType !== 'number'
+                ? [
+                    {
+                      required: true,
+                      message: `Please Input ${title}!`
+                    }
+                  ]
+                : [
+                    {
+                      required: true,
+                      message: `Please Input ${title}!`
+                    },
+                    {
+                      type: 'number',
+                      min: 0,
+                      message: 'Minimum is 0!'
+                    },
+                    {
+                      type: 'number',
+                      max: 365,
+                      message: 'Maximum is 365!'
+                    }
+                  ]
+            }
           >
             {inputType === 'number' ? (
               <InputNumber
                 onChange={(value) => {
                   handleInputChange(value!.toString(), name);
                 }}
-                min={0}
               />
             ) : inputType === 'string' ? (
               <Input
