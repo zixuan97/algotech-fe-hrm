@@ -21,7 +21,8 @@ import {
   ALL_LEAVE_APPLICATIONS_URL,
   EMPLOYEE_LEAVE_QUOTA_URL,
   PEOPLE_MANAGE_URL,
-  PEOPLE_ROLES_URL
+  PEOPLE_ROLES_URL,
+  PEOPLE_ORGCHART_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 import authContext from 'src/context/auth/authContext';
@@ -53,17 +54,25 @@ const Sidebar = () => {
       icon: <TeamOutlined />,
       children: [
         {
-          label: <Link to={PEOPLE_URL}>Org Chart</Link>,
+          label: <Link to={PEOPLE_ORGCHART_URL}>Org Chart</Link>,
           key: 'orgchart'
         },
-        {
-          label: <Link to={PEOPLE_MANAGE_URL}>Manage People</Link>,
-          key: 'manage-people'
-        },
-        {
-          label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
-          key: 'roles'
-        }
+        ...(user?.role === 'ADMIN'
+          ? [
+              {
+                label: <Link to={PEOPLE_MANAGE_URL}>Manage People</Link>,
+                key: 'manage-people'
+              }
+            ]
+          : []),
+          ...(user?.role === 'ADMIN'
+          ? [
+              {
+                label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
+                key: 'roles'
+              }
+            ]
+          : [])
       ]
     },
     {
