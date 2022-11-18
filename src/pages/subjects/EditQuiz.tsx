@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -16,7 +16,8 @@ import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
 import {
   EDIT_QUIZ_URL,
   EDIT_SUBJECT_URL,
-  SUBJECTS_URL
+  SUBJECTS_URL,
+  VIEW_QUIZ_URL
 } from 'src/components/routes/routes';
 import QuestionEditCard from 'src/components/subjects/quiz/QuestionEditCard';
 import { getNewQuizQuestion } from 'src/components/subjects/subject/quiz/quizHelper';
@@ -24,6 +25,7 @@ import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
 import { ContentStatus, Quiz } from 'src/models/types';
 import {
   createQuizQuestion,
+  deleteQuiz,
   getQuizById,
   updateQuiz
 } from 'src/services/quizService';
@@ -137,6 +139,24 @@ const EditQuiz = () => {
           title='Edit Quiz'
           inEditMode
           updateLoading={updateQuizLoading}
+          editFunctions={{
+            onView: () =>
+              navigate(generatePath(VIEW_QUIZ_URL, { subjectId, quizId })),
+            onDelete: async () => {
+              editQuiz && deleteQuiz(editQuiz.id);
+            },
+            deleteModalProps: {
+              title: 'Confirm Delete Quiz',
+              body: `Are you sure you want to delete ${editQuiz?.title}?`,
+              deleteSuccessContent: (
+                <Space>
+                  <Text>{`Quiz successfully deleted! Redirecting you back to ${editQuiz?.subject.title} subject page...`}</Text>
+                  <LoadingOutlined />
+                </Space>
+              ),
+              deleteRedirectUrl: generatePath(EDIT_SUBJECT_URL, { subjectId })
+            }
+          }}
           lastUpdatedInfo={
             quiz
               ? {
@@ -154,7 +174,7 @@ const EditQuiz = () => {
             direction='vertical'
             style={{ width: '100%', flex: '0 0 80%' }}
           >
-            <Text>Topic Name</Text>
+            <Text>Quiz Name</Text>
             <Input
               name='title'
               size='large'
@@ -195,7 +215,7 @@ const EditQuiz = () => {
                 style={{ width: '100%', paddingBottom: '32px' }}
               >
                 <Space direction='vertical'>
-                  <Text>{`Passing score`}</Text>
+                  <Text>Passing Score</Text>
                   <Space>
                     <InputNumber
                       defaultValue={editQuiz?.questions.length}
@@ -228,12 +248,13 @@ const EditQuiz = () => {
                     rows={12}
                     value={editQuiz?.description}
                     onChange={editNamedField}
+                    onBlur={() => updateQuizApiCall(editQuiz)}
                   />
                 </Space>
               </Space>
             </Card>
           </div>
-          <div className='questions-editor'>
+          <div className='questions-display'>
             <Title level={4}>Questions</Title>
             {!!editQuiz?.questions.length ? (
               editQuiz.questions.map((question) => (

@@ -22,7 +22,6 @@ import {
   EDIT_SUBJECT_URL,
   EDIT_TOPIC_URL,
   SUBJECTS_URL,
-  VIEW_SUBJECT_URL,
   VIEW_TOPIC_URL
 } from 'src/components/routes/routes';
 import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
@@ -194,7 +193,7 @@ const EditTopic = () => {
                   <LoadingOutlined />
                 </Space>
               ),
-              deleteRedirectUrl: generatePath(VIEW_SUBJECT_URL, { subjectId })
+              deleteRedirectUrl: generatePath(EDIT_SUBJECT_URL, { subjectId })
             },
             onView: () =>
               navigate(generatePath(VIEW_TOPIC_URL, { subjectId, topicId })),

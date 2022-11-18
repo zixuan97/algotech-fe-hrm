@@ -35,6 +35,6 @@ export const convertBooleanToString = (bool?: boolean) => {
   return bool ? BOOLEAN_TRUE : BOOLEAN_FALSE;
 };
 
-export const convertStringToBoolean = (str?: string) => {
-  return str?.toLowerCase() === BOOLEAN_TRUE ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+export const convertStringToBoolean = (str?: string | null): boolean => {
+  return str?.toLowerCase() === BOOLEAN_TRUE;
 };

@@ -21,7 +21,8 @@ import {
   ALL_LEAVE_APPLICATIONS_URL,
   EMPLOYEE_LEAVE_QUOTA_URL,
   PEOPLE_MANAGE_URL,
-  PEOPLE_ROLES_URL
+  PEOPLE_ROLES_URL,
+  MY_SUBJECTS_URL
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 
@@ -59,9 +60,19 @@ const menuItems: MenuProps['items'] = [
     ]
   },
   {
-    label: <Link to={SUBJECTS_URL}>Subjects</Link>,
-    key: SUBJECTS_URL,
-    icon: <FileTextOutlined />
+    label: 'Subjects',
+    key: 'subjects',
+    icon: <FileTextOutlined />,
+    children: [
+      {
+        label: <Link to={SUBJECTS_URL}>All Subjects</Link>,
+        key: SUBJECTS_URL
+      },
+      {
+        label: <Link to={MY_SUBJECTS_URL}>My Assigned Subjects</Link>,
+        key: MY_SUBJECTS_URL
+      }
+    ]
   },
   {
     label: <Link to={PROCESSES_URL}>Processes</Link>,

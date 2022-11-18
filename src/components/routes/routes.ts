@@ -1,6 +1,5 @@
 export const ROOT_URL = '/';
 // app level routes
-export const ACCOUNT_SETTINGS_URL = ROOT_URL + 'accountSettings';
 export const MY_ACCOUNT_URL = ROOT_URL + 'myAccount';
 export const LOGIN_URL = ROOT_URL + 'login';
 export const DASHBOARD_URL = ROOT_URL + 'dashboard';
@@ -17,9 +16,12 @@ export const PEOPLE_ROLES_URL = PEOPLE_URL + '/roles';
 
 // subjects routes
 export const SUBJECTS_URL = ROOT_URL + 'subjects';
+export const MY_SUBJECTS_URL = ROOT_URL + 'mySubjects';
 export const SUBJECT_ID_URL = SUBJECTS_URL + '/:subjectId';
+export const MY_SUBJECT_ID_URL = MY_SUBJECTS_URL + '/:subjectId';
 export const VIEW_SUBJECT_URL = SUBJECT_ID_URL + '/view';
 export const EDIT_SUBJECT_URL = SUBJECT_ID_URL + '/edit';
+export const ASSIGNED_SUBJECT_URL = MY_SUBJECT_ID_URL + '/assigned';
 export const VIEW_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/view';
 export const EDIT_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/edit';
 export const VIEW_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/view';

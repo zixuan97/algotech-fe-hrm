@@ -15,7 +15,6 @@ import ThemeState from './context/theme/ThemeState';
 import AppHeader from './components/common/AppHeader';
 import './styles/common/app.scss';
 import {
-  ACCOUNT_SETTINGS_URL,
   COMPANY_URL,
   DASHBOARD_URL,
   EDIT_TOPIC_URL,
@@ -38,12 +37,13 @@ import {
   ALL_LEAVE_APPLICATIONS_URL,
   EMPLOYEE_LEAVE_QUOTA_URL,
   EDIT_QUIZ_URL,
-  VIEW_QUIZ_URL
+  VIEW_QUIZ_URL,
+  MY_SUBJECTS_URL,
+  ASSIGNED_SUBJECT_URL
 } from './components/routes/routes';
 import moment from 'moment';
 import EditTopic from './pages/subjects/EditTopic';
 import NotFound from './pages/NotFound';
-import AccountSettings from './pages/AccountSettings';
 import AllSubjects from './pages/subjects/AllSubjects';
 import ManageLeaveQuota from './pages/leave/ManageLeaveQuota';
 import ViewMyLeaveApplications from './pages/leave/ViewMyLeaveApplications';
@@ -61,6 +61,8 @@ import ManagePeople from './pages/people/ManagePeople';
 import ManageRoles from './pages/people/ManageRoles';
 import EditQuiz from './pages/subjects/EditQuiz';
 import ViewQuiz from './pages/subjects/ViewQuiz';
+import MySubjects from './pages/subjects/MySubjects';
+import AssignedSubject from './pages/subjects/AssignedSubject';
 
 const { Footer } = Layout;
 
@@ -116,8 +118,13 @@ const App = () => {
                   <Route path={PEOPLE_ROLES_URL} element={<ManageRoles />} />
                   {/* subjects routes */}
                   <Route path={SUBJECTS_URL} element={<AllSubjects />} />
+                  <Route path={MY_SUBJECTS_URL} element={<MySubjects />} />
                   <Route path={VIEW_SUBJECT_URL} element={<ViewSubject />} />
                   <Route path={EDIT_SUBJECT_URL} element={<EditSubject />} />
+                  <Route
+                    path={ASSIGNED_SUBJECT_URL}
+                    element={<AssignedSubject />}
+                  />
                   <Route path={VIEW_TOPIC_URL} element={<ViewTopic />} />
                   <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
                   <Route path={VIEW_QUIZ_URL} element={<ViewQuiz />} />
@@ -127,10 +134,6 @@ const App = () => {
                   {/* report routes */}
                   <Route path={REPORTS_URL} element={<></>} />
                   {/* accounts routes */}
-                  <Route
-                    path={ACCOUNT_SETTINGS_URL}
-                    element={<AccountSettings />}
-                  />
                   <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                   {/* leave routes */}
                   <Route

@@ -78,7 +78,11 @@ const CompletionRateCard = ({
               } Completion Rate`}</Text>
             )}
             <Progress
-              percent={completionRate}
+              percent={
+                completionRateView === CompletionRateView.AVERAGE
+                  ? completionRate
+                  : selectedRecord?.completionRate
+              }
               format={(percent) => `${percent?.toFixed(0)}%`}
               style={{ width: '100%' }}
             />

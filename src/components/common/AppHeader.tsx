@@ -4,12 +4,7 @@ import authContext from '../../context/auth/authContext';
 import '../../styles/common/app.scss';
 import '../../styles/common/common.scss';
 import { UserOutlined } from '@ant-design/icons';
-import {
-  ACCOUNT_SETTINGS_URL,
-  LOGIN_URL,
-  MY_ACCOUNT_URL,
-  ROOT_URL
-} from '../routes/routes';
+import { LOGIN_URL, MY_ACCOUNT_URL, ROOT_URL } from '../routes/routes';
 import { Link } from 'react-router-dom';
 import { useThemedClassName } from 'src/hooks/useThemedClassName';
 
@@ -33,12 +28,6 @@ const AppHeader = () => {
                     {
                       label: <Link to={MY_ACCOUNT_URL}>My Account</Link>,
                       key: MY_ACCOUNT_URL
-                    },
-                    {
-                      label: (
-                        <Link to={ACCOUNT_SETTINGS_URL}>Account Settings</Link>
-                      ),
-                      key: ACCOUNT_SETTINGS_URL
                     },
                     {
                       label: <Link to={LOGIN_URL}>Logout</Link>,
