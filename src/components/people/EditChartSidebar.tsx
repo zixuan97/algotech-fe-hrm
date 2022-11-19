@@ -60,6 +60,7 @@ const EditChartSidebar = ({
       >
         <div className='sidebar-container'>
           <Button
+            type='text'
             icon={<CloseOutlined />}
             className='close-button'
             onClick={handleCloseSideBar}

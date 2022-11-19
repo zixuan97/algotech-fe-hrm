@@ -1,16 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import '../../styles/people/orgChart.scss';
-import {
-  Affix,
-  Layout,
-  Typography,
-  Divider,
-  Card,
-  Space,
-  Drawer,
-  Spin,
-  Button
-} from 'antd';
+import { Layout, Typography, Divider, Space, Spin, Button } from 'antd';
 import { Tree } from 'react-organizational-chart';
 import { TreeNode, User, UserRole } from 'src/models/types';
 import {
@@ -20,6 +10,7 @@ import {
   getOrganisationHierarchy,
   setCEO
 } from 'src/services/peopleService';
+import authContext from 'src/context/auth/authContext';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import ChartNode from 'src/components/people/ChartNode';
 import StyledNode from 'src/components/people/StyledNode';
@@ -32,6 +23,8 @@ import { ApartmentOutlined } from '@ant-design/icons';
 
 const OrganisationChart = () => {
   const { updateBreadcrumbItems } = useContext(breadcrumbContext);
+
+  const { user } = useContext(authContext);
   const { isDarkMode } = useContext(themeContext);
 
   const [ceo, setCeo] = useState<User>();
@@ -64,9 +57,13 @@ const OrganisationChart = () => {
     users: { id: number }[];
   }) => {
     setLoading(true);
-    await asyncFetchCallback(assignSubordinatesToManager(body), (res) => {
+    await asyncFetchCallback(assignSubordinatesToManager(body), () => {
       loadChart();
     });
+  };
+
+  const handleCloseSideBar = () => {
+    setCollapsedSideBar(true);
   };
 
   const loadChart = () => {
@@ -99,7 +96,6 @@ const OrganisationChart = () => {
 
   useEffect(() => {
     setLoading(true);
-
     asyncFetchCallback(getAllEmployees(), (res) => {
       res = res.filter(
         (user: User) =>
@@ -111,10 +107,6 @@ const OrganisationChart = () => {
     });
     loadChart();
   }, []);
-
-  const handleCloseSideBar = () => {
-    setCollapsedSideBar(true);
-  };
 
   if (loading) {
     return (
@@ -152,9 +144,11 @@ const OrganisationChart = () => {
                 everyone having the "Manager" field set for each user.
               </Typography>
             </div>
-            <Button type='primary' onClick={() => setCollapsedSideBar(false)}>
-              Edit Chart
-            </Button>
+            {user!.role === 'ADMIN' && (
+              <Button type='primary' onClick={() => setCollapsedSideBar(false)}>
+                Edit Chart
+              </Button>
+            )}
           </div>
           <Content className='org-chart-layout-content'>
             <div className='org-chart-container'>

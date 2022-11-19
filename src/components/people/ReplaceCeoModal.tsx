@@ -49,7 +49,9 @@ const ReplaceCeoModal = (props: ReplaceCeoModalProps) => {
     setSelectedCeo(newCeo!);
     let employeesThatReportToNewCeo = allEmployees.filter(
       (user) =>
-        (user.managerId === currentCeoId || user.managerId === 0) &&
+        (user.managerId === currentCeoId ||
+          user.managerId === 0 ||
+          user.manager === null) &&
         user.id !== newCeo!.id
     );
     setReportingEmployees(employeesThatReportToNewCeo);
