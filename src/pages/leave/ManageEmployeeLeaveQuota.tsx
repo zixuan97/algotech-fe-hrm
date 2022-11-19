@@ -181,10 +181,46 @@ const ManageEmployeeLeaveQuota = () => {
     }
   };
 
+  const incrementLeaveBalance = (
+    currentBalance: number,
+    newQuota: number,
+    oldQuota: number
+  ) => {
+    if (currentBalance >= newQuota) {
+      return newQuota;
+    }
+    return Math.max(newQuota, currentBalance + newQuota - oldQuota);
+  };
+
   const onInputChange = (value: string, name: string) => {
     if (name === 'tier') {
       form.setFieldsValue({
-        ...tiersObj[value]
+        ...tiersObj[value],
+        annualBalance: incrementLeaveBalance(
+          form.getFieldValue('annualBalance'),
+          tiersObj[value].annualQuota,
+          form.getFieldValue('annualQuota')
+        ),
+        childcareBalance: incrementLeaveBalance(
+          form.getFieldValue('childcareBalance'),
+          tiersObj[value].childcareQuota,
+          form.getFieldValue('childcareQuota')
+        ),
+        compassionateBalance: incrementLeaveBalance(
+          form.getFieldValue('compassionateBalance'),
+          tiersObj[value].compassionate,
+          form.getFieldValue('compassionateQuota')
+        ),
+        parentalBalance: incrementLeaveBalance(
+          form.getFieldValue('parentalBalance'),
+          tiersObj[value].parentalQuota,
+          form.getFieldValue('parentalQuota')
+        ),
+        sickBalance: incrementLeaveBalance(
+          form.getFieldValue('sickBalance'),
+          tiersObj[value].sickQuota,
+          form.getFieldValue('sickQuota')
+        )
       });
     }
   };
@@ -202,40 +238,115 @@ const ManageEmployeeLeaveQuota = () => {
       editable: true
     },
     {
-      title: 'Annual Leave',
-      name: 'annualQuota',
-      dataIndex: 'annualQuota',
-      editable: true
+      title: 'Annual',
+      editable: true,
+      children: [
+        {
+          title: 'Quota',
+          name: 'annualQuota',
+          inputType: 'number',
+          dataIndex: 'annualQuota',
+          editable: true
+        },
+        {
+          title: 'Balance',
+          name: 'annualBalance',
+          dataIndex: 'annualBalance',
+          editable: false
+        }
+      ]
     },
     {
-      title: 'Childcare Leave',
-      name: 'childcareQuota',
-      dataIndex: 'childcareQuota',
-      editable: true
+      title: 'Childcare',
+      editable: true,
+      children: [
+        {
+          title: 'Quota',
+          name: 'childcareQuota',
+          dataIndex: 'childcareQuota',
+          editable: true
+        },
+        {
+          title: 'Balance',
+          name: 'childcareBalance',
+          dataIndex: 'childcareBalance',
+          editable: false
+        }
+      ]
     },
     {
-      title: 'Compassionate Leave',
-      name: 'compassionateQuota',
-      dataIndex: 'compassionateQuota',
-      editable: true
+      title: 'Compassionate',
+      editable: true,
+      children: [
+        {
+          title: 'Quota',
+          name: 'compassionateQuota',
+          dataIndex: 'compassionateQuota',
+          editable: true
+        },
+        {
+          title: 'Balance',
+          name: 'compassionateBalance',
+          dataIndex: 'compassionateBalance',
+          editable: false
+        }
+      ]
     },
     {
-      title: 'Parental Leave',
-      name: 'parentalQuota',
-      dataIndex: 'parentalQuota',
-      editable: true
+      title: 'Parental',
+      editable: true,
+      children: [
+        {
+          title: 'Quota',
+          name: 'parentalQuota',
+          dataIndex: 'parentalQuota',
+          editable: true
+        },
+        {
+          title: 'Balance',
+          name: 'parentalBalance',
+          dataIndex: 'parentalBalance',
+          editable: false
+        }
+      ]
     },
     {
-      title: 'Sick Leave',
-      name: 'sickQuota',
-      dataIndex: 'sickQuota',
-      editable: true
+      title: 'Sick',
+      editable: true,
+      children: [
+        {
+          title: 'Quota',
+          name: 'sickQuota',
+          dataIndex: 'sickQuota',
+          editable: true
+        },
+        {
+          title: 'Balance',
+          name: 'sickBalance',
+          dataIndex: 'sickBalance',
+          editable: false
+        }
+      ]
     },
     {
       title: 'Unpaid Leave',
       name: 'unpaidQuota',
       dataIndex: 'unpaidQuota',
-      editable: true
+      editable: true,
+      children: [
+        {
+          title: 'Quota',
+          name: 'unpaidQuota',
+          dataIndex: 'unpaidQuota',
+          editable: true
+        },
+        {
+          title: 'Balance',
+          name: 'unpaidBalance',
+          dataIndex: 'unpaidBalance',
+          editable: false
+        }
+      ]
     },
     {
       title: 'Operation',
@@ -290,6 +401,26 @@ const ManageEmployeeLeaveQuota = () => {
       })
     };
   });
+  const mergedColumns1 = mergedColumns.map((col) => {
+    if (col.children) {
+      return {
+        ...col,
+        children: col.children.map((col1) => ({
+          ...col1,
+          onCell: (record: EmployeeLeaveQuota) => ({
+            editing: isEditing(record),
+            name: col1.name,
+            title: col1.title,
+            inputType: col1.name === 'tier' ? 'select' : 'number',
+            handleInputChange: onInputChange,
+            selectedTier: record.employee.tier,
+            tiers: tiers
+          })
+        }))
+      };
+    }
+    return col;
+  });
 
   return (
     <Form form={form} component={false}>
@@ -321,7 +452,7 @@ const ManageEmployeeLeaveQuota = () => {
           }}
           bordered
           dataSource={filteredLeaveQuotas}
-          columns={mergedColumns}
+          columns={mergedColumns1}
           rowClassName='editable-row'
           pagination={{
             onChange: cancel,

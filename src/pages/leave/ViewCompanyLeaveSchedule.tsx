@@ -52,7 +52,6 @@ const ViewCompanyLeaveSchedule = () => {
     asyncFetchCallback(
       getAllPublicHolidays(new Date().getFullYear()),
       (res) => {
-        console.log("res",res)
         setPublicHolidays(res);
       }
     );
@@ -94,6 +93,19 @@ const ViewCompanyLeaveSchedule = () => {
     setSelectedMode(mode);
   };
 
+  const onSelectedYearChange = (year: number) => {
+    setLoading(true);
+
+    asyncFetchCallback(
+      getAllPublicHolidays(year),
+      (res) => {
+        setPublicHolidays(res);
+      },
+      () => void 0,
+      { updateLoading: setLoading }
+    );
+  };
+
   return (
     <>
       <Typography.Title level={2}>Company Leave Schedule</Typography.Title>
@@ -104,6 +116,7 @@ const ViewCompanyLeaveSchedule = () => {
           onPanelChange={onPanelChange}
           handleSelect={handleSelect}
           colours={colours}
+          onSelectYear={(selectedYear) => onSelectedYearChange(selectedYear)}
         />
         <CalendarCellModal
           open={openCalendarCellModal}

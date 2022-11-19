@@ -17,6 +17,12 @@ export const getAllEmployeeLeaveQuota = async (): Promise<
   return axios.get(`${apiRoot}/leave/records/all`).then((res) => res.data);
 };
 
+export const getEmployeeLeaveQuota = async (
+  id: string | number
+): Promise<EmployeeLeaveQuota> => {
+  return axios.get(`${apiRoot}/leave/employee/${id}`).then((res) => res.data);
+};
+
 export const getTierSize = async (tierName: string): Promise<number> => {
   return axios
     .get(`${apiRoot}/leave/size/tier/${tierName}`)
@@ -85,8 +91,16 @@ export const editLeaveApplication = async (body: object): Promise<void> => {
   return axios.put(`${apiRoot}/leave`, body);
 };
 
-export const vetLeaveApplication = async (body: object): Promise<void> => {
-  return axios.put(`${apiRoot}/leave/vet`, body, {
+export const approveLeaveApplication = async (body: object): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/approve`, body, {
+    headers: {
+      'x-access-token': axios.defaults.headers.common['x-access-token']
+    }
+  });
+};
+
+export const rejectLeaveApplication = async (body: object): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/reject`, body, {
     headers: {
       'x-access-token': axios.defaults.headers.common['x-access-token']
     }

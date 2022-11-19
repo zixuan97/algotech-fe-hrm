@@ -46,7 +46,7 @@ const ManageLeaveQuota = () => {
   useEffect(() => {
     updateBreadcrumbItems([
       {
-        label: 'Leave Quota',
+        label: 'Leave Tiers',
         to: LEAVE_QUOTA_URL
       }
     ]);
@@ -381,7 +381,7 @@ const ManageLeaveQuota = () => {
 
   return (
     <Form form={form} component={false}>
-      <Typography.Title level={2}>Manage Leave Quota</Typography.Title>
+      <Typography.Title level={2}>View Leave Tiers</Typography.Title>
       {alert && (
         <div className='leave-quota-alert'>
           <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />
