@@ -109,9 +109,11 @@ const AssignedSubject = () => {
   }, [subjectId, user]);
 
   React.useEffect(() => {
-    if (!quizzesAndTopics.length) return;
-    if (attempt && record?.completionRate === 100) {
-      setTimeout(() => setSelectedQuizOrTopic(null), 500);
+    if (
+      !quizzesAndTopics.length ||
+      (attempt && record?.completionRate === 100)
+    ) {
+      setSelectedQuizOrTopic(null);
     }
     if (attempt) {
       let currIdx = 0;
@@ -125,13 +127,13 @@ const AssignedSubject = () => {
       ) {
         currIdx++;
       }
-
       if (currIdx === quizzesAndTopics.length) {
       } else {
         setSelectedQuizOrTopic(quizzesAndTopics[currIdx]);
       }
     } else {
-      setSelectedQuizOrTopic(quizzesAndTopics[0]);
+      console.log(quizzesAndTopics);
+      setSelectedQuizOrTopic(quizzesAndTopics?.[0] ?? null);
     }
   }, [
     quizzesAndTopics,
@@ -184,7 +186,10 @@ const AssignedSubject = () => {
                   {attempt && (
                     <div style={{ width: '60%' }}>
                       <Text>My progress</Text>
-                      <Progress percent={record?.completionRate} />
+                      <Progress
+                        percent={record?.completionRate}
+                        format={(percent) => `${percent?.toFixed(0)}%`}
+                      />
                     </div>
                   )}
                 </div>
@@ -256,7 +261,7 @@ const AssignedSubject = () => {
                       }}
                     />
                   )
-                ) : record?.completionRate === 100 && !loading ? (
+                ) : record?.completionRate === 100 && !loading && attempt ? (
                   <Result
                     status='success'
                     title='Successfully completed subject!'

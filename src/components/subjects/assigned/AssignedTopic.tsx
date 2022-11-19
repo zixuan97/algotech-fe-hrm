@@ -105,6 +105,7 @@ const AssignedTopic = ({
         <Space direction='vertical'>
           <Text>Topic Progress</Text>
           <Progress
+            format={(percent) => `${percent?.toFixed(0)}%`}
             percent={
               isComplete ? 100 : (completedStepIds.size / steps.length) * 100
             }
