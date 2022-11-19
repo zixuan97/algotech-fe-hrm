@@ -12,7 +12,7 @@ import {
 import { differenceWith } from 'lodash';
 import React from 'react';
 import { EmployeeSubjectRecord, User } from 'src/models/types';
-import { getAllNonB2bUsers } from 'src/services/userService';
+import { getAllEmployees } from 'src/services/userService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
   getFirstLastNameInitials,
@@ -48,7 +48,7 @@ const UsersAssignedCard = ({
     React.useState<boolean>(false);
 
   React.useEffect(() => {
-    asyncFetchCallback(getAllNonB2bUsers(), (res) => {
+    asyncFetchCallback(getAllEmployees(), (res) => {
       setAllUsers(
         differenceWith(
           res,
@@ -58,8 +58,6 @@ const UsersAssignedCard = ({
       );
     });
   }, [usersAssigned]);
-
-  const { firstName } = selectedUser || {};
 
   return (
     <Card className='subject-card'>

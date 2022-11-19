@@ -1,0 +1,17 @@
+.chapter-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  height: 100%;
+  width: 100%;
+}
+
+.chapter-display {
+  flex: 0 0 calc(100% / 5 - 16px);
+  flex-wrap: wrap;
+}
+
+.chapter-content {
+  flex: 0 0 calc((100% / 5) * 4 - 16px);
+}

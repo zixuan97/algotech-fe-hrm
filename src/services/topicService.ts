@@ -24,6 +24,14 @@ export const updateTopicsOrder = async (topics: Topic[]): Promise<Topic[]> => {
   return axios.post(`${apiRoot}/topic/order`, topics).then((res) => res.data);
 };
 
+export const completeTopic = async (
+  topicId: string | number
+): Promise<Topic> => {
+  return axios
+    .post(`${apiRoot}/topic/completed`, { topicId })
+    .then((res) => res.data);
+};
+
 export const createStep = async (step: Partial<Step>): Promise<Step> => {
   return axios.post(`${apiRoot}/step`, step).then((res) => res.data);
 };

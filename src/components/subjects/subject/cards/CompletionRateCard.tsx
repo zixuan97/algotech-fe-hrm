@@ -54,7 +54,6 @@ const CompletionRateCard = ({
               style={{ width: '100%' }}
               placeholder='Select User'
               onChange={(value) => {
-                // TODO: check whether EmployeeSubjectRecord will have its own ID (it should have bah)
                 setSelectedRecord(
                   usersAssigned.find((record) => record.id === value) ?? null
                 );

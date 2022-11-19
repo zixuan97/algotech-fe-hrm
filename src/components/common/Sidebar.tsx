@@ -2,9 +2,7 @@ import React, { useContext } from 'react';
 import {
   DesktopOutlined,
   FileTextOutlined,
-  LineChartOutlined,
   TeamOutlined,
-  ToolOutlined,
   CalendarOutlined
 } from '@ant-design/icons';
 import { Grid, Layout, Menu, MenuProps } from 'antd';
@@ -14,8 +12,6 @@ import {
   LEAVE_QUOTA_URL,
   MY_LEAVE_APPLICATIONS_URL,
   SUBJECTS_URL,
-  PROCESSES_URL,
-  REPORTS_URL,
   COMPANY_LEAVE_SCHEDULE_URL,
   ALL_LEAVE_APPLICATIONS_URL,
   EMPLOYEE_LEAVE_QUOTA_URL,
@@ -26,6 +22,7 @@ import {
 } from '../routes/routes';
 import '../../styles/common/app.scss';
 import authContext from 'src/context/auth/authContext';
+import { UserRole } from 'src/models/types';
 
 const { Sider } = Layout;
 const { useBreakpoint } = Grid;
@@ -57,7 +54,7 @@ const Sidebar = () => {
           label: <Link to={PEOPLE_ORGCHART_URL}>Org Chart</Link>,
           key: 'orgchart'
         },
-        ...(user?.role === 'ADMIN'
+        ...(user?.role === UserRole.ADMIN
           ? [
               {
                 label: <Link to={PEOPLE_MANAGE_URL}>Manage People</Link>,
@@ -65,7 +62,7 @@ const Sidebar = () => {
               }
             ]
           : []),
-        ...(user?.role === 'ADMIN'
+        ...(user?.role === UserRole.ADMIN
           ? [
               {
                 label: <Link to={PEOPLE_ROLES_URL}>Manage Roles</Link>,
@@ -80,32 +77,36 @@ const Sidebar = () => {
       key: 'subjects',
       icon: <FileTextOutlined />,
       children: [
-        {
-          label: <Link to={SUBJECTS_URL}>All Subjects</Link>,
-          key: SUBJECTS_URL
-        },
+        ...(user?.role === UserRole.ADMIN
+          ? [
+              {
+                label: <Link to={SUBJECTS_URL}>All Subjects</Link>,
+                key: SUBJECTS_URL
+              }
+            ]
+          : []),
         {
           label: <Link to={MY_SUBJECTS_URL}>My Assigned Subjects</Link>,
           key: MY_SUBJECTS_URL
         }
       ]
     },
-    {
-      label: <Link to={PROCESSES_URL}>Processes</Link>,
-      key: PROCESSES_URL,
-      icon: <ToolOutlined />
-    },
-    {
-      label: <Link to={REPORTS_URL}>Reports</Link>,
-      key: REPORTS_URL,
-      icon: <LineChartOutlined />
-    },
+    // {
+    //   label: <Link to={PROCESSES_URL}>Processes</Link>,
+    //   key: PROCESSES_URL,
+    //   icon: <ToolOutlined />
+    // },
+    // {
+    //   label: <Link to={REPORTS_URL}>Reports</Link>,
+    //   key: REPORTS_URL,
+    //   icon: <LineChartOutlined />
+    // },
     {
       label: 'Leave',
       key: 'leave',
       icon: <CalendarOutlined />,
       children: [
-        ...(user?.role === 'ADMIN'
+        ...(user?.role === UserRole.ADMIN
           ? [
               {
                 label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
@@ -113,7 +114,7 @@ const Sidebar = () => {
               }
             ]
           : []),
-        ...(user?.role === 'ADMIN'
+        ...(user?.role === UserRole.ADMIN
           ? [
               {
                 label: (
@@ -131,7 +132,7 @@ const Sidebar = () => {
           ),
           key: 'company-leave-schedule'
         },
-        ...(user?.role === 'ADMIN'
+        ...(user?.role === UserRole.ADMIN
           ? [
               {
                 label: (

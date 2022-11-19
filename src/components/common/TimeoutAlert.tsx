@@ -17,13 +17,17 @@ type AlertProps = {
   clearAlert: () => void;
   closable?: boolean;
   timeout?: number;
+  className?: string;
+  style?: React.CSSProperties;
 };
 
 const TimeoutAlert = ({
   alert,
   clearAlert,
   closable = true,
-  timeout = 3000
+  timeout = 3000,
+  className = '',
+  style = {}
 }: AlertProps) => {
   const location = useLocation();
 
@@ -54,6 +58,8 @@ const TimeoutAlert = ({
       onClose={clearAlert}
       showIcon
       closable={closable}
+      className={className}
+      style={style}
     />
   );
 };

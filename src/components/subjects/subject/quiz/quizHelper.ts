@@ -11,6 +11,11 @@ import {
   STARTCASE_BOOLEAN_TRUE
 } from 'src/utils/constants';
 
+export interface QuizQuestionAnswer {
+  questionId: number;
+  userAnswer: number;
+}
+
 const EMPTY_QUIZ: Partial<Quiz> = {
   subjectOrder: 0,
   title: EMPTYSTR,
@@ -101,3 +106,11 @@ export const swapQuestionsInQuestionsArr = (
   newQuestions[idxB] = temp;
   return reorderQuestionsArr(newQuestions, false);
 };
+
+export const convertMapToQuizQuestionAnswers = (
+  map: Map<number, number>
+): QuizQuestionAnswer[] =>
+  [...map.entries()].map((entry) => ({
+    questionId: entry[0],
+    userAnswer: entry[1]
+  }));

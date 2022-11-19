@@ -59,12 +59,12 @@
   display: inline-block;
 }
 
-.status-dot-draft {
-  @extend .status-dot;
-  background-color: #717171;
-}
+// .status-dot-draft {
+//   @extend .status-dot;
+//   background-color: #717171;
+// }
 
-.status-dot-pending {
+.status-dot-draft {
   @extend .status-dot;
   background-color: #f8a13e;
 }
