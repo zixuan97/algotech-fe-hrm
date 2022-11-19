@@ -30,7 +30,6 @@ const LeaveQuotaEditableCell: React.FC<EditableCellProps> = ({
     value: item.tier
   }));
   tierNames = tierNames?.sort((a, b) => a.value.localeCompare(b.value));
-
   return (
     <td {...restProps}>
       {editing ? (

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge, Calendar } from 'antd';
 import type { Moment } from 'moment';
 import { CalendarObject, CalendarPHObject } from 'src/models/types';
 import themeContext from 'src/context/theme/themeContext';
-import moment from 'moment';
+import { StarOutlined } from '@ant-design/icons';
+import type { Dayjs } from 'dayjs';
 
 interface LeaveCalendarProps {
   leaveDates: CalendarObject[];
@@ -11,16 +12,17 @@ interface LeaveCalendarProps {
   handleSelect: (value: Moment) => void;
   onPanelChange: (value: Moment, mode: string) => void;
   colours: Map<number, string>;
+  onSelectYear: (onSelectYear: number) => void;
 }
 
-const LeaveCalendar = ({
-  leaveDates,
-  publicHolidays,
-  handleSelect,
-  onPanelChange,
-  colours
-}: LeaveCalendarProps) => {
+const LeaveCalendar = (props: LeaveCalendarProps) => {
   const { isDarkMode } = React.useContext(themeContext);
+  const { leaveDates, publicHolidays, handleSelect, onPanelChange, colours } =
+    props;
+
+  const onDateChange = (date: Moment) => {
+    props.onSelectYear(date.year());
+  };
 
   const dateCellRender = (value: Moment) => {
     const stringValue = value.format('DD/MM/YYYY');
@@ -30,18 +32,29 @@ const LeaveCalendar = ({
     const publicHol = publicHolidays.find(
       (publicHolObject) => publicHolObject.Date === value.format('YYYY-MM-DD')
     );
-    const publicHolObserved = publicHolidays.find(
+    let publicHolObserved = publicHolidays.find(
       (publicHolObject) =>
         publicHolObject.Observance === value.format('YYYY-MM-DD')
     );
+    if (publicHolObserved?.Date === publicHolObserved?.Observance) {
+      publicHolObserved = undefined;
+    }
 
     return (
       <>
-        {publicHol && <Badge color='red' text={publicHol.Name} />}
-        {publicHolObserved && (
-          <Badge color='pink' text={`${publicHolObserved.Name} (observed)`} />
+        {publicHol && (
+          <div className='calendar-public-hol'>
+            <StarOutlined style={{ paddingRight: '0.2rem' }} />
+            <span>{publicHol.Name}</span>
+          </div>
         )}
-        <ul>
+        {publicHolObserved && (
+          <div className='calendar-public-hol'>
+            <StarOutlined style={{ paddingRight: '0.2rem' }} />
+            <span>{`${publicHolObserved.Name} (observed)`}</span>
+          </div>
+        )}
+        <ul style={{ paddingLeft: '1rem' }}>
           {listData.map((item) => (
             <Badge
               color={colours.get(item.employeeId)}
@@ -74,6 +87,7 @@ const LeaveCalendar = ({
       monthCellRender={monthCellRender}
       onSelect={handleSelect}
       onPanelChange={onPanelChange}
+      onChange={onDateChange}
     />
   );
 };

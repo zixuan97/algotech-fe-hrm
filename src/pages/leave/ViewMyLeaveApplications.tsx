@@ -3,8 +3,11 @@ import { useNavigate, generatePath } from 'react-router-dom';
 import { Button, Input, Select, Space, Table, Typography } from 'antd';
 import authContext from 'src/context/auth/authContext';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { getLeaveApplicationsByEmployeeId } from 'src/services/leaveService';
-import { LeaveApplication } from 'src/models/types';
+import {
+  getEmployeeLeaveQuota,
+  getLeaveApplicationsByEmployeeId
+} from 'src/services/leaveService';
+import { EmployeeLeaveQuota, LeaveApplication } from 'src/models/types';
 import moment from 'moment';
 import LeaveStatusCell from 'src/components/leave/LeaveStatusCell';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
@@ -63,6 +66,7 @@ const ViewMyLeaveApplications = () => {
   const [leaveApplications, setLeaveApplications] = useState<
     LeaveApplication[]
   >([]);
+  const [leaveQuota, setLeaveQuota] = useState<EmployeeLeaveQuota>();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [searchField, setSearchField] = React.useState<string>('');
   const [sortOption, setSortOption] = React.useState<SortOption | null>();
@@ -95,6 +99,11 @@ const ViewMyLeaveApplications = () => {
   useEffect(() => {
     if (user) {
       setLoading(true);
+
+      asyncFetchCallback(getEmployeeLeaveQuota(user.id), (res) => {
+        setLeaveQuota(res);
+      });
+
       asyncFetchCallback(
         getLeaveApplicationsByEmployeeId(user.id),
         (res) => {

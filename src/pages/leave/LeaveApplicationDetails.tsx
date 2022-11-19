@@ -18,10 +18,11 @@ import {
 import { LeaveApplication, LeaveStatus, LeaveType } from 'src/models/types';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
 import {
+  approveLeaveApplication,
   cancelLeaveApplication,
   editLeaveApplication,
   getLeaveApplicationById,
-  vetLeaveApplication
+  rejectLeaveApplication
 } from 'src/services/leaveService';
 import { DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
@@ -268,46 +269,95 @@ const LeaveApplicationDetails = () => {
       commentsByVetter: updatedLeaveApplication?.commentsByVetter
     };
 
-    let editReqBody = {
-      id: updatedLeaveApplication?.id,
-      status: updatedLeaveApplication?.status
-    };
-
-    await asyncFetchCallback(editLeaveApplication(editReqBody), (res) => {});
-
-    await asyncFetchCallback(
-      vetLeaveApplication(vetReqBody),
-      (res) => {
-        setOriginalLeaveApplication((originalLeaveApplication) => {
-          if (originalLeaveApplication) {
-            return {
-              ...originalLeaveApplication,
-              status: updatedLeaveApplication!.status,
-              commentsByVetter: updatedLeaveApplication!.commentsByVetter,
-              lastUpdated: new Date(),
-              vettedBy: user!
-            };
-          } else {
-            return originalLeaveApplication;
-          }
-        });
-        setAlert({
-          type: 'success',
-          message: 'Leave Application vetted successfully'
-        });
-        setVet(false);
-        setLoading(false);
-      },
-      (err) => {
-        setAlert({
-          type: 'error',
-          message:
-            'Leave Application was not vetted successfully, please try again later.'
-        });
-        setVet(false);
-        setLoading(false);
-      }
-    );
+    if (updatedLeaveApplication?.status === LeaveStatus.APPROVED) {
+      await asyncFetchCallback(
+        approveLeaveApplication(vetReqBody),
+        (res) => {
+          setOriginalLeaveApplication((originalLeaveApplication) => {
+            if (originalLeaveApplication) {
+              return {
+                ...originalLeaveApplication,
+                status: updatedLeaveApplication!.status,
+                commentsByVetter: updatedLeaveApplication!.commentsByVetter,
+                lastUpdated: new Date(),
+                vettedBy: user!
+              };
+            } else {
+              return originalLeaveApplication;
+            }
+          });
+          setAlert({
+            type: 'success',
+            message: 'Leave Application vetted successfully'
+          });
+          setVet(false);
+          setLoading(false);
+        },
+        (err) => {
+          setUpdatedLeaveApplication((updatedLeaveApplication) => {
+            if (updatedLeaveApplication) {
+              return {
+                ...updatedLeaveApplication,
+                status: LeaveStatus.PENDING
+              };
+            } else {
+              return updatedLeaveApplication;
+            }
+          });
+          setAlert({
+            type: 'error',
+            message:
+              'Leave Application was not vetted successfully, please try again later.'
+          });
+          setVet(false);
+          setLoading(false);
+        }
+      );
+    } else {
+      await asyncFetchCallback(
+        rejectLeaveApplication(vetReqBody),
+        (res) => {
+          setOriginalLeaveApplication((originalLeaveApplication) => {
+            if (originalLeaveApplication) {
+              return {
+                ...originalLeaveApplication,
+                status: updatedLeaveApplication!.status,
+                commentsByVetter: updatedLeaveApplication!.commentsByVetter,
+                lastUpdated: new Date(),
+                vettedBy: user!
+              };
+            } else {
+              return originalLeaveApplication;
+            }
+          });
+          setAlert({
+            type: 'success',
+            message: 'Leave Application vetted successfully'
+          });
+          setVet(false);
+          setLoading(false);
+        },
+        (err) => {
+          setUpdatedLeaveApplication((updatedLeaveApplication) => {
+            if (updatedLeaveApplication) {
+              return {
+                ...updatedLeaveApplication,
+                status: LeaveStatus.PENDING
+              };
+            } else {
+              return updatedLeaveApplication;
+            }
+          });
+          setAlert({
+            type: 'error',
+            message:
+              'Leave Application was not vetted successfully, please try again later.'
+          });
+          setVet(false);
+          setLoading(false);
+        }
+      );
+    }
   };
 
   return (
