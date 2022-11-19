@@ -139,7 +139,8 @@ const ManageRoles = () => {
       getAllEmployees(),
       (res) => {
         setUsers(
-          res.filter((currUser) => currUser.id !== user?.id).sort(sortNameAsc)
+          res
+          // res.filter((currUser) => currUser.id !== user?.id).sort(sortNameAsc)
         );
         fetchJobRoles();
       },
