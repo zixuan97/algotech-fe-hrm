@@ -1,11 +1,13 @@
 import React from 'react';
 import { Badge, Calendar } from 'antd';
 import type { Moment } from 'moment';
-import { CalendarObject } from 'src/models/types';
+import { CalendarObject, CalendarPHObject } from 'src/models/types';
 import themeContext from 'src/context/theme/themeContext';
+import moment from 'moment';
 
 interface LeaveCalendarProps {
   leaveDates: CalendarObject[];
+  publicHolidays: CalendarPHObject[];
   handleSelect: (value: Moment) => void;
   onPanelChange: (value: Moment, mode: string) => void;
   colours: Map<number, string>;
@@ -13,6 +15,7 @@ interface LeaveCalendarProps {
 
 const LeaveCalendar = ({
   leaveDates,
+  publicHolidays,
   handleSelect,
   onPanelChange,
   colours
@@ -24,10 +27,21 @@ const LeaveCalendar = ({
     const listData = leaveDates.filter(
       (leaveDate) => leaveDate.calDate.format('DD/MM/YYYY') === stringValue
     );
+    const publicHol = publicHolidays.find(
+      (publicHolObject) => publicHolObject.Date === value.format('YYYY-MM-DD')
+    );
+    const publicHolObserved = publicHolidays.find(
+      (publicHolObject) =>
+        publicHolObject.Observance === value.format('YYYY-MM-DD')
+    );
 
     return (
       <>
-        <ul className='events'>
+        {publicHol && <Badge color='red' text={publicHol.Name} />}
+        {publicHolObserved && (
+          <Badge color='pink' text={`${publicHolObserved.Name} (observed)`} />
+        )}
+        <ul>
           {listData.map((item) => (
             <Badge
               color={colours.get(item.employeeId)}

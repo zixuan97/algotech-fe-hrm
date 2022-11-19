@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  CalendarPHObject,
   EmployeeLeaveQuota,
   LeaveApplication,
   LeaveQuota
@@ -60,6 +61,12 @@ export const getAllApprovedLeaveApplications = async (): Promise<
   LeaveApplication[]
 > => {
   return axios.get(`${apiRoot}/leave/approved/all`).then((res) => res.data);
+};
+
+export const getAllPublicHolidays = async (
+  year: string | number
+): Promise<CalendarPHObject[]> => {
+  return axios.get(`${apiRoot}/leave/ph/${year}`).then((res) => res.data);
 };
 
 export const getLeaveApplicationById = async (

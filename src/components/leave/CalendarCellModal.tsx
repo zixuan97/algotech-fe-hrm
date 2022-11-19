@@ -22,6 +22,7 @@ const CalendarCellModal = ({
 }: CalendarCellModalProps) => {
   let stringValue: string;
   let listData;
+
   if (mode === 'month') {
     stringValue = date!.format('DD/MM/YYYY');
     listData = data.filter(
@@ -34,6 +35,11 @@ const CalendarCellModal = ({
     );
   }
 
+  listData = listData.filter(
+    (object, index, self) =>
+      self.findIndex((object2) => object2.id === object.id) === index
+  );
+
   const listDataGroups = Object.values(
     listData.reduce<{ [index: number]: CalendarObject[] }>((groups, item) => {
       const group = groups[item.employeeId] || [];
@@ -45,10 +51,13 @@ const CalendarCellModal = ({
 
   const renderModalMonthView = (listData: CalendarObject[]) => {
     return listData.map((item) => (
-      <Badge
-        color={colours.get(item.employeeId)}
-        text={`${item.employeeName} on leave`}
-      />
+      <>
+        <Badge
+          color={colours.get(item.employeeId)}
+          text={`${item.employeeName} on leave`}
+        />
+        <Divider />
+      </>
     ));
   };
 
