@@ -2,8 +2,6 @@ import React from 'react';
 import '../../styles/people/orgChart.scss';
 import { Avatar, Card, Typography } from 'antd';
 import { TreeNode } from 'src/models/types';
-
-import '../../styles/people/chartNode.scss';
 import { getUserFullName } from 'src/utils/formatUtils';
 import ViewUserModal from './ViewUserModal';
 

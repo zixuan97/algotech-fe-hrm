@@ -1,0 +1,41 @@
+.sidebar-sider {
+  overflow: auto;
+  height: 100vh;
+  right: 0;
+}
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+}
+
+.close-button {
+  align-self: flex-end;
+}
+
+.sider-heading {
+  white-space: nowrap;
+  padding-top: 2rem;
+}
+
+.sider-horizontal-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.sider-star-icon {
+  font-size: 18px;
+  padding-top: 0.2rem;
+  padding-right: 0.5rem;
+}
+
+.sider-replace-button {
+  width: max-content;
+  font-weight: bold;
+  padding: 0px 0px !important;
+}
+
+.sider-save-button {
+  width: max-content;
+}
