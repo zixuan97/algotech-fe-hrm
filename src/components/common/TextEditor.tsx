@@ -26,7 +26,6 @@ const toolbarOptions = [
 type TextEditorProps = {
   content?: string;
   updateContent: (content: string) => void;
-  onBlur?: () => void;
   className?: string;
   style?: React.CSSProperties;
 };
@@ -34,7 +33,6 @@ type TextEditorProps = {
 const TextEditor = ({
   content = '',
   updateContent,
-  onBlur,
   className = '',
   style = {}
 }: TextEditorProps) => {
@@ -46,7 +44,6 @@ const TextEditor = ({
         onChange={(value) => {
           updateContent(value);
         }}
-        onBlur={onBlur}
         modules={{
           toolbar: toolbarOptions,
           divider: true,

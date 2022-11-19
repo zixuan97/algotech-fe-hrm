@@ -137,12 +137,6 @@ const ViewTopic = () => {
                 <Card style={{ maxWidth: '100%' }}>
                   <RichTextDisplay
                     content={selectedStep?.content}
-                    updateContent={(content: string) =>
-                      setSelectedStep((prev) =>
-                        prev ? { ...prev, content: content } : null
-                      )
-                    }
-                    onBlur={() => {}}
                     style={{ flex: 0.8 }}
                   />
                 </Card>
