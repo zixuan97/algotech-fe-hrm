@@ -18,12 +18,17 @@ $toolbar-height: 42px;
   position: relative;
   border-radius: 0 0 8px 8px;
   width: 100%;
+  max-width: 100%;
 }
 .ql-container.ql-disabled .ql-tooltip {
   visibility: hidden;
 }
 .ql-container.ql-disabled .ql-editor ul[data-checked] > li::before {
   pointer-events: none;
+}
+.ql-disabled img {
+  object-fit: contain;
+  max-width: 100%;
 }
 .ql-clipboard {
   left: -100000px;

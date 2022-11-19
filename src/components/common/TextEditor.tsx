@@ -1,6 +1,9 @@
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
+import { ImageResize } from 'quill-image-resize-module-ts';
 import 'quill-divider';
 import '../../styles/editor/editor.scss';
+
+Quill.register('modules/imageResize', ImageResize);
 
 const toolbarOptions = [
   //   [{ font: ['sans-serif', 'serif'] }],
@@ -44,7 +47,14 @@ const TextEditor = ({
           updateContent(value);
         }}
         onBlur={onBlur}
-        modules={{ toolbar: toolbarOptions, divider: true }}
+        modules={{
+          toolbar: toolbarOptions,
+          divider: true,
+          imageResize: {
+            parchment: Quill.import('parchment'),
+            modules: ['Resize', 'Toolbar']
+          }
+        }}
         style={{ height: '40vh' }}
         placeholder='Enter content here...'
       />
