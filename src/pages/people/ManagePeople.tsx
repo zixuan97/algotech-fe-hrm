@@ -20,7 +20,6 @@ import EditPersonModal from 'src/components/people/EditPersonModal';
 import { PEOPLE_MANAGE_URL, PEOPLE_URL } from 'src/components/routes/routes';
 import authContext from 'src/context/auth/authContext';
 import '../../styles/people/managePeople.scss';
-// import FilterPeopleMenu from 'src/components/people/FilterPeopleMenu';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -134,10 +133,6 @@ const ManagePeople = () => {
       ? filteredUsers.sort(sortOption.comparator)
       : filteredUsers;
   }, [users, searchField, sortOption]);
-
-  // const handleFilterPeople = (users: User[]) => {
-  //   console.log('handle filter people');
-  // };
 
   React.useEffect(() => {
     setLoading(true);
@@ -262,11 +257,6 @@ const ManagePeople = () => {
                 ))}
               </Select>
             </Space>
-            {/* <FilterPeopleMenu
-              allUsers={users}
-              allJobRoles={jobRoles}
-              updateUsers={handleFilterPeople}
-            /> */}
           </Space>
         </Space>
         <Table
