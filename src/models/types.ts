@@ -180,7 +180,7 @@ export interface TreeNode {
 
 export enum ContentStatus {
   DRAFT = 'DRAFT',
-  PENDING = 'PENDING',
+  // PENDING = 'PENDING',
   FINISHED = 'FINISHED'
 }
 

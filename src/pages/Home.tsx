@@ -18,7 +18,7 @@ const Home = ({ children }: React.PropsWithChildren) => {
   return (
     <Layout>
       <Sidebar />
-      <Layout>
+      <Layout id='home-content'>
         <Content
           style={{
             padding: screens.xxl ? '20px 60px' : '20px 40px',

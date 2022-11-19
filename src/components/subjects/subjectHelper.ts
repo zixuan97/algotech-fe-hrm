@@ -121,3 +121,15 @@ export const swapQuizOrTopicInArr = (
   newQuizzesAndTopics[idxB] = temp;
   return reorderTopicsAndQuizzesArr(newQuizzesAndTopics);
 };
+
+export const isQuizOrTopicCompleted = (
+  quizOrTopic: Quiz | Topic,
+  completedQuizzes: Quiz[] = [],
+  completedTopics: Topic[] = []
+): boolean => {
+  if (instanceOfTopic(quizOrTopic)) {
+    return !!completedTopics.find((toFind) => toFind.id === quizOrTopic.id);
+  } else {
+    return !!completedQuizzes.find((toFind) => toFind.id === quizOrTopic.id);
+  }
+};

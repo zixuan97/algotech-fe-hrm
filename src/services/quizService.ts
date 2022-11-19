@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { Quiz, QuizQuestion } from 'src/models/types';
+import { QuizQuestionAnswer } from 'src/components/subjects/subject/quiz/quizHelper';
+import {
+  EmployeeQuizQuestionRecord,
+  Quiz,
+  QuizQuestion
+} from 'src/models/types';
 import apiRoot from './apiRoot';
 
 export const createQuiz = async (quiz: Partial<Quiz>): Promise<Quiz> => {
@@ -51,5 +56,13 @@ export const updateQuizQuestionssOrder = async (
 ): Promise<QuizQuestion[]> => {
   return axios
     .post(`${apiRoot}/quizquestion/order`, questions)
+    .then((res) => res.data);
+};
+
+export const createQuizQuestionRecord = async (
+  answers: QuizQuestionAnswer[]
+): Promise<EmployeeQuizQuestionRecord[]> => {
+  return axios
+    .post(`${apiRoot}/quizquestion/record`, { quizQuestions: answers })
     .then((res) => res.data);
 };

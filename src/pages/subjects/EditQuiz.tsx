@@ -80,10 +80,10 @@ const EditQuiz = () => {
     asyncFetchCallback(
       getQuizById(quizId),
       (res) => {
-        setGetQuizLoading(false);
         setQuiz(res);
       },
-      () => setGetQuizLoading(false)
+      (err) => console.log(err),
+      { updateLoading: setGetQuizLoading }
     );
   };
 
@@ -112,7 +112,7 @@ const EditQuiz = () => {
         () => {
           fetchQuizById(editQuiz.id);
         },
-        () => void 0,
+        (err) => console.log(err),
         { updateLoading: setUpdateQuizLoading }
       );
     }

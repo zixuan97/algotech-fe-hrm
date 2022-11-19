@@ -14,6 +14,7 @@ import React from 'react';
 import {
   createSearchParams,
   generatePath,
+  Link,
   useNavigate
 } from 'react-router-dom';
 import { ASSIGNED_SUBJECT_URL } from 'src/components/routes/routes';
@@ -51,7 +52,9 @@ const MySubjects = () => {
       setLoading(true);
       asyncFetchCallback(
         getAllSubjectRecordsPerUser(),
-        setMySubjects,
+        (res) => {
+          setMySubjects(res.filter((res) => res.subject.isPublished));
+        },
         () => void 0,
         { updateLoading: setLoading }
       );
@@ -63,7 +66,15 @@ const MySubjects = () => {
       title: 'Subject',
       dataIndex: 'subject',
       width: '60%',
-      render: (value: Subject) => value.title
+      render: (value: Subject) => (
+        <Link
+          to={generatePath(ASSIGNED_SUBJECT_URL, {
+            subjectId: value.id.toString()
+          })}
+        >
+          {value.title}
+        </Link>
+      )
     },
     {
       title: 'Completion Rate',
@@ -83,6 +94,7 @@ const MySubjects = () => {
         <Space>
           <Tooltip>
             <Button
+              style={{ width: '8em' }}
               icon={<PlayCircleOutlined />}
               type='primary'
               shape='round'
@@ -97,11 +109,12 @@ const MySubjects = () => {
                 })
               }
             >
-              Start
+              Attempt
             </Button>
           </Tooltip>
           <Tooltip>
             <Button
+              style={{ width: '8em' }}
               icon={<EyeOutlined />}
               shape='round'
               onClick={() =>
@@ -131,7 +144,7 @@ const MySubjects = () => {
               key: 'all',
               children: (
                 <Space direction='vertical' style={{ width: '100%' }}>
-                  <Title level={4}>All Subjects</Title>
+                  <Title level={4}>All Assigned Subjects</Title>
                   <Table
                     columns={columns}
                     dataSource={mySubjects}

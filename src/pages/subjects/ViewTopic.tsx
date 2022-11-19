@@ -118,45 +118,55 @@ const ViewTopic = () => {
             <Title level={4} style={{ marginBottom: '16px' }}>
               Steps
             </Title>
-            <StepsList
-              steps={steps?.sort((a, b) => a.topicOrder - b.topicOrder) ?? []}
-              selectedStep={selectedStep}
-              updateSelectedStep={setSelectedStep}
-            />
+            {steps?.length ? (
+              <StepsList
+                steps={steps?.sort((a, b) => a.topicOrder - b.topicOrder) ?? []}
+                selectedStep={selectedStep}
+                updateSelectedStep={setSelectedStep}
+              />
+            ) : (
+              <Text>No steps in this topic.</Text>
+            )}
           </div>
           <div className='steps-editor'>
             <Title level={4} style={{ marginBottom: '0' }}>
-              {selectedStep?.title ?? 'Step Title'}
+              {selectedStep?.title ?? 'Step Content'}
             </Title>
-            <Card>
-              <RichTextDisplay
-                content={selectedStep?.content}
-                updateContent={(content: string) =>
-                  setSelectedStep((prev) =>
-                    prev ? { ...prev, content: content } : null
-                  )
-                }
-                onBlur={() => {}}
-                style={{ flex: 0.8 }}
-              />
-            </Card>
-            <Space style={{ alignSelf: 'flex-end', marginTop: '24px' }}>
-              <Button
-                style={{ width: '10em' }}
-                onClick={() => moveToPreviousStep()}
-                disabled={currStepIdx === 0}
-              >
-                Previous Step
-              </Button>
-              <Button
-                style={{ width: '10em' }}
-                type='primary'
-                onClick={() => moveToNextStep()}
-                disabled={steps && currStepIdx === steps.length - 1}
-              >
-                Next Step
-              </Button>
-            </Space>
+            {!!steps?.length ? (
+              <>
+                <Card style={{ maxWidth: '100%' }}>
+                  <RichTextDisplay
+                    content={selectedStep?.content}
+                    updateContent={(content: string) =>
+                      setSelectedStep((prev) =>
+                        prev ? { ...prev, content: content } : null
+                      )
+                    }
+                    onBlur={() => {}}
+                    style={{ flex: 0.8 }}
+                  />
+                </Card>
+                <Space style={{ alignSelf: 'flex-end', marginTop: '24px' }}>
+                  <Button
+                    style={{ width: '10em' }}
+                    onClick={() => moveToPreviousStep()}
+                    disabled={currStepIdx === 0}
+                  >
+                    Previous Step
+                  </Button>
+                  <Button
+                    style={{ width: '10em' }}
+                    type='primary'
+                    onClick={() => moveToNextStep()}
+                    disabled={steps && currStepIdx === steps.length - 1}
+                  >
+                    Next Step
+                  </Button>
+                </Space>
+              </>
+            ) : (
+              <Text>No step selected.</Text>
+            )}
           </div>
         </div>
       </div>

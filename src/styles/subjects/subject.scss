@@ -45,3 +45,10 @@
 .top-fields-subject-type {
   flex: 0 0 calc((100% / 6) - 16px);
 }
+
+.assigned-subject-header {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  width: 40%;
+}

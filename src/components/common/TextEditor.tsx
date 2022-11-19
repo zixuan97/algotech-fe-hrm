@@ -55,7 +55,7 @@ const TextEditor = ({
             modules: ['Resize', 'Toolbar']
           }
         }}
-        style={{ height: '40vh' }}
+        style={{ height: '50vh' }}
         placeholder='Enter content here...'
       />
     </div>

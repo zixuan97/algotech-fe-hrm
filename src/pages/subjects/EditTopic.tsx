@@ -153,7 +153,7 @@ const EditTopic = () => {
         (res) => {
           fetchTopicById(editTopic.id);
         },
-        () => void 0,
+        (err) => console.log(err),
         { updateLoading: setUpdateTopicLoading }
       );
     }
@@ -249,20 +249,25 @@ const EditTopic = () => {
             </Select>
           </Space>
         </div>
-        <Title level={4}>Steps</Title>
         <div className='steps-container'>
           <div className='steps-sidebar'>
-            <StepsList
-              steps={
-                editTopic?.steps.sort((a, b) => a.topicOrder - b.topicOrder) ??
-                []
-              }
-              selectedStep={selectedStep}
-              updateSelectedStep={setSelectedStep}
-              refreshTopic={() => {
-                editTopic && fetchTopicById(editTopic.id);
-              }}
-            />
+            <Title level={4}>Steps</Title>
+            {!!editTopic?.steps.length ? (
+              <StepsList
+                steps={
+                  editTopic?.steps.sort(
+                    (a, b) => a.topicOrder - b.topicOrder
+                  ) ?? []
+                }
+                selectedStep={selectedStep}
+                updateSelectedStep={setSelectedStep}
+                refreshTopic={() => {
+                  editTopic && fetchTopicById(editTopic.id);
+                }}
+              />
+            ) : (
+              <Text>No steps in this topic.</Text>
+            )}
             <Button
               style={{ marginTop: '16px' }}
               block
@@ -275,50 +280,59 @@ const EditTopic = () => {
             </Button>
           </div>
           <div className='steps-editor'>
-            <Input
-              size='large'
-              placeholder='Step Title'
-              value={selectedStep?.title}
-              onChange={(e) =>
-                setSelectedStep(
-                  (prev) => prev && { ...prev, title: e.target.value }
-                )
-              }
-              onBlur={() => updateStepApiCall(selectedStep)}
-            />
-            <TextEditor
-              content={selectedStep?.content}
-              updateContent={(content: string) =>
-                setSelectedStep((prev) =>
-                  prev ? { ...prev, content: content } : null
-                )
-              }
-              onBlur={() => updateStepApiCall(selectedStep)}
-              style={{ flex: 0.8 }}
-            />
-            {/* strip html tags and count length of actual text including space */}
-            <Text>{`Characters: ${
-              stripHtml(selectedStep?.content).length
-            }`}</Text>
-            <Space style={{ alignSelf: 'flex-end' }}>
-              <Button
-                style={{ width: '10em' }}
-                onClick={() => moveToPreviousStep()}
-                disabled={currStepIdx === 0}
-              >
-                Previous Step
-              </Button>
-              <Button
-                style={{ width: '10em' }}
-                type='primary'
-                onClick={() => moveToNextStep()}
-                disabled={
-                  topic?.steps && currStepIdx === topic.steps.length - 1
-                }
-              >
-                Next Step
-              </Button>
-            </Space>
+            {selectedStep ? (
+              <>
+                <Input
+                  size='large'
+                  placeholder='Step Title'
+                  value={selectedStep?.title}
+                  onChange={(e) =>
+                    setSelectedStep(
+                      (prev) => prev && { ...prev, title: e.target.value }
+                    )
+                  }
+                  onBlur={() => updateStepApiCall(selectedStep)}
+                />
+                <TextEditor
+                  content={selectedStep?.content}
+                  updateContent={(content: string) =>
+                    setSelectedStep((prev) =>
+                      prev ? { ...prev, content: content } : null
+                    )
+                  }
+                  onBlur={() => updateStepApiCall(selectedStep)}
+                  style={{ flex: 0.8 }}
+                />
+                {/* strip html tags and count length of actual text including space */}
+                <Text>{`Characters: ${
+                  stripHtml(selectedStep?.content).length
+                }`}</Text>
+                <Space style={{ alignSelf: 'flex-end' }}>
+                  <Button
+                    style={{ width: '10em' }}
+                    onClick={() => moveToPreviousStep()}
+                    disabled={currStepIdx === 0}
+                  >
+                    Previous Step
+                  </Button>
+                  <Button
+                    style={{ width: '10em' }}
+                    type='primary'
+                    onClick={() => moveToNextStep()}
+                    disabled={
+                      topic?.steps && currStepIdx === topic.steps.length - 1
+                    }
+                  >
+                    Next Step
+                  </Button>
+                </Space>
+              </>
+            ) : (
+              <div>
+                <Title level={4}>Step Content</Title>
+                <Text>No step selected.</Text>
+              </div>
+            )}
           </div>
         </div>
       </div>
