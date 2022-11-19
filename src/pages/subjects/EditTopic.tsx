@@ -26,6 +26,7 @@ import {
 } from 'src/components/routes/routes';
 import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
 import { getNewStep } from 'src/components/subjects/topic/topicHelper';
+import { useDebounceCallback } from 'src/hooks/useDebounce';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -117,12 +118,21 @@ const EditTopic = () => {
     }
   };
 
-  const editNamedField = (
+  const updateNamedField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) =>
-    setEditTopic(
-      (prev) => prev && { ...prev, [e.target.name]: e.target.value }
-    );
+  ) => {
+    const updatedTopic = editTopic && {
+      ...editTopic,
+      [e.target.name]: e.target.value
+    };
+    // setEditTopic(
+    //   (prev) => prev && { ...prev, [e.target.name]: e.target.value }
+    // );
+    if (updatedTopic) {
+      setEditTopic(updatedTopic);
+      debouncedUpdateTopicApiCall(updatedTopic);
+    }
+  };
 
   const addStep = () => {
     if (editTopic) {
@@ -159,20 +169,26 @@ const EditTopic = () => {
     }
   };
 
-  const updateStepApiCall = (step: Step | null) => {
+  const updateStepApiCall = (step: Step | null, refresh: boolean = true) => {
     if (step && topicId) {
       setUpdateTopicLoading(true);
+
       asyncFetchCallback(
         updateStep(step),
         (res) => {
-          setSelectedStep(res);
-          fetchTopicById(topicId);
+          if (refresh) {
+            setSelectedStep(res);
+            fetchTopicById(topicId);
+          }
         },
         () => void 0,
         { updateLoading: setUpdateTopicLoading }
       );
     }
   };
+
+  const debouncedUpdateTopicApiCall = useDebounceCallback(updateTopicApiCall);
+  const debouncedUpdateStepApiCall = useDebounceCallback(updateStepApiCall);
 
   return (
     <Spin size='large' spinning={getTopicLoading}>
@@ -224,8 +240,7 @@ const EditTopic = () => {
               size='large'
               placeholder='Topic Name'
               value={editTopic?.title}
-              onChange={editNamedField}
-              onBlur={() => updateTopicApiCall(editTopic)}
+              onChange={updateNamedField}
             />
           </Space>
           <Space direction='vertical' style={{ width: '100%' }}>
@@ -286,21 +301,31 @@ const EditTopic = () => {
                   size='large'
                   placeholder='Step Title'
                   value={selectedStep?.title}
-                  onChange={(e) =>
-                    setSelectedStep(
-                      (prev) => prev && { ...prev, title: e.target.value }
-                    )
-                  }
-                  onBlur={() => updateStepApiCall(selectedStep)}
+                  onChange={(e) => {
+                    const updatedStep = selectedStep && {
+                      ...selectedStep,
+                      title: e.target.value
+                    };
+                    if (updatedStep) {
+                      setSelectedStep(updatedStep);
+                      debouncedUpdateStepApiCall(updatedStep);
+                    }
+                  }}
                 />
                 <TextEditor
                   content={selectedStep?.content}
-                  updateContent={(content: string) =>
-                    setSelectedStep((prev) =>
-                      prev ? { ...prev, content: content } : null
-                    )
-                  }
-                  onBlur={() => updateStepApiCall(selectedStep)}
+                  updateContent={(content: string) => {
+                    const updatedStep = selectedStep
+                      ? {
+                          ...selectedStep,
+                          content: content
+                        }
+                      : null;
+                    if (updatedStep) {
+                      setSelectedStep(updatedStep);
+                      debouncedUpdateStepApiCall(updatedStep, false);
+                    }
+                  }}
                   style={{ flex: 0.8 }}
                 />
                 {/* strip html tags and count length of actual text including space */}

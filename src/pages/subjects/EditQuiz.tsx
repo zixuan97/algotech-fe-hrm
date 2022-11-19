@@ -22,6 +22,7 @@ import {
 import QuestionEditCard from 'src/components/subjects/quiz/QuestionEditCard';
 import { getNewQuizQuestion } from 'src/components/subjects/subject/quiz/quizHelper';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import { useDebounceCallback } from 'src/hooks/useDebounce';
 import { ContentStatus, Quiz } from 'src/models/types';
 import {
   createQuizQuestion,
@@ -99,10 +100,18 @@ const EditQuiz = () => {
     }
   }, [quiz]);
 
-  const editNamedField = (
+  const updateNamedField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) =>
-    setEditQuiz((prev) => prev && { ...prev, [e.target.name]: e.target.value });
+  ) => {
+    const updatedQuiz = editQuiz && {
+      ...editQuiz,
+      [e.target.name]: e.target.value
+    };
+    if (updatedQuiz) {
+      setEditQuiz(updatedQuiz);
+      debouncedUpdateQuizApiCall(updatedQuiz);
+    }
+  };
 
   const updateQuizApiCall = (editQuiz: Quiz | null) => {
     if (editQuiz && !isEqual(quiz, editQuiz)) {
@@ -117,6 +126,8 @@ const EditQuiz = () => {
       );
     }
   };
+
+  const debouncedUpdateQuizApiCall = useDebounceCallback(updateQuizApiCall);
 
   const addQuestion = () => {
     if (editQuiz) {
@@ -180,8 +191,7 @@ const EditQuiz = () => {
               size='large'
               placeholder='Topic Name'
               value={editQuiz?.title}
-              onChange={editNamedField}
-              onBlur={() => updateQuizApiCall(editQuiz)}
+              onChange={updateNamedField}
             />
           </Space>
           <Space direction='vertical' style={{ width: '100%' }}>
@@ -223,20 +233,16 @@ const EditQuiz = () => {
                       max={editQuiz?.questions.length}
                       value={editQuiz?.passingScore}
                       onChange={(value) => {
-                        if (value) {
-                          setEditQuiz((prev) => {
-                            const numQuestions = editQuiz?.questions.length;
-                            if (prev && value <= (numQuestions ?? 0)) {
-                              return {
-                                ...prev,
-                                passingScore: value
-                              };
-                            }
-                            return prev;
-                          });
+                        const numQuestions = editQuiz?.questions.length;
+                        if (editQuiz && value && value <= (numQuestions ?? 0)) {
+                          const updatedQuiz = {
+                            ...editQuiz,
+                            passingScore: value
+                          };
+                          setEditQuiz(updatedQuiz);
+                          debouncedUpdateQuizApiCall(updatedQuiz);
                         }
                       }}
-                      onBlur={() => updateQuizApiCall(editQuiz)}
                     />
                     <Text>/ {editQuiz?.questions.length}</Text>
                   </Space>
@@ -247,8 +253,7 @@ const EditQuiz = () => {
                     name='description'
                     rows={12}
                     value={editQuiz?.description}
-                    onChange={editNamedField}
-                    onBlur={() => updateQuizApiCall(editQuiz)}
+                    onChange={updateNamedField}
                   />
                 </Space>
               </Space>

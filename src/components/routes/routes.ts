@@ -4,9 +4,6 @@ export const MY_ACCOUNT_URL = ROOT_URL + 'myAccount';
 export const LOGIN_URL = ROOT_URL + 'login';
 export const DASHBOARD_URL = ROOT_URL + 'dashboard';
 
-// company routtes
-export const COMPANY_URL = ROOT_URL + 'company';
-
 // people routes
 export const PEOPLE_URL = ROOT_URL + 'people';
 export const PEOPLE_MANAGE_URL = PEOPLE_URL + '/manage';
@@ -26,12 +23,6 @@ export const VIEW_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/view';
 export const EDIT_TOPIC_URL = SUBJECT_ID_URL + '/topic/:topicId/edit';
 export const VIEW_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/view';
 export const EDIT_QUIZ_URL = SUBJECT_ID_URL + '/quiz/:quizId/edit';
-
-// processes routes
-export const PROCESSES_URL = ROOT_URL + 'processes';
-
-// reports routes
-export const REPORTS_URL = ROOT_URL + 'reports';
 
 // leave routes
 export const LEAVE_URL = ROOT_URL + 'leave';

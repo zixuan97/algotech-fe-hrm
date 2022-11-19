@@ -105,6 +105,7 @@ const AssignedTopic = ({
         <Space direction='vertical'>
           <Text>Topic Progress</Text>
           <Progress
+            format={(percent) => `${percent?.toFixed(0)}%`}
             percent={
               isComplete ? 100 : (completedStepIds.size / steps.length) * 100
             }
@@ -136,12 +137,6 @@ const AssignedTopic = ({
               <Card>
                 <RichTextDisplay
                   content={selectedStep?.content}
-                  updateContent={(content: string) =>
-                    setSelectedStep((prev) =>
-                      prev ? { ...prev, content: content } : null
-                    )
-                  }
-                  onBlur={() => {}}
                   style={{ flex: 0.8 }}
                 />
               </Card>

@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Card, Divider, Input, Select, Space, Typography } from 'antd';
 import React from 'react';
+import { useDebounceCallback } from 'src/hooks/useDebounce';
 import { AnswerType, QuizQuestion } from 'src/models/types';
 import { updateQuizQuestion } from 'src/services/quizService';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
@@ -51,6 +52,8 @@ const QuestionOption = ({
 }: QuestionOptionProps) => {
   const [editOption, setEditOption] = React.useState<string>(option);
 
+  const debouncedUpdateOption = useDebounceCallback(updateOption);
+
   return (
     <div
       className='container-spaced-out'
@@ -62,8 +65,8 @@ const QuestionOption = ({
         disabled={type === AnswerType.TRUEFALSE}
         onChange={(e) => {
           setEditOption(e.target.value);
+          debouncedUpdateOption(e.target.value);
         }}
-        onBlur={() => updateOption(editOption)}
       />
       <Button
         type={isCorrect ? 'primary' : 'default'}
@@ -115,7 +118,11 @@ const QuestionEditCard = ({
         { updateLoading: setLoading }
       );
     },
-    []
+    [refreshQuiz]
+  );
+
+  const debouncedUpdateQnApiCall = useDebounceCallback(
+    updateQuizQuestionApiCall
   );
 
   React.useEffect(() => {
@@ -171,13 +178,14 @@ const QuestionEditCard = ({
             name='description'
             rows={3}
             value={question}
-            onChange={(e) =>
-              setEditQuizQuestion((prev) => ({
-                ...prev,
+            onChange={(e) => {
+              const updatedEditQuestion = {
+                ...editQuizQuestion,
                 question: e.target.value
-              }))
-            }
-            onBlur={() => updateQuizQuestionApiCall(editQuizQuestion)}
+              };
+              setEditQuizQuestion(updatedEditQuestion);
+              debouncedUpdateQnApiCall(updatedEditQuestion);
+            }}
           />
         </Space>
         <Space direction='vertical' style={{ width: '100%' }}>

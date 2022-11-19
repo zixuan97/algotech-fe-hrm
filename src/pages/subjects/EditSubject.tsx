@@ -28,6 +28,7 @@ import { getSubjectTypeIcon } from './AllSubjects';
 import QuizTopicPanel from 'src/components/subjects/subject/panels/QuizTopicPanel';
 import ViewEditTitleHeader from 'src/components/common/ViewEditTitleHeader';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useDebounceCallback } from 'src/hooks/useDebounce';
 
 const { Text, Title } = Typography;
 
@@ -96,10 +97,16 @@ const EditSubject = () => {
 
   const editNamedField = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) =>
-    setEditSubject(
-      (prev) => prev && { ...prev, [e.target.name]: e.target.value }
-    );
+  ) => {
+    const updatedSubject = editSubject && {
+      ...editSubject,
+      [e.target.name]: e.target.value
+    };
+    if (updatedSubject) {
+      setEditSubject(updatedSubject);
+      debouncedUpdateSubjectApiCall(updatedSubject);
+    }
+  };
 
   const updateSubjectApiCall = (editSubject: Subject | null) => {
     if (editSubject && !isEqual(editSubject, subject)) {
@@ -115,6 +122,9 @@ const EditSubject = () => {
       );
     }
   };
+
+  const debouncedUpdateSubjectApiCall =
+    useDebounceCallback(updateSubjectApiCall);
 
   const assignUserToSubject = (user: User) => {
     if (editSubject) {
@@ -193,7 +203,6 @@ const EditSubject = () => {
               size='large'
               value={editSubject?.title}
               onChange={editNamedField}
-              onBlur={() => updateSubjectApiCall(editSubject)}
             />
           </Space>
           <div className='top-fields-container'>
@@ -210,7 +219,6 @@ const EditSubject = () => {
                   rows={4}
                   value={editSubject?.description}
                   onChange={editNamedField}
-                  onBlur={() => updateSubjectApiCall(editSubject)}
                 />
               </Space>
             </Space>

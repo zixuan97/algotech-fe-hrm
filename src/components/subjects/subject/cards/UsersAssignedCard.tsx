@@ -119,7 +119,10 @@ const UsersAssignedCard = ({
               selectedRecord?.user
             )}'s Completion Rate`}</Text>
             {/* TODO: add in actual completion rate statistics */}
-            <Progress percent={selectedRecord?.completionRate} />
+            <Progress
+              percent={selectedRecord?.completionRate}
+              format={(percent) => `${percent?.toFixed(0)}%`}
+            />
           </Space>
           <Space style={{ float: 'right', marginTop: '8px' }}>
             {/* TODO: shouldn't have double modal for good UX */}

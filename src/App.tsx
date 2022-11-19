@@ -16,7 +16,6 @@ import AppHeader from './components/common/AppHeader';
 import RoleRoute from './components/auth/RoleRoute';
 import './styles/common/app.scss';
 import {
-  COMPANY_URL,
   DASHBOARD_URL,
   EDIT_TOPIC_URL,
   LEAVE_QUOTA_URL,
@@ -27,8 +26,6 @@ import {
   PEOPLE_MANAGE_URL,
   PEOPLE_ROLES_URL,
   SUBJECTS_URL,
-  PROCESSES_URL,
-  REPORTS_URL,
   ROOT_URL,
   EDIT_SUBJECT_URL,
   COMPANY_LEAVE_SCHEDULE_URL,
@@ -66,6 +63,7 @@ import EditQuiz from './pages/subjects/EditQuiz';
 import ViewQuiz from './pages/subjects/ViewQuiz';
 import MySubjects from './pages/subjects/MySubjects';
 import AssignedSubject from './pages/subjects/AssignedSubject';
+import Dashboard from './pages/Dashboard';
 
 const { Footer } = Layout;
 
@@ -112,9 +110,7 @@ const App = () => {
                     element={<Navigate replace to={DASHBOARD_URL} />}
                   />
                   {/* dashboard routes */}
-                  <Route path={DASHBOARD_URL} element={<></>} />
-                  {/* company routes */}
-                  <Route path={COMPANY_URL} element={<></>} />
+                  <Route path={DASHBOARD_URL} element={<Dashboard />} />
                   {/* people routes */}
                   <Route
                     path={PEOPLE_ORGCHART_URL}
@@ -144,10 +140,6 @@ const App = () => {
                   <Route path={EDIT_TOPIC_URL} element={<EditTopic />} />
                   <Route path={VIEW_QUIZ_URL} element={<ViewQuiz />} />
                   <Route path={EDIT_QUIZ_URL} element={<EditQuiz />} />
-                  {/* processes routes */}
-                  <Route path={PROCESSES_URL} element={<></>} />
-                  {/* report routes */}
-                  <Route path={REPORTS_URL} element={<></>} />
                   {/* accounts routes */}
                   <Route path={MY_ACCOUNT_URL} element={<ViewMyAccount />} />
                   {/* leave routes */}
