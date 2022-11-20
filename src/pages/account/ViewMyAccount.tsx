@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../../styles/pages/account.scss';
-import { Typography, Card, Divider, Input, Spin, Space, Switch } from 'antd';
+import { Typography, Card, Divider, Input, Spin } from 'antd';
 import authContext from '../../context/auth/authContext';
 import themeContext from 'src/context/theme/themeContext';
 import { User } from '../../models/types';
@@ -192,7 +192,7 @@ const ViewMyAccount = () => {
           </Typography.Title>
           <Typography>{user?.role}</Typography>
           <Divider type='horizontal' />
-          <Typography.Title
+          {/* <Typography.Title
             level={4}
             style={{ color: isDarkMode ? '#f3cc62' : '#96694c' }}
           >
@@ -204,7 +204,7 @@ const ViewMyAccount = () => {
               onChange={(checked) => updateDarkMode(checked)}
               checked={isDarkMode}
             />
-          </Space>
+          </Space> */}
         </Spin>
       </Card>
     </>
