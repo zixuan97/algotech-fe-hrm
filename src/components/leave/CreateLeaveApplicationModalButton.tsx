@@ -55,7 +55,7 @@ const CreateLeaveApplicationModalButton = ({
       value: 'COMPASSIONATE'
     },
     {
-      label: `Compassionate (${leaveQuota?.parentalBalance} / ${leaveQuota?.parentalQuota} remaining)`,
+      label: `Parental (${leaveQuota?.parentalBalance} / ${leaveQuota?.parentalQuota} remaining)`,
       value: 'PARENTAL'
     },
     {
