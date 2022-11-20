@@ -11,8 +11,7 @@ const { useBreakpoint } = Grid;
 
 const Home = ({ children }: React.PropsWithChildren) => {
   const screens = useBreakpoint();
-  const { breadcrumbItems, getBreadcrumbItems } =
-    React.useContext(breadcrumbContext);
+  const { getBreadcrumbItems } = React.useContext(breadcrumbContext);
 
   useAuthVerify();
 
@@ -27,7 +26,7 @@ const Home = ({ children }: React.PropsWithChildren) => {
           }}
         >
           <Breadcrumb style={{ margin: '12px 0' }}>
-            {getBreadcrumbItems(breadcrumbItems)}
+            {getBreadcrumbItems()}
           </Breadcrumb>
           <Divider />
           <Layout style={{ paddingBottom: '24px', height: '85%' }}>

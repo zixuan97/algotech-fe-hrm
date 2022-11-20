@@ -8,7 +8,7 @@ export interface BreadcrumbItem {
 type BreadcrumbStateInit = {
   breadcrumbItems: BreadcrumbItem[];
   updateBreadcrumbItems: (breadcrumbItems: BreadcrumbItem[]) => void;
-  getBreadcrumbItems: (breadcrumbItems: BreadcrumbItem[]) => React.ReactNode[];
+  getBreadcrumbItems: () => React.ReactNode[];
 };
 
 const breadcrumbContext = React.createContext({
