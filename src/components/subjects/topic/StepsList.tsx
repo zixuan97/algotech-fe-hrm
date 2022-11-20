@@ -1,4 +1,4 @@
-import { Button, List, Typography } from 'antd';
+import { List, Typography } from 'antd';
 import { useThemedClassName } from 'src/hooks/useThemedClassName';
 import { Step } from 'src/models/types';
 import '../../../styles/subjects/topic.scss';
@@ -7,7 +7,7 @@ import StepsMoreButton from './StepsMoreButton';
 import React from 'react';
 import { CheckCircleOutlined } from '@ant-design/icons';
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 type StepsListProps = {
   steps: Step[];
@@ -39,12 +39,17 @@ const StepsList = ({
         >
           {completedIds ? (
             <Text
-              style={{ padding: '8px 16px' }}
+              style={{ padding: '8px 16px', maxWidth: '70%' }}
             >{`${step.topicOrder}. ${step.title}`}</Text>
           ) : (
-            <Button type='link' onClick={() => updateSelectedStep(step)}>
+            <Link
+              style={{ padding: '8px 16px', maxWidth: '70%' }}
+              onClick={() => {
+                updateSelectedStep(step);
+              }}
+            >
               {`${step.topicOrder}. ${step.title}`}
-            </Button>
+            </Link>
           )}
           {completedIds && completedIds.includes(step.id) && (
             <CheckCircleOutlined
