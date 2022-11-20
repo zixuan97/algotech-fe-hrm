@@ -15,6 +15,8 @@ const BreadcrumbState = ({ children }: React.PropsWithChildren) => {
   const hasPathChanged = useHasChanged(location.pathname);
   const hasBreadcrumbItemsChanged = useHasChanged(breadcrumbItems);
 
+  console.log(hasPathChanged, hasBreadcrumbItemsChanged);
+
   React.useEffect(() => {
     if (hasPathChanged && !hasBreadcrumbItemsChanged) {
       setBreadcrumbItems([]);
