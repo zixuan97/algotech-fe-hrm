@@ -227,7 +227,10 @@ const ViewMyLeaveApplications = () => {
             <Table.Summary>
               <Table.Summary.Row>
                 <Table.Summary.Cell index={0} colSpan={6}>
-                  <CreateLeaveApplicationModalButton employeeId={user?.id} />
+                  <CreateLeaveApplicationModalButton
+                    employeeId={user?.id}
+                    leaveQuota={leaveQuota}
+                  />
                 </Table.Summary.Cell>
               </Table.Summary.Row>
             </Table.Summary>

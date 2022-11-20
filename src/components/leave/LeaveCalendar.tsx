@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Badge, Calendar } from 'antd';
 import type { Moment } from 'moment';
 import { CalendarObject, CalendarPHObject } from 'src/models/types';
 import themeContext from 'src/context/theme/themeContext';
 import { StarOutlined } from '@ant-design/icons';
-import type { Dayjs } from 'dayjs';
 
 interface LeaveCalendarProps {
   leaveDates: CalendarObject[];
