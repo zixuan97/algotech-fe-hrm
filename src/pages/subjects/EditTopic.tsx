@@ -125,9 +125,6 @@ const EditTopic = () => {
       ...editTopic,
       [e.target.name]: e.target.value
     };
-    // setEditTopic(
-    //   (prev) => prev && { ...prev, [e.target.name]: e.target.value }
-    // );
     if (updatedTopic) {
       setEditTopic(updatedTopic);
       debouncedUpdateTopicApiCall(updatedTopic);
@@ -172,7 +169,6 @@ const EditTopic = () => {
   const updateStepApiCall = (step: Step | null, refresh: boolean = true) => {
     if (step && topicId) {
       setUpdateTopicLoading(true);
-
       asyncFetchCallback(
         updateStep(step),
         (res) => {
@@ -189,6 +185,37 @@ const EditTopic = () => {
 
   const debouncedUpdateTopicApiCall = useDebounceCallback(updateTopicApiCall);
   const debouncedUpdateStepApiCall = useDebounceCallback(updateStepApiCall);
+  const debouncedUpdateStepContent = useDebounceCallback(
+    updateStepApiCall,
+    1000
+  );
+
+  const updateContent = React.useCallback(
+    (content: string) => {
+      // // if (content !== selectedStep?.content) {
+      // const updatedStep = selectedStep
+      //   ? {
+      //       ...selectedStep,
+      //       content: content
+      //     }
+      //   : null;
+      // console.log('rte', selectedStep?.title, updatedStep);
+      // if (updatedStep) {
+      //   // setSelectedStep(updatedStep);
+      //   debouncedUpdateStepContent(updatedStep);
+      // }
+      // // }
+      setSelectedStep((prev) => {
+        if (prev && prev.content !== content) {
+          const updatedStep = { ...prev, content };
+          debouncedUpdateStepContent(updatedStep);
+          return updatedStep;
+        }
+        return prev;
+      });
+    },
+    [debouncedUpdateStepContent]
+  );
 
   return (
     <Spin size='large' spinning={getTopicLoading}>
@@ -314,18 +341,8 @@ const EditTopic = () => {
                 />
                 <TextEditor
                   content={selectedStep?.content}
-                  updateContent={(content: string) => {
-                    const updatedStep = selectedStep
-                      ? {
-                          ...selectedStep,
-                          content: content
-                        }
-                      : null;
-                    if (updatedStep) {
-                      setSelectedStep(updatedStep);
-                      debouncedUpdateStepApiCall(updatedStep, false);
-                    }
-                  }}
+                  updateContent={updateContent}
+                  // onBlur={() => updateStepApiCall(selectedStep)}
                   style={{ flex: 0.8 }}
                 />
                 {/* strip html tags and count length of actual text including space */}
