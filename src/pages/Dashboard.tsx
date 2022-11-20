@@ -11,6 +11,7 @@ import {
   Progress,
   Space,
   Spin,
+  Switch,
   Table,
   TableColumnsType,
   Typography
@@ -69,7 +70,7 @@ const WidgetCard = ({ title, body, block = false }: WidgetCardProps) => {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { isDarkMode } = React.useContext(themeContext);
+  const { isDarkMode, updateDarkMode } = React.useContext(themeContext);
   const { user } = React.useContext(authContext);
 
   const [incompleteRecords, setIncompleteRecords] = React.useState<
@@ -168,7 +169,17 @@ const Dashboard = () => {
 
   return (
     <div className='container-left-full'>
-      <Title level={2}>My Dashboard</Title>
+      <div className='container-spaced-out'>
+        <Title level={2}>My Dashboard</Title>
+
+        <Space>
+          <Typography.Text>Dark Mode</Typography.Text>{' '}
+          <Switch
+            onChange={(checked) => updateDarkMode(checked)}
+            checked={isDarkMode}
+          />
+        </Space>
+      </div>
       <div className='widgets-container'>
         <WidgetCard
           title='My Pending Subjects'
