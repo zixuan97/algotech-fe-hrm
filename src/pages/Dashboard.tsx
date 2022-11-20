@@ -115,10 +115,12 @@ const Dashboard = () => {
   };
 
   React.useEffect(() => {
-    fetchIncompleteRecords();
-    fetchLeaveApplications();
+    if (user) {
+      fetchIncompleteRecords();
+      fetchLeaveApplications();
+    }
     //eslint-disable-next-line
-  }, []);
+  }, [user]);
 
   const columns: TableColumnsType<LeaveApplication> = [
     {
