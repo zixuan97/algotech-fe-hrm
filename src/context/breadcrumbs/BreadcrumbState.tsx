@@ -21,7 +21,7 @@ const BreadcrumbState = ({ children }: React.PropsWithChildren) => {
     }
   }, [hasPathChanged, hasBreadcrumbItemsChanged]);
 
-  const getBreadcrumbItems = () => {
+  const getBreadcrumbItems = React.useCallback(() => {
     if (breadcrumbItems.length) {
       return breadcrumbItems.map((item, index) => (
         <Breadcrumb.Item key={index}>
@@ -44,7 +44,7 @@ const BreadcrumbState = ({ children }: React.PropsWithChildren) => {
       }
       return breadcrumbs.slice(1);
     }
-  };
+  }, [breadcrumbItems, location]);
 
   return (
     <BreadcrumbContext.Provider
