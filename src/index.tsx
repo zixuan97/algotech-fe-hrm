@@ -1,8 +1,8 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { ThemeSwitcherProvider } from 'react-css-theme-switcher';
+import React from 'react';
 
 const themes = {
   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
