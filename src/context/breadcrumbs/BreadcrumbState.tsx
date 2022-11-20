@@ -1,5 +1,5 @@
 import { Breadcrumb } from 'antd';
-import { startCase } from 'lodash';
+import { isEqual, startCase } from 'lodash';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useDebounce from 'src/hooks/useDebounce';
@@ -20,9 +20,12 @@ const BreadcrumbState = ({ children }: React.PropsWithChildren) => {
 
   const updateBreadcrumbItems = React.useCallback(
     (updatedItems: BreadcrumbItem[]) => {
-      if (breadcrumbItems.length === 0) {
-        setBreadcrumbItems(updatedItems);
-      }
+      setBreadcrumbItems((prev) => {
+        if (breadcrumbItems.length === 0 || !isEqual(updatedItems, prev)) {
+          return updatedItems;
+        }
+        return prev;
+      });
     },
     [breadcrumbItems]
   );
