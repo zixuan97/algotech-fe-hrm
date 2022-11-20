@@ -483,7 +483,7 @@ const LeaveApplicationDetails = () => {
                 style={{
                   paddingTop: '0.5rem',
                   paddingRight: '2rem',
-                  width: '10%'
+                  width: '170px'
                 }}
               >
                 Status:
