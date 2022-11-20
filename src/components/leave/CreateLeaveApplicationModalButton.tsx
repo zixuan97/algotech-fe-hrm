@@ -21,46 +21,52 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { createLeaveApplication } from 'src/services/leaveService';
 import { LEAVE_APPLICATION_DETAILS_URL } from '../routes/routes';
+import { EmployeeLeaveQuota } from 'src/models/types';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
-const leaveOptions = [
-  {
-    label: 'Annual',
-    value: 'ANNUAL'
-  },
-  { label: 'Childcare', value: 'CHILDCARE' },
-  {
-    label: 'Compassionate',
-    value: 'COMPASSIONATE'
-  },
-  {
-    label: 'Parental',
-    value: 'PARENTAL'
-  },
-  {
-    label: 'Sick',
-    value: 'SICK'
-  },
-  {
-    label: 'Unpaid',
-    value: 'UNPAID'
-  }
-];
-
 type CreateLeaveApplicationModalButtonProps = {
   employeeId: number | undefined;
+  leaveQuota: EmployeeLeaveQuota | undefined;
 };
 
 const CreateLeaveApplicationModalButton = ({
-  employeeId
+  employeeId,
+  leaveQuota
 }: CreateLeaveApplicationModalButtonProps) => {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [createLoading, setCreateLoading] = React.useState<boolean>(false);
   const [createSuccess, setCreateSuccess] = React.useState<boolean>(false);
   const [form] = Form.useForm();
+
+  const leaveOptions = [
+    {
+      label: `Annual (${leaveQuota?.annualBalance} / ${leaveQuota?.annualQuota} remaining)`,
+      value: 'ANNUAL'
+    },
+    {
+      label: `Childcare (${leaveQuota?.childcareBalance} / ${leaveQuota?.childcareQuota} remaining)`,
+      value: 'CHILDCARE'
+    },
+    {
+      label: `Compassionate (${leaveQuota?.compassionateBalance} / ${leaveQuota?.compassionateQuota} remaining)`,
+      value: 'COMPASSIONATE'
+    },
+    {
+      label: `Compassionate (${leaveQuota?.parentalBalance} / ${leaveQuota?.parentalQuota} remaining)`,
+      value: 'PARENTAL'
+    },
+    {
+      label: `Sick (${leaveQuota?.sickBalance} / ${leaveQuota?.sickQuota} remaining)`,
+      value: 'SICK'
+    },
+    {
+      label: `Unpaid (${leaveQuota?.unpaidBalance} / ${leaveQuota?.unpaidQuota} remaining)`,
+      value: 'UNPAID'
+    }
+  ];
 
   return (
     <>
@@ -150,7 +156,13 @@ const CreateLeaveApplicationModalButton = ({
                 }
               ]}
             >
-              <RangePicker showTime format='YYYY-MM-DD HH:mm' />
+              <RangePicker
+                showTime
+                format='YYYY-MM-DD HH:mm'
+                disabledDate={(current) => {
+                  return moment().add(-1, 'days') >= current;
+                }}
+              />
             </Form.Item>
           </Space>
           <Space direction='vertical' style={{ width: '100%' }}>

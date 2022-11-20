@@ -34,7 +34,6 @@ const ManageEmployeeLeaveQuota = () => {
   const [form] = Form.useForm();
   const { user } = React.useContext(authContext);
   const { updateBreadcrumbItems } = useContext(breadcrumbContext);
-
   const [leaveQuotas, setLeaveQuotas] = useState<EmployeeLeaveQuota[]>([]);
   const [tiers, setTiers] = useState<LeaveQuota[]>([]);
   const [editingKey, setEditingKey] = useState<number>(-1);
@@ -114,6 +113,23 @@ const ManageEmployeeLeaveQuota = () => {
     );
   }, []);
 
+  const getBalanceProp = (name: string, record: EmployeeLeaveQuota) => {
+    switch (name) {
+      case 'annualQuota':
+        return record.annualBalance;
+      case 'childcareQuota':
+        return record.childcareBalance;
+      case 'compassionateQuota':
+        return record.compassionateBalance;
+      case 'parentalQuota':
+        return record.parentalBalance;
+      case 'sickQuota':
+        return record.sickBalance;
+      case 'unpaidQuota':
+        return record.unpaidBalance;
+    }
+  };
+
   const edit = (record: EmployeeLeaveQuota) => {
     form.setFieldsValue({
       ...record
@@ -125,6 +141,21 @@ const ManageEmployeeLeaveQuota = () => {
     setEditingKey(-1);
   };
 
+  const incrementLeaveBalance = (
+    currentBalance: number,
+    newQuota: number,
+    oldQuota: number
+  ) => {
+    if (currentBalance >= newQuota) {
+      return newQuota;
+    }
+    if (newQuota >= oldQuota) {
+      return currentBalance + newQuota - oldQuota;
+    } else {
+      return Math.min(currentBalance, newQuota);
+    }
+  };
+
   const save = async (employeeId: number) => {
     try {
       setLoading(true);
@@ -133,7 +164,39 @@ const ManageEmployeeLeaveQuota = () => {
       const index = newLeaveQuotas.findIndex(
         (item) => employeeId === item.employee.id
       );
-      const item = newLeaveQuotas[index];
+      const item = {
+        ...newLeaveQuotas[index],
+        annualBalance: incrementLeaveBalance(
+          newLeaveQuotas[index].annualBalance,
+          row.annualQuota,
+          leaveQuotas[index].annualQuota
+        ),
+        childcareBalance: incrementLeaveBalance(
+          newLeaveQuotas[index].childcareBalance,
+          row.childcareQuota,
+          leaveQuotas[index].childcareQuota
+        ),
+        compassionateBalance: incrementLeaveBalance(
+          newLeaveQuotas[index].compassionateBalance,
+          row.compassionateQuota,
+          leaveQuotas[index].compassionateQuota
+        ),
+        parentalBalance: incrementLeaveBalance(
+          newLeaveQuotas[index].parentalBalance,
+          row.parentalQuota,
+          leaveQuotas[index].parentalQuota
+        ),
+        sickBalance: incrementLeaveBalance(
+          newLeaveQuotas[index].sickBalance,
+          row.sickQuota,
+          leaveQuotas[index].sickQuota
+        ),
+        unpaidBalance: incrementLeaveBalance(
+          newLeaveQuotas[index].unpaidBalance,
+          row.unpaidQuota,
+          leaveQuotas[index].unpaidQuota
+        )
+      };
       newLeaveQuotas.splice(index, 1, {
         ...item,
         ...row
@@ -141,10 +204,8 @@ const ManageEmployeeLeaveQuota = () => {
       const sortedData = newLeaveQuotas.sort((a, b) =>
         a.tier.localeCompare(b.tier)
       );
-
       setLeaveQuotas(sortedData);
       setEditingKey(-1);
-
       const reqBody = {
         employeeId: item.employee.id,
         annualQuota: row.annualQuota,
@@ -155,7 +216,6 @@ const ManageEmployeeLeaveQuota = () => {
         unpaidQuota: row.unpaidQuota,
         tier: row.tier
       };
-
       await asyncFetchCallback(
         editEmployeeLeaveQuota(reqBody),
         (res) => {
@@ -181,46 +241,10 @@ const ManageEmployeeLeaveQuota = () => {
     }
   };
 
-  const incrementLeaveBalance = (
-    currentBalance: number,
-    newQuota: number,
-    oldQuota: number
-  ) => {
-    if (currentBalance >= newQuota) {
-      return newQuota;
-    }
-    return Math.max(newQuota, currentBalance + newQuota - oldQuota);
-  };
-
   const onInputChange = (value: string, name: string) => {
     if (name === 'tier') {
       form.setFieldsValue({
-        ...tiersObj[value],
-        annualBalance: incrementLeaveBalance(
-          form.getFieldValue('annualBalance'),
-          tiersObj[value].annualQuota,
-          form.getFieldValue('annualQuota')
-        ),
-        childcareBalance: incrementLeaveBalance(
-          form.getFieldValue('childcareBalance'),
-          tiersObj[value].childcareQuota,
-          form.getFieldValue('childcareQuota')
-        ),
-        compassionateBalance: incrementLeaveBalance(
-          form.getFieldValue('compassionateBalance'),
-          tiersObj[value].compassionate,
-          form.getFieldValue('compassionateQuota')
-        ),
-        parentalBalance: incrementLeaveBalance(
-          form.getFieldValue('parentalBalance'),
-          tiersObj[value].parentalQuota,
-          form.getFieldValue('parentalQuota')
-        ),
-        sickBalance: incrementLeaveBalance(
-          form.getFieldValue('sickBalance'),
-          tiersObj[value].sickQuota,
-          form.getFieldValue('sickQuota')
-        )
+        ...tiersObj[value]
       });
     }
   };
@@ -238,115 +262,64 @@ const ManageEmployeeLeaveQuota = () => {
       editable: true
     },
     {
-      title: 'Annual',
-      editable: true,
-      children: [
-        {
-          title: 'Quota',
-          name: 'annualQuota',
-          inputType: 'number',
-          dataIndex: 'annualQuota',
-          editable: true
-        },
-        {
-          title: 'Balance',
-          name: 'annualBalance',
-          dataIndex: 'annualBalance',
-          editable: false
-        }
-      ]
+      title: 'Annual Leave',
+      name: 'annualQuota',
+      render: (record: EmployeeLeaveQuota) => (
+        <div>
+          {record.annualBalance} / {record.annualQuota}
+        </div>
+      ),
+      editable: true
     },
     {
-      title: 'Childcare',
-      editable: true,
-      children: [
-        {
-          title: 'Quota',
-          name: 'childcareQuota',
-          dataIndex: 'childcareQuota',
-          editable: true
-        },
-        {
-          title: 'Balance',
-          name: 'childcareBalance',
-          dataIndex: 'childcareBalance',
-          editable: false
-        }
-      ]
+      title: 'Childcare Leave',
+      name: 'childcareQuota',
+      render: (record: EmployeeLeaveQuota) => (
+        <div>
+          {record.childcareBalance} / {record.childcareQuota}
+        </div>
+      ),
+      editable: true
     },
     {
-      title: 'Compassionate',
-      editable: true,
-      children: [
-        {
-          title: 'Quota',
-          name: 'compassionateQuota',
-          dataIndex: 'compassionateQuota',
-          editable: true
-        },
-        {
-          title: 'Balance',
-          name: 'compassionateBalance',
-          dataIndex: 'compassionateBalance',
-          editable: false
-        }
-      ]
+      title: 'Compassionate Leave',
+      name: 'compassionateQuota',
+      render: (record: EmployeeLeaveQuota) => (
+        <div>
+          {record.compassionateBalance} / {record.compassionateQuota}
+        </div>
+      ),
+      editable: true
     },
     {
-      title: 'Parental',
-      editable: true,
-      children: [
-        {
-          title: 'Quota',
-          name: 'parentalQuota',
-          dataIndex: 'parentalQuota',
-          editable: true
-        },
-        {
-          title: 'Balance',
-          name: 'parentalBalance',
-          dataIndex: 'parentalBalance',
-          editable: false
-        }
-      ]
+      title: 'Parental Leave',
+      name: 'parentalQuota',
+      render: (record: EmployeeLeaveQuota) => (
+        <div>
+          {record.parentalBalance} / {record.parentalQuota}
+        </div>
+      ),
+      editable: true
     },
     {
-      title: 'Sick',
-      editable: true,
-      children: [
-        {
-          title: 'Quota',
-          name: 'sickQuota',
-          dataIndex: 'sickQuota',
-          editable: true
-        },
-        {
-          title: 'Balance',
-          name: 'sickBalance',
-          dataIndex: 'sickBalance',
-          editable: false
-        }
-      ]
+      title: 'Sick Leave',
+      name: 'sickQuota',
+      render: (record: EmployeeLeaveQuota) => (
+        <div>
+          {record.sickBalance} / {record.sickQuota}
+        </div>
+      ),
+      editable: true
     },
     {
       title: 'Unpaid Leave',
       name: 'unpaidQuota',
-      dataIndex: 'unpaidQuota',
-      editable: true,
-      children: [
-        {
-          title: 'Quota',
-          name: 'unpaidQuota',
-          dataIndex: 'unpaidQuota',
-          editable: true
-        },
-        {
-          title: 'Balance',
-          name: 'unpaidBalance',
-          dataIndex: 'unpaidBalance',
-          editable: false
-        }
-      ]
+      render: (record: EmployeeLeaveQuota) => (
+        <div>
+          {record.unpaidBalance} / {record.unpaidQuota}
+        </div>
+      ),
+      editable: true
     },
     {
       title: 'Operation',
@@ -393,6 +366,8 @@ const ManageEmployeeLeaveQuota = () => {
       onCell: (record: EmployeeLeaveQuota) => ({
         editing: isEditing(record),
         name: col.name,
+        isManageEmployeeLeaveQuota: true,
+        balance: getBalanceProp(col.name, record),
         title: col.title,
         inputType: col.name === 'tier' ? 'select' : 'number',
         handleInputChange: onInputChange,
@@ -400,26 +375,6 @@ const ManageEmployeeLeaveQuota = () => {
         tiers: tiers
       })
     };
-  });
-  const mergedColumns1 = mergedColumns.map((col) => {
-    if (col.children) {
-      return {
-        ...col,
-        children: col.children.map((col1) => ({
-          ...col1,
-          onCell: (record: EmployeeLeaveQuota) => ({
-            editing: isEditing(record),
-            name: col1.name,
-            title: col1.title,
-            inputType: col1.name === 'tier' ? 'select' : 'number',
-            handleInputChange: onInputChange,
-            selectedTier: record.employee.tier,
-            tiers: tiers
-          })
-        }))
-      };
-    }
-    return col;
   });
 
   return (
@@ -452,7 +407,7 @@ const ManageEmployeeLeaveQuota = () => {
           }}
           bordered
           dataSource={filteredLeaveQuotas}
-          columns={mergedColumns1}
+          columns={mergedColumns}
           rowClassName='editable-row'
           pagination={{
             onChange: cancel,

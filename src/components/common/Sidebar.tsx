@@ -109,7 +109,7 @@ const Sidebar = () => {
         ...(user?.role === UserRole.ADMIN
           ? [
               {
-                label: <Link to={LEAVE_QUOTA_URL}>Leave Quota</Link>,
+                label: <Link to={LEAVE_QUOTA_URL}>Leave Tiers</Link>,
                 key: 'leave-quota'
               }
             ]
