@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   Button,
   Input,
@@ -23,11 +23,12 @@ import TimeoutAlert, { AlertType } from 'src/components/common/TimeoutAlert';
 import EditJobRoleModal from 'src/components/people/roles/EditJobRoleModal';
 import {
   sortJobRoleAsc,
-  sortJobRoleDesc,
-  sortNameAsc
+  sortJobRoleDesc
 } from 'src/components/people/roles/comparators';
 import authContext from 'src/context/auth/authContext';
 import { getAllEmployees } from 'src/services/peopleService';
+import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
+import { PEOPLE_ROLES_URL } from 'src/components/routes/routes';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -52,6 +53,8 @@ const sortOptions: SortOption[] = [
 
 const ManageRoles = () => {
   const { user } = React.useContext(authContext);
+  const { updateBreadcrumbItems } = useContext(breadcrumbContext);
+
   const [jobRoles, setJobRoles] = React.useState<JobRole[]>([]);
   const [focusedJobRole, setFocusedJobRole] = React.useState<JobRole>();
   const [editJobRoleModalOpen, setEditJobRoleModalOpen] =
@@ -73,6 +76,15 @@ const ManageRoles = () => {
       ? filteredJobRoles.sort(sortOption.comparator)
       : filteredJobRoles;
   }, [jobRoles, searchField, sortOption]);
+
+  useEffect(() => {
+    updateBreadcrumbItems([
+      {
+        label: 'Manage Roles',
+        to: PEOPLE_ROLES_URL
+      }
+    ]);
+  }, [updateBreadcrumbItems]);
 
   const handleEditJobRoleModal = (jobRoleId: number) => {
     const jobRole = jobRoles.find((role) => role.id === jobRoleId);

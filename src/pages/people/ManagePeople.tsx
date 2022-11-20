@@ -61,9 +61,9 @@ const sortOptions: SortOption[] = [
 ];
 
 const ManagePeople = () => {
+  const { user } = React.useContext(authContext);
   const { updateBreadcrumbItems } = React.useContext(breadcrumbContext);
 
-  const { user } = React.useContext(authContext);
   const [users, setUsers] = React.useState<User[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [alert, setAlert] = React.useState<AlertType | null>(null);
@@ -79,10 +79,6 @@ const ManagePeople = () => {
 
   useEffect(() => {
     updateBreadcrumbItems([
-      {
-        label: 'People',
-        to: PEOPLE_URL
-      },
       {
         label: 'Manage People',
         to: PEOPLE_MANAGE_URL
