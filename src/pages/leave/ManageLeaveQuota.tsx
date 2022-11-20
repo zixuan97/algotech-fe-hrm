@@ -43,18 +43,9 @@ const ManageLeaveQuota = () => {
 
   const isEditing = (record: LeaveQuota) => record.tier === editingKey;
 
-  useEffect(() => {
-    updateBreadcrumbItems([
-      {
-        label: 'Leave Quota',
-        to: LEAVE_QUOTA_URL
-      }
-    ]);
-  }, [updateBreadcrumbItems]);
-
-  useEffect(() => {
+  const loadTiers = async () => {
     setLoading(true);
-    asyncFetchCallback(
+    await asyncFetchCallback(
       getAllLeaveQuota(),
       (res) => {
         const sortedData = res.sort((a, b) => a.tier.localeCompare(b.tier));
@@ -63,6 +54,20 @@ const ManageLeaveQuota = () => {
       () => void 0,
       { updateLoading: setLoading }
     );
+  };
+
+  useEffect(() => {
+    updateBreadcrumbItems([
+      {
+        label: 'Leave Tiers',
+        to: LEAVE_QUOTA_URL
+      }
+    ]);
+  }, [updateBreadcrumbItems]);
+
+  useEffect(() => {
+    setLoading(true);
+    loadTiers();
   }, []);
 
   const edit = (record: LeaveQuota) => {
@@ -91,11 +96,15 @@ const ManageLeaveQuota = () => {
       const row = (await form.validateFields()) as LeaveQuota;
       const newData = [...data];
       const index = newData.findIndex((item) => tier === item.tier);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row
-      });
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row
+        });
+      } else {
+        newData.push(row);
+      }
 
       const uniqueValues = new Set(
         newData.map((leaveQuota) => leaveQuota.tier)
@@ -136,6 +145,7 @@ const ManageLeaveQuota = () => {
               type: 'success',
               message: 'Leave quota created successfully!'
             });
+            loadTiers();
           },
           (err) => {
             setEditingKey('');
@@ -164,6 +174,7 @@ const ManageLeaveQuota = () => {
               type: 'success',
               message: 'Leave quota updated successfully!'
             });
+            loadTiers();
           },
           (err) => {
             setEditingKey('');
@@ -213,6 +224,7 @@ const ManageLeaveQuota = () => {
           type: 'success',
           message: 'Leave quota deleted successfully!'
         });
+        loadTiers();
       },
       (err) => {
         setCurrentRow({});
@@ -381,7 +393,7 @@ const ManageLeaveQuota = () => {
 
   return (
     <Form form={form} component={false}>
-      <Typography.Title level={2}>Manage Leave Quota</Typography.Title>
+      <Typography.Title level={2}>View Leave Tiers</Typography.Title>
       {alert && (
         <div className='leave-quota-alert'>
           <TimeoutAlert alert={alert} clearAlert={() => setAlert(null)} />

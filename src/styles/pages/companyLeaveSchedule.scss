@@ -7,6 +7,7 @@
   color: white;
   padding: 0.1rem 2rem 0.2rem 2rem;
   width: max-content;
+  border-radius: 8px;
 }
 
 .calendar-month-cell-dark {
@@ -19,4 +20,10 @@
 .calendar-spin {
   display: flex;
   justify-content: center;
+}
+
+.calendar-public-hol {
+  padding: 0.1rem 1rem 0.2rem 1rem;
+  width: max-content;
+  border-radius: 8px;
 }

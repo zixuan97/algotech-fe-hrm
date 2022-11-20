@@ -5,9 +5,12 @@ import { interpolateRdYlBu } from 'd3-scale-chromatic';
 import type { Moment } from 'moment';
 import moment from 'moment';
 import asyncFetchCallback from 'src/services/util/asyncFetchCallback';
-import { getAllApprovedLeaveApplications } from 'src/services/leaveService';
+import {
+  getAllApprovedLeaveApplications,
+  getAllPublicHolidays
+} from 'src/services/leaveService';
 import CalendarCellModal from 'src/components/leave/CalendarCellModal';
-import { CalendarObject } from 'src/models/types';
+import { CalendarObject, CalendarPHObject } from 'src/models/types';
 import LeaveCalendar from 'src/components/leave/LeaveCalendar';
 import interpolateColors from 'src/utils/colourUtils';
 import breadcrumbContext from 'src/context/breadcrumbs/breadcrumbContext';
@@ -17,6 +20,7 @@ const ViewCompanyLeaveSchedule = () => {
   const { updateBreadcrumbItems } = useContext(breadcrumbContext);
 
   const [leaveDates, setLeaveDates] = useState<CalendarObject[]>([]);
+  const [publicHolidays, setPublicHolidays] = useState<CalendarPHObject[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Moment>(moment());
   const [selectedMode, setSelectedMode] = useState<string>('month');
@@ -44,10 +48,17 @@ const ViewCompanyLeaveSchedule = () => {
 
   useEffect(() => {
     setLoading(true);
+
+    asyncFetchCallback(
+      getAllPublicHolidays(new Date().getFullYear()),
+      (res) => {
+        setPublicHolidays(res);
+      }
+    );
+
     asyncFetchCallback(
       getAllApprovedLeaveApplications(),
       (res) => {
-        console.log(res);
         const leaveDatesArr = res.flatMap((o) => {
           const startDate = moment(o.startDate);
           const endDate = moment(o.endDate);
@@ -82,15 +93,30 @@ const ViewCompanyLeaveSchedule = () => {
     setSelectedMode(mode);
   };
 
+  const onSelectedYearChange = (year: number) => {
+    setLoading(true);
+
+    asyncFetchCallback(
+      getAllPublicHolidays(year),
+      (res) => {
+        setPublicHolidays(res);
+      },
+      () => void 0,
+      { updateLoading: setLoading }
+    );
+  };
+
   return (
     <>
       <Typography.Title level={2}>Company Leave Schedule</Typography.Title>
       <Spin size='large' spinning={loading} className='calendar-spin'>
         <LeaveCalendar
           leaveDates={leaveDates}
+          publicHolidays={publicHolidays}
           onPanelChange={onPanelChange}
           handleSelect={handleSelect}
           colours={colours}
+          onSelectYear={(selectedYear) => onSelectedYearChange(selectedYear)}
         />
         <CalendarCellModal
           open={openCalendarCellModal}

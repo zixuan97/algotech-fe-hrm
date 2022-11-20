@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Select } from 'antd';
-import { EmployeeLeaveQuota, LeaveQuota } from 'src/models/types';
+import { LeaveQuota } from 'src/models/types';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
+  isManageEmployeeLeaveQuota: boolean;
   editing: boolean;
   name: string;
+  balance: number;
   title: any;
   inputType: 'number' | 'string' | 'select';
   handleInputChange: (value: string, name: string) => void;
@@ -14,8 +16,10 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const LeaveQuotaEditableCell: React.FC<EditableCellProps> = ({
+  isManageEmployeeLeaveQuota,
   editing,
   name,
+  balance,
   title,
   inputType,
   handleInputChange,
@@ -66,9 +70,19 @@ const LeaveQuotaEditableCell: React.FC<EditableCellProps> = ({
           >
             {inputType === 'number' ? (
               <InputNumber
+                style={{
+                  width: '120px',
+                  display: 'flex',
+                  justifySelf: 'center',
+                  borderRadius: '8px'
+                }}
+                bordered
                 onChange={(value) => {
                   handleInputChange(value!.toString(), name);
                 }}
+                addonBefore={
+                  isManageEmployeeLeaveQuota ? `${balance} /` : undefined
+                }
               />
             ) : inputType === 'string' ? (
               <Input

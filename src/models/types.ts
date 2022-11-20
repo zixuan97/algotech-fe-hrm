@@ -146,6 +146,12 @@ export interface EmployeeLeaveQuota {
   parentalQuota: number;
   sickQuota: number;
   unpaidQuota: number;
+  annualBalance: number;
+  childcareBalance: number;
+  compassionateBalance: number;
+  parentalBalance: number;
+  sickBalance: number;
+  unpaidBalance: number;
 }
 
 export interface LeaveApplication {
@@ -171,6 +177,12 @@ export interface CalendarObject {
   employeeId: number;
   employeeName: string;
   color: string;
+}
+
+export interface CalendarPHObject {
+  Date: string;
+  Name: string;
+  Observance: string;
 }
 
 export interface TreeNode {

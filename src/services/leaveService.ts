@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  CalendarPHObject,
   EmployeeLeaveQuota,
   LeaveApplication,
   LeaveQuota
@@ -14,6 +15,12 @@ export const getAllEmployeeLeaveQuota = async (): Promise<
   EmployeeLeaveQuota[]
 > => {
   return axios.get(`${apiRoot}/leave/records/all`).then((res) => res.data);
+};
+
+export const getEmployeeLeaveQuota = async (
+  id: string | number
+): Promise<EmployeeLeaveQuota> => {
+  return axios.get(`${apiRoot}/leave/employee/${id}`).then((res) => res.data);
 };
 
 export const getTierSize = async (tierName: string): Promise<number> => {
@@ -62,6 +69,12 @@ export const getAllApprovedLeaveApplications = async (): Promise<
   return axios.get(`${apiRoot}/leave/approved/all`).then((res) => res.data);
 };
 
+export const getAllPublicHolidays = async (
+  year: string | number
+): Promise<CalendarPHObject[]> => {
+  return axios.get(`${apiRoot}/leave/ph/${year}`).then((res) => res.data);
+};
+
 export const getLeaveApplicationById = async (
   id: string | number
 ): Promise<LeaveApplication> => {
@@ -78,8 +91,16 @@ export const editLeaveApplication = async (body: object): Promise<void> => {
   return axios.put(`${apiRoot}/leave`, body);
 };
 
-export const vetLeaveApplication = async (body: object): Promise<void> => {
-  return axios.put(`${apiRoot}/leave/vet`, body, {
+export const approveLeaveApplication = async (body: object): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/approve`, body, {
+    headers: {
+      'x-access-token': axios.defaults.headers.common['x-access-token']
+    }
+  });
+};
+
+export const rejectLeaveApplication = async (body: object): Promise<void> => {
+  return axios.post(`${apiRoot}/leave/reject`, body, {
     headers: {
       'x-access-token': axios.defaults.headers.common['x-access-token']
     }
