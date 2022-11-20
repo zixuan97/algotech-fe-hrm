@@ -478,7 +478,14 @@ const LeaveApplicationDetails = () => {
           </div>
           <Card>
             <div className='leave-application-details-row-display'>
-              <Typography.Title level={4} className='leave-application-title'>
+              <Typography.Title
+                level={4}
+                style={{
+                  paddingTop: '0.5rem',
+                  paddingRight: '2rem',
+                  width: '10%'
+                }}
+              >
                 Status:
               </Typography.Title>
               {(updatedLeaveApplication?.status === 'APPROVED' ||
